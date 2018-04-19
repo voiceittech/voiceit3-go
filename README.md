@@ -9,7 +9,7 @@ A Go wrapper for VoiceIt's API2.0 featuring Face + Voice Verification and Identi
   * [User API Calls](#user-api-calls)
       * [Get All Users](#get-all-users)
       * [Create User](#create-user)
-      * [Get User](#check-if-user-exists)
+      * [Check User Exists](#check-user-exists)
       * [Get Groups for User](#get-groups-for-user)
       * [Delete User](#delete-user)
   * [Group API Calls](#group-api-calls)
@@ -17,11 +17,13 @@ A Go wrapper for VoiceIt's API2.0 featuring Face + Voice Verification and Identi
       * [Create Group](#create-group)
       * [Get Group](#get-group)
       * [Delete Group](#delete-group)
-      * [Group exists](#check-if-group-exists)
+      * [Check Group Exists](#check-group-exists)
       * [Add User to Group](#add-user-to-group)
       * [Remove User from Group](#remove-user-from-group)      
   * [Enrollment API Calls](#enrollment-api-calls)
       * [Get All Enrollments for User](#get-all-enrollments-for-user)
+      * [Get Face Enrollments for User](#get-face-enrollments-for-user)
+      * [Delete All Enrollments for User](#delete-all-enrollments-for-user)
       * [Delete Enrollment for User](#delete-enrollment-for-user)
       * [Delete Face Enrollment](#delete-face-enrollment)
       * [Create Voice Enrollment](#create-voice-enrollment)
@@ -85,18 +87,11 @@ Create a new user
 myVoiceIt.CreateUser()
 ```
 
-#### Check if User Exists
+#### Check User Exists
 
 Check whether a user exists for the given userId(begins with 'usr_')
 ```go
-myVoiceIt.GetUser("USER_ID_HERE").
-```
-
-#### Delete User
-
-Delete user with given userId(begins with 'usr_')
-```go
-myVoiceIt.DeleteUser("USER_ID_HERE")
+myVoiceIt.CheckUserExists("USER_ID_HERE").
 ```
 
 #### Get Groups for User
@@ -104,6 +99,13 @@ myVoiceIt.DeleteUser("USER_ID_HERE")
 Get a list of groups that the user with given userId(begins with 'usr_') is a part of
 ```go
 myVoiceIt.GetGroupsForUser("USER_ID_HERE")
+```
+
+#### Delete User
+
+Delete user with given userId(begins with 'usr_')
+```go
+myVoiceIt.DeleteUser("USER_ID_HERE")
 ```
 
 ### Group API Calls
@@ -115,6 +117,13 @@ Get all the groups associated with the apiKey
 myVoiceIt.GetAllGroups()
 ```
 
+#### Create Group
+
+Create a new group with the given description
+```go
+myVoiceIt.CreateGroup("Sample Group Description")
+```
+
 #### Get Group
 
 Returns a group for the given groupId(begins with 'grp_')
@@ -122,18 +131,19 @@ Returns a group for the given groupId(begins with 'grp_')
 myVoiceIt.GetGroup("GROUP_ID_HERE")
 ```
 
-#### Check if Group Exists
+#### Delete Group
+
+Delete group with given groupId(begins with 'grp_'), Note: This call does not delete any users, but simply deletes the group and disassociates the users from the group
+
+```go
+myVoiceIt.DeleteGroup("GROUP_ID_HERE")
+```
+
+#### Check Group Exists
 
 Checks if group with given groupId(begins with 'grp_') exists
 ```go
-myVoiceIt.GroupExists("GROUP_ID_HERE")
-```
-
-#### Create Group
-
-Create a new group with the given description
-```go
-myVoiceIt.CreateGroup("Sample Group Description")
+myVoiceIt.CheckGroupExists("GROUP_ID_HERE")
 ```
 
 #### Add User to Group
@@ -151,13 +161,6 @@ Removes user with given userId(begins with 'usr_') from group with given groupId
 myVoiceIt.RemoveUserFromGroup("GROUP_ID_HERE", "USER_ID_HERE")
 ```
 
-#### Delete Group
-
-Delete group with given groupId(begins with 'grp_'), Note: This call does not delete any users, but simply deletes the group and disassociates the users from the group
-
-```go
-myVoiceIt.DeleteGroup("GROUP_ID_HERE")
-```
 
 ### Enrollment API Calls
 
@@ -167,6 +170,22 @@ Gets all enrollment for user with given userId(begins with 'usr_')
 
 ```go
 myVoiceIt.GetAllEnrollmentsForuser("USER_ID_HERE")
+```
+
+#### Get Face Enrollments for User
+
+Gets face enrollments for user with given userId(begins with 'usr_')
+
+```go
+myVoiceIt.GetFaceEnrollmentsForuser("USER_ID_HERE")
+```
+
+#### Delete All Enrollments for User
+
+Delete all enrollments for user with the given userId(begins with 'usr_')
+
+```go
+myVoiceIt.DeleteAllEnrollmentForUser( "USER_ID_HERE")
 ```
 
 #### Delete Enrollment for User
@@ -187,7 +206,7 @@ myVoiceIt.DeleteFaceEnrollment( "USER_ID_HERE", "FACE_ENROLLMENT_ID_HERE")
 
 #### Create Voice Enrollment
 
-Create audio enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Create voice enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
 myVoiceIt.CreateVoiceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
@@ -195,7 +214,7 @@ myVoiceIt.CreateVoiceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePat
 
 #### Create Voice Enrollment by URL
 
-Create audio enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Create voice enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
 myVoiceIt.CreateVoiceEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_AUDIO_FILE_HERE");
@@ -287,6 +306,20 @@ or with blinkDetection disabled
 
 ```go
 myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false)
+```
+
+#### Face Verification
+
+Verify user's face with given userId(begins with 'usr_') and optionally a boolean to disable blink detection. Note: Provide an about 2 seconds long video(mp4 codec is recommended) of the user's face
+
+```go
+myVoiceIt.FaceVerification("USER_ID_HERE", filePath)
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.FaceVerification("USER_ID_HERE", filePath, false)
 ```
 
 ### Identification API Calls
