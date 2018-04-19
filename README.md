@@ -66,7 +66,7 @@ import "github.com/voiceittech/VoiceIt2-Go/voiceit2"
 First assign the API Credentials an initialize a VoiceIt2 struct.
 
 ```go
-myVoiceIt := voiceit2.New("API_KEY", "API_TOKEN")
+myVoiceIt := voiceit2.NewClient("API_KEY", "API_TOKEN")
 ```
 
 ### User API Calls
