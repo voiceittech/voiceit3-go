@@ -41,8 +41,7 @@ func (vi *VoiceIt2) GetAllUsers()string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateUser()string {
@@ -61,8 +60,7 @@ func (vi *VoiceIt2) CreateUser()string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetUser(userId string) string {
@@ -81,8 +79,7 @@ func (vi *VoiceIt2) GetUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) DeleteUser(userId string) string {
@@ -101,8 +98,7 @@ func (vi *VoiceIt2) DeleteUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
@@ -121,8 +117,7 @@ func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
@@ -141,8 +136,7 @@ func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
@@ -161,8 +155,7 @@ func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetFaceFaceEnrollmentsForUser(userId string) string {
@@ -181,8 +174,7 @@ func (vi *VoiceIt2) GetFaceFaceEnrollmentsForUser(userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, filePath string) string {
@@ -209,8 +201,7 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage string, fileUrl string) string {
@@ -233,8 +224,7 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, filePath string, doBlinkDetection ... bool)string {
@@ -264,8 +254,7 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage string, fileUrl string, doBlinkDetection ... bool)string {
@@ -291,8 +280,7 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, filePath string, doBlinkDetection ... bool)string {
@@ -322,8 +310,7 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, 
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string) string {
@@ -342,8 +329,7 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId string) string {
@@ -362,8 +348,7 @@ func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId stri
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetAllGroups()string {
@@ -382,8 +367,7 @@ func (vi *VoiceIt2) GetAllGroups()string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GetGroup(groupId string) string {
@@ -402,8 +386,7 @@ func (vi *VoiceIt2) GetGroup(groupId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) GroupExists(groupId string) string {
@@ -422,8 +405,7 @@ func (vi *VoiceIt2) GroupExists(groupId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) CreateGroup(description string) string {
@@ -445,8 +427,7 @@ func (vi *VoiceIt2) CreateGroup(description string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
@@ -469,8 +450,7 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
@@ -493,8 +473,7 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) DeleteGroup(groupId string) string {
@@ -513,8 +492,7 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, filePath string) string {
@@ -541,8 +519,7 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, fil
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string, fileUrl string) string {
@@ -565,8 +542,7 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDetection ... bool)string {
@@ -595,8 +571,7 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDete
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, filePath string, doBlinkDetection ... bool)string {
@@ -626,8 +601,7 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, fil
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string, fileUrl string, doBlinkDetection ... bool)string {
@@ -653,8 +627,7 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, filePath string) string {
@@ -681,7 +654,7 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
+  result := string(reply)
   return result
 }
 
@@ -705,8 +678,7 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, filePath string, doBlinkDetection ... bool)string {
@@ -736,8 +708,7 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage string, fileUrl string, doBlinkDetection ... bool)string {
@@ -763,6 +734,5 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
   reply, _ := ioutil.ReadAll(resp.Body)
   respBody := &bytes.Buffer{}
   respBody.ReadFrom(resp.Body)
-  result := string(reply[:len(reply)])
-  return result
+  return string(reply)
 }
