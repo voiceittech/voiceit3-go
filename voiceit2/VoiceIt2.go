@@ -473,7 +473,7 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
   return result
 }
 
-func (vi *VoiceIt2) RemoveUserToGroup(groupId string, userId string) string {
+func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
 
   body := &bytes.Buffer{}
   writer := multipart.NewWriter(body)
