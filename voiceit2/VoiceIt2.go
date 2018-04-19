@@ -16,11 +16,11 @@ type VoiceIt2 struct {
     baseURL string
 }
 
-func New(key string, tok string) *VoiceIt{
-    return &VoiceIt{
+func New(key string, tok string) VoiceIt2 {
+    return VoiceIt2{
         apiKey: key,
         apiToken: tok,
-        baseURL : "https://api.voiceit.io"
+        baseURL : "https://api.voiceit.io",
     }
 }
 
