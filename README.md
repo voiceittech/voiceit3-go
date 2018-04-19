@@ -50,7 +50,7 @@ Sign up for a free Developer Account at [voiceit.io](https://voiceit.io/signup) 
 In order to easily integrate VoiceIt API 2 into your Go project, please install the VoiceIt Go Package by running the following command in your Go Workspace.
 
 ```
-go get github.com/voiceittech/VoiceIt2-Go
+go get github.com/voiceittech/VoiceIt2-Go/voiceit2
 ```
 
 ## API Calls
