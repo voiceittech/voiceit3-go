@@ -1,6 +1,6 @@
 # VoiceIt2-Go
 
-A Go wrapper for VoiceIt's new API2.0 featuring Voice + Face Verification and Identification.
+A Go wrapper for VoiceIt's API2.0 featuring Face + Voice Verification and Identification.
 
 * [Getting Started](#getting-started)
 * [Installation](#installation)
@@ -9,7 +9,7 @@ A Go wrapper for VoiceIt's new API2.0 featuring Voice + Face Verification and Id
   * [User API Calls](#user-api-calls)
       * [Get All Users](#get-all-users)
       * [Create User](#create-user)
-      * [Get User](#check-if-user-exists)
+      * [Check User Exists](#check-user-exists)
       * [Get Groups for User](#get-groups-for-user)
       * [Delete User](#delete-user)
   * [Group API Calls](#group-api-calls)
@@ -17,36 +17,59 @@ A Go wrapper for VoiceIt's new API2.0 featuring Voice + Face Verification and Id
       * [Create Group](#create-group)
       * [Get Group](#get-group)
       * [Delete Group](#delete-group)
-      * [Group exists](#check-if-group-exists)
+      * [Check Group Exists](#check-group-exists)
       * [Add User to Group](#add-user-to-group)
       * [Remove User from Group](#remove-user-from-group)      
   * [Enrollment API Calls](#enrollment-api-calls)
       * [Get All Enrollments for User](#get-all-enrollments-for-user)
+      * [Get Face Enrollments for User](#get-face-enrollments-for-user)
+      * [Delete All Enrollments for User](#delete-all-enrollments-for-user)
       * [Delete Enrollment for User](#delete-enrollment-for-user)
-      * [Create Audio Enrollment](#create-voice-enrollment)
+      * [Delete Face Enrollment](#delete-face-enrollment)
+      * [Create Voice Enrollment](#create-voice-enrollment)
+      * [Create Voice Enrollment By URL](#create-voice-enrollment-by-url)
       * [Create Video Enrollment](#create-video-enrollment)
+      * [Create Video Enrollment By URL](#create-video-enrollment-by-url)
+      * [Create Face Enrollment](#create-face-enrollment)
   * [Verification API Calls](#verification-api-calls)
-      * [Audio Verification](#voice-verification)
+      * [Voice Verification](#voice-verification)
+      * [Voice Verification By URL](#voice-verification-by-url)
       * [Video Verification](#video-verification)
+      * [Video Verification By URL](#video-verification-by-url)
+      * [Face Verification](#face-verification)
   * [Identification API Calls](#identification-api-calls)
-      * [Audio Identification](#voice-identification)
+      * [Voice Identification](#voice-identification)
+      * [Voice Identification By URL](#voice-identification-by-url)
       * [Video Identification](#video-identification)
+      * [Video Identification By URL](#video-identification-by-url)
 
 ## Getting Started
 
-Sign up for a free Developer Account at <a href="https://voiceit.io/signup" target="_blank">VoiceIt.io</a> and activate API 2.0 from the settings page. Then you should be able view the API Key and Token. You can also review the HTTP Documentation at <a href="https://api.voiceit.io" target="_blank">api.voiceit.io</a>.
+Sign up for a free Developer Account at [voiceit.io](https://voiceit.io/signup) and activate API 2.0 from the settings page. Then you should be able view the API Key and Token. You can also review the HTTP Documentation at [api.voiceit.io](https://api.voiceit.io)
+
+## Installation
+
+In order to easily integrate VoiceIt API 2 into your Go project, please install the VoiceIt Go Package by running the following command in your Go Workspace.
+
+```
+go get github.com/voiceittech/VoiceIt2-Go/voiceit2
+```
 
 ## API Calls
 
 ### Initialization
 
-First assign the API Credentials.
+Make Sure to add this at the top of your project
 
-```go
-VoiceIt2.SetAPIKeyAndToken("API_KEY", "API_TOK")
+```
+import "github.com/voiceittech/VoiceIt2-Go/voiceit2"
 ```
 
-### API calls
+First assign the API Credentials an initialize a VoiceIt2 struct.
+
+```go
+myVoiceIt := voiceit2.NewClient("API_KEY", "API_TOKEN")
+```
 
 ### User API Calls
 
@@ -54,35 +77,35 @@ VoiceIt2.SetAPIKeyAndToken("API_KEY", "API_TOK")
 
 Get all  users associated with the apiKey
 ```go
-VoiceIt2.GetAllUsers()
+myVoiceIt.GetAllUsers()
 ```
 
 #### Create User
 
 Create a new user
 ```go
-VoiceIt2.CreateUser()
+myVoiceIt.CreateUser()
 ```
 
-#### Check if User Exists
+#### Check User Exists
 
 Check whether a user exists for the given userId(begins with 'usr_')
 ```go
-VoiceIt2.GetUser("USER_ID_HERE").
-```
-
-#### Delete User
-
-Delete user with given userId(begins with 'usr_')
-```go
-VoiceIt2.DeleteUser("USER_ID_HERE")
+myVoiceIt.CheckUserExists("USER_ID_HERE").
 ```
 
 #### Get Groups for User
 
 Get a list of groups that the user with given userId(begins with 'usr_') is a part of
 ```go
-VoiceIt2.GetGroupsForUser("USER_ID_HERE")
+myVoiceIt.GetGroupsForUser("USER_ID_HERE")
+```
+
+#### Delete User
+
+Delete user with given userId(begins with 'usr_')
+```go
+myVoiceIt.DeleteUser("USER_ID_HERE")
 ```
 
 ### Group API Calls
@@ -91,43 +114,21 @@ VoiceIt2.GetGroupsForUser("USER_ID_HERE")
 
 Get all the groups associated with the apiKey
 ```go
-VoiceIt2.GetAllGroups()
-```
-
-#### Get Group
-
-Returns a group for the given groupId(begins with 'grp_')
-```go
-VoiceIt2.GetGroup("GROUP_ID_HERE")
-```
-
-#### Check if Group Exists
-
-Checks if group with given groupId(begins with 'grp_') exists
-```go
-VoiceIt2.GroupExists("GROUP_ID_HERE")
+myVoiceIt.GetAllGroups()
 ```
 
 #### Create Group
 
 Create a new group with the given description
 ```go
-VoiceIt2.CreateGroup("Sample Group Description")
+myVoiceIt.CreateGroup("Sample Group Description")
 ```
 
-#### Add User to Group
+#### Get Group
 
-Adds user with given userId(begins with 'usr_') to group with given groupId(begins with 'grp_')
+Returns a group for the given groupId(begins with 'grp_')
 ```go
-VoiceIt2.AddUserToGroup("GROUP_ID_HERE", "USER_ID_HERE")
-```
-
-#### Remove User from Group
-
-Removes user with given userId(begins with 'usr_') from group with given groupId(begins with 'grp_')
-
-```go
-VoiceIt2.RemoveUserFromGroup("GROUP_ID_HERE", "USER_ID_HERE")
+myVoiceIt.GetGroup("GROUP_ID_HERE")
 ```
 
 #### Delete Group
@@ -135,8 +136,31 @@ VoiceIt2.RemoveUserFromGroup("GROUP_ID_HERE", "USER_ID_HERE")
 Delete group with given groupId(begins with 'grp_'), Note: This call does not delete any users, but simply deletes the group and disassociates the users from the group
 
 ```go
-VoiceIt2.DeleteGroup("GROUP_ID_HERE")
+myVoiceIt.DeleteGroup("GROUP_ID_HERE")
 ```
+
+#### Check Group Exists
+
+Checks if group with given groupId(begins with 'grp_') exists
+```go
+myVoiceIt.CheckGroupExists("GROUP_ID_HERE")
+```
+
+#### Add User to Group
+
+Adds user with given userId(begins with 'usr_') to group with given groupId(begins with 'grp_')
+```go
+myVoiceIt.AddUserToGroup("GROUP_ID_HERE", "USER_ID_HERE")
+```
+
+#### Remove User from Group
+
+Removes user with given userId(begins with 'usr_') from group with given groupId(begins with 'grp_')
+
+```go
+myVoiceIt.RemoveUserFromGroup("GROUP_ID_HERE", "USER_ID_HERE")
+```
+
 
 ### Enrollment API Calls
 
@@ -145,7 +169,23 @@ VoiceIt2.DeleteGroup("GROUP_ID_HERE")
 Gets all enrollment for user with given userId(begins with 'usr_')
 
 ```go
-VoiceIt2.GetAllEnrollmentsForuser("USER_ID_HERE")
+myVoiceIt.GetAllEnrollmentsForuser("USER_ID_HERE")
+```
+
+#### Get Face Enrollments for User
+
+Gets face enrollments for user with given userId(begins with 'usr_')
+
+```go
+myVoiceIt.GetFaceEnrollmentsForuser("USER_ID_HERE")
+```
+
+#### Delete All Enrollments for User
+
+Delete all enrollments for user with the given userId(begins with 'usr_')
+
+```go
+myVoiceIt.DeleteAllEnrollmentForUser( "USER_ID_HERE")
 ```
 
 #### Delete Enrollment for User
@@ -153,23 +193,73 @@ VoiceIt2.GetAllEnrollmentsForuser("USER_ID_HERE")
 Delete enrollment for user with given userId(begins with 'usr_') and enrollmentId(integer)
 
 ```go
-VoiceIt2.DeleteEnrollmentForUser( "USER_ID_HERE", "ENROLLMENT_ID_HERE")
+myVoiceIt.DeleteEnrollmentForUser( "USER_ID_HERE", "ENROLLMENT_ID_HERE")
+```
+
+#### Delete Face Enrollment
+
+Delete face enrollment for user with given userId(begins with 'usr_') and faceEnrollmentId(integer)
+
+```go
+myVoiceIt.DeleteFaceEnrollment( "USER_ID_HERE", "FACE_ENROLLMENT_ID_HERE")
 ```
 
 #### Create Voice Enrollment
 
-Create audio enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Create voice enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
-VoiceIt2.CreateVoiceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+myVoiceIt.CreateVoiceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+```
+
+#### Create Voice Enrollment by URL
+
+Create voice enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.CreateVoiceEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_AUDIO_FILE_HERE");
 ```
 
 #### Create Video Enrollment
 
-Create video enrollment for user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Create video enrollment for user with given userId(begins with 'usr_'), contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
-VoiceIt2.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+myVoiceIt.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false);
+```
+
+#### Create Video Enrollment by URL
+
+Create video enrollment for user with given userId(begins with 'usr_'), contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE");
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false);
+```
+
+#### Create Face Enrollment
+
+Create face enrollment for user with given userId(begins with 'usr_') and optionally a boolean to disable blink detection. Note: It is recommended that you send a 2 second mp4 video
+
+```go
+myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false);
 ```
 
 ### Verification API Calls
@@ -179,37 +269,108 @@ VoiceIt2.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath
 Verify user with the given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
-VoiceIt2.VoiceVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+myVoiceIt.VoiceVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+```
+
+#### Voice Verification by URL
+
+Verify user with the given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.VoiceVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_AUDIO_FILE_HERE")
 ```
 
 #### Video Verification
 
-Verify user with given userId(begins with 'usr_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Verify user with given userId(begins with 'usr_'), contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
+
 ```go
-VoiceIt2.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+myVoiceIt.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false)
+```
+
+#### Video Verification by URL
+
+Verify user with given userId(begins with 'usr_'), contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE")
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false)
+```
+
+#### Face Verification
+
+Verify user's face with given userId(begins with 'usr_') and optionally a boolean to disable blink detection. Note: Provide an about 2 seconds long video(mp4 codec is recommended) of the user's face
+
+```go
+myVoiceIt.FaceVerification("USER_ID_HERE", filePath)
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.FaceVerification("USER_ID_HERE", filePath, false)
 ```
 
 ### Identification API Calls
 
 #### Voice Identification
 
-Identify user inside group with the given groupId(begins with 'grp_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Identify user inside group with the given groupId(begins with 'grp_') and contentLanguage('en-US','es-ES', etc.). Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
-VoiceIt2.VoiceIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+myVoiceIt.VoiceIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+```
+
+#### Voice Identification by URL
+
+Identify user inside group with the given groupId(begins with 'grp_') and contentLanguage('en-US','es-ES', etc.). Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.VoiceIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_AUDIO_FILE_HERE")
 ```
 
 #### Video Identification
 
-Identify user inside group with the given groupId(begins with 'grp_') and contentLanguage('en-US','es-ES', etc.). Note: File recording need to be no less than 1.2 seconds and no more than 5 seconds
+Identify user inside group with the given groupId(begins with 'grp_'), contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
 
 ```go
-VoiceIt2.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+myVoiceIt.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
+```
+or with blinkDetection disabled
+
+```go
+myVoiceIt.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false)
 ```
 
-## Author
+#### Video Identification by URL
+
+Identify user inside group with the given groupId(begins with 'grp_') , contentLanguage('en-US','es-ES', etc.) and optionally a boolean to disable blink detection. Note: File recording needs to be no less than 1.2 seconds and no more than 5 seconds
+
+```go
+myVoiceIt.VideoIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE")
+```
+
+or with blinkDetection disabled
+
+```go
+myVoiceIt.VideoIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false)
+```
+
+## Authors
 
 Stephen Akers, stephen@voiceit.io
+Armaan Bindra, armaan@voiceit.io
 
 ## License
 
