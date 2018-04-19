@@ -12,16 +12,16 @@ import (
 )
 
 type VoiceIt2 struct {
-    apiKey string
-    apiToken string
-    baseURL string
+    ApiKey string
+    ApiToken string
+    BaseUrl string
 }
 
 func NewClient(key string, tok string) *VoiceIt2 {
     return &VoiceIt2{
-        apiKey: key,
-        apiToken: tok,
-        baseURL : "https://api.voiceit.io",
+        ApiKey: key,
+        ApiToken: tok,
+        BaseUrl : "https://api.voiceit.io",
     }
 }
 
@@ -31,8 +31,8 @@ func (vi *VoiceIt2) GetAllUsers()string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/users", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/users", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -50,8 +50,8 @@ func (vi *VoiceIt2) CreateUser()string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/users", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/users", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -69,8 +69,8 @@ func (vi *VoiceIt2) GetUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/users/" + userId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/users/" + userId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -88,8 +88,8 @@ func (vi *VoiceIt2) DeleteUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("DELETE", vi.baseURL + "/users/" + userId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("DELETE", vi.BaseUrl + "/users/" + userId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -107,8 +107,8 @@ func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/users/" + userId + "/groups", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/users/" + userId + "/groups", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -126,8 +126,8 @@ func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/enrollments/" + userId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/enrollments/" + userId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -145,8 +145,8 @@ func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("DELETE", vi.baseURL + "/enrollments/" + userId + "/all", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("DELETE", vi.BaseUrl + "/enrollments/" + userId + "/all", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -164,8 +164,8 @@ func (vi *VoiceIt2) GetFaceFaceEnrollmentsForUser(userId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/enrollments/face/" + userId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/enrollments/face/" + userId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -191,8 +191,8 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
   _ = writer.WriteField("contentLanguage", contentLanguage)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/enrollments", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/enrollments", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -214,8 +214,8 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
   _ = writer.WriteField("fileUrl", fileUrl)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/enrollments/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/enrollments/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -244,8 +244,8 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/enrollments/video", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/enrollments/video", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -270,8 +270,8 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/enrollments/video/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/enrollments/video/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -300,8 +300,8 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, 
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/enrollments/face", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/enrollments/face", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -319,8 +319,8 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("DELETE", vi.baseURL + "/enrollments/face/" + userId + "/" + faceEnrollmentId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("DELETE", vi.BaseUrl + "/enrollments/face/" + userId + "/" + faceEnrollmentId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -338,8 +338,8 @@ func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId stri
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("DELETE", vi.baseURL + "/enrollments/" + userId + "/" + faceEnrollmentId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("DELETE", vi.BaseUrl + "/enrollments/" + userId + "/" + faceEnrollmentId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -357,8 +357,8 @@ func (vi *VoiceIt2) GetAllGroups()string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/groups", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/groups", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -376,8 +376,8 @@ func (vi *VoiceIt2) GetGroup(groupId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/groups/" + groupId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/groups/" + groupId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -395,8 +395,8 @@ func (vi *VoiceIt2) GroupExists(groupId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("GET", vi.baseURL + "/groups/" + groupId + "/exists", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("GET", vi.BaseUrl + "/groups/" + groupId + "/exists", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -417,8 +417,8 @@ func (vi *VoiceIt2) CreateGroup(description string) string {
 
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/groups", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/groups", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -440,8 +440,8 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
 
   writer.Close()
 
-  req, _ := http.NewRequest("PUT", vi.baseURL + "/groups/addUser", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("PUT", vi.BaseUrl + "/groups/addUser", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -463,8 +463,8 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
 
   writer.Close()
 
-  req, _ := http.NewRequest("PUT", vi.baseURL + "/groups/removeUser", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("PUT", vi.BaseUrl + "/groups/removeUser", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -482,8 +482,8 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
   writer := multipart.NewWriter(body)
   writer.Close()
 
-  req, _ := http.NewRequest("DELETE", vi.baseURL + "/groups/" + groupId, body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("DELETE", vi.BaseUrl + "/groups/" + groupId, body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -509,8 +509,8 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, fil
   _ = writer.WriteField("contentLanguage", contentLanguage)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/verification", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/verification", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -532,8 +532,8 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
   _ = writer.WriteField("fileUrl", fileUrl)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/verification/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/verification/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -561,8 +561,8 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDete
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/verification/face", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/verification/face", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -591,8 +591,8 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, fil
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/verification/video", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/verification/video", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -617,8 +617,8 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/verification/video/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/verification/video/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -644,8 +644,8 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
   _ = writer.WriteField("contentLanguage", contentLanguage)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/identification", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/identification", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -668,8 +668,8 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
   _ = writer.WriteField("contentLanguage", contentLanguage)
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/identification/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/identification/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -698,8 +698,8 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/identification/video", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/identification/video", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
@@ -724,8 +724,8 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
   }
   writer.Close()
 
-  req, _ := http.NewRequest("POST", vi.baseURL + "/identification/video/byUrl", body)
-  req.SetBasicAuth(vi.apiKey, vi.apiToken)
+  req, _ := http.NewRequest("POST", vi.BaseUrl + "/identification/video/byUrl", body)
+  req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
   req.Header.Add("Content-Type", writer.FormDataContentType())
 
   client := &http.Client{}
