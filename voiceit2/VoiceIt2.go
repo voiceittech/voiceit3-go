@@ -17,7 +17,7 @@ type VoiceIt2 struct {
     baseURL string
 }
 
-func New(key string, tok string) *VoiceIt2 {
+func NewClient(key string, tok string) *VoiceIt2 {
     return &VoiceIt2{
         apiKey: key,
         apiToken: tok,
