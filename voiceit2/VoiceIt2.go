@@ -39,8 +39,6 @@ func (vi *VoiceIt2) GetAllUsers()string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -58,8 +56,6 @@ func (vi *VoiceIt2) CreateUser()string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -77,8 +73,6 @@ func (vi *VoiceIt2) GetUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -96,8 +90,6 @@ func (vi *VoiceIt2) DeleteUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -115,8 +107,6 @@ func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -134,8 +124,6 @@ func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -153,8 +141,6 @@ func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -172,8 +158,6 @@ func (vi *VoiceIt2) GetFaceFaceEnrollmentsForUser(userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -199,8 +183,6 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -222,8 +204,6 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -252,8 +232,6 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -278,8 +256,6 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -308,8 +284,6 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, 
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -327,8 +301,6 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -346,8 +318,6 @@ func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId stri
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -365,8 +335,6 @@ func (vi *VoiceIt2) GetAllGroups()string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -384,8 +352,6 @@ func (vi *VoiceIt2) GetGroup(groupId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -403,8 +369,6 @@ func (vi *VoiceIt2) GroupExists(groupId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -425,8 +389,6 @@ func (vi *VoiceIt2) CreateGroup(description string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -448,8 +410,6 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -471,8 +431,6 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -490,8 +448,6 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -517,8 +473,6 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, fil
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -540,8 +494,6 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -569,8 +521,6 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDete
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -599,8 +549,6 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, fil
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -625,8 +573,6 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -652,10 +598,7 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
-  result := string(reply)
-  return result
+  return string(reply)
 }
 
 func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage string, fileUrl string) string {
@@ -676,8 +619,6 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -706,8 +647,6 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
 
@@ -732,7 +671,5 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
   resp, _ := client.Do(req)
   defer resp.Body.Close()
   reply, _ := ioutil.ReadAll(resp.Body)
-  respBody := &bytes.Buffer{}
-  respBody.ReadFrom(resp.Body)
   return string(reply)
 }
