@@ -57,7 +57,7 @@ go get github.com/voiceittech/VoiceIt2-Go/voiceit2
 
 ### Initialization
 
-// Make Sure to add this at the top of your project
+Make Sure to add this at the top of your project
 
 ```
 import "github.com/voiceittech/VoiceIt2-Go/voiceit2"
@@ -66,7 +66,7 @@ import "github.com/voiceittech/VoiceIt2-Go/voiceit2"
 First assign the API Credentials an initialize a VoiceIt2 struct.
 
 ```go
-myVoiceIt := voiceit2.New("API_KEY", "API_TOK")
+myVoiceIt := voiceit2.New("API_KEY", "API_TOKEN")
 ```
 
 ### User API Calls
