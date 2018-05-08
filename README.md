@@ -1,4 +1,5 @@
 # VoiceIt2-Go
+[![Go project version](https://badge.fury.io/go/github.com%2Fvoiceittech%2FVoiceIt2-Go.svg)](https://badge.fury.io/go/github.com%2Fvoiceittech%2FVoiceIt2-Go)
 
 A Go wrapper for VoiceIt's API2.0 featuring Face + Voice Verification and Identification.
 
