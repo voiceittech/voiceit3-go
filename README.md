@@ -229,10 +229,10 @@ Create video enrollment for user with given userId(begins with 'usr_'), contentL
 myVoiceIt.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false);
+myVoiceIt.CreateVideoEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, true);
 ```
 
 #### Create Video Enrollment by URL
@@ -243,10 +243,10 @@ Create video enrollment for user with given userId(begins with 'usr_'), contentL
 myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE");
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false);
+myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", true);
 ```
 
 #### Create Face Enrollment
@@ -257,10 +257,10 @@ Create face enrollment for user with given userId(begins with 'usr_') and option
 myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false);
+myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, true);
 ```
 
 ### Verification API Calls
@@ -289,10 +289,10 @@ Verify user with given userId(begins with 'usr_'), contentLanguage('en-US','es-E
 myVoiceIt.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false)
+myVoiceIt.VideoVerification("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, true)
 ```
 
 #### Video Verification by URL
@@ -303,10 +303,10 @@ Verify user with given userId(begins with 'usr_'), contentLanguage('en-US','es-E
 myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE")
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false)
+myVoiceIt.VideoVerificationByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", true)
 ```
 
 #### Face Verification
@@ -317,10 +317,10 @@ Verify user's face with given userId(begins with 'usr_') and optionally a boolea
 myVoiceIt.FaceVerification("USER_ID_HERE", filePath)
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.FaceVerification("USER_ID_HERE", filePath, false)
+myVoiceIt.FaceVerification("USER_ID_HERE", filePath, true)
 ```
 
 ### Identification API Calls
@@ -348,10 +348,9 @@ Identify user inside group with the given groupId(begins with 'grp_'), contentLa
 ```go
 myVoiceIt.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath)
 ```
-or with blinkDetection disabled
-
+or with blinkDetection enabled
 ```go
-myVoiceIt.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, false)
+myVoiceIt.VideoIdentification("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, true)
 ```
 
 #### Video Identification by URL
@@ -362,10 +361,10 @@ Identify user inside group with the given groupId(begins with 'grp_') , contentL
 myVoiceIt.VideoIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE")
 ```
 
-or with blinkDetection disabled
+or with blinkDetection enabled
 
 ```go
-myVoiceIt.VideoIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", false)
+myVoiceIt.VideoIdentificationByUrl("GROUP_ID_HERE", "CONTENT_LANGUAGE_HERE", "PUBLIC_URL_TO_VIDEO_FILE_HERE", true)
 ```
 
 ## Authors
