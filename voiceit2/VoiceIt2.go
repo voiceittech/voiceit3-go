@@ -483,13 +483,13 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
 // an enrollmentId returned during a voiceEnrollment/videoEnrollment and deletes
 // the voice/video enrollment for the user
 // For more details see https://api.voiceit.io/#delete-enrollment-for-user
-func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId string) string {
+func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, EnrollmentId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/"+faceEnrollmentId, body)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/"+EnrollmentId, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
