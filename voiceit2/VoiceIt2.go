@@ -294,10 +294,10 @@ func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
 	return string(reply)
 }
 
-// GetFaceFaceEnrollmentsForUser takes the userId generated during a createUser
+// GetFaceEnrollmentsForUser takes the userId generated during a createUser
 // and returns a list of all face enrollments for the user
 // For more details see https://api.voiceit.io/#get-user-39-s-face-enrollments
-func (vi *VoiceIt2) GetFaceFaceEnrollmentsForUser(userId string) string {
+func (vi *VoiceIt2) GetFaceEnrollmentsForUser(userId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
