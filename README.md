@@ -254,13 +254,13 @@ myVoiceIt.CreateVideoEnrollmentByUrl("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", "P
 Create face enrollment for user with given userId(begins with 'usr_') and optionally a boolean to disable blink detection. Note: It is recommended that you send a 2 second mp4 video
 
 ```go
-myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath);
+myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", filePath);
 ```
 
 or with blinkDetection enabled
 
 ```go
-myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", "CONTENT_LANGUAGE_HERE", filePath, true);
+myVoiceIt.CreateFaceEnrollment("USER_ID_HERE", filePath, true);
 ```
 
 ### Verification API Calls
