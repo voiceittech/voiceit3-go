@@ -371,7 +371,7 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 // CreateFaceEnrollment takes the userId generated during a createUser and
 // absolute file path for a video recording to create a face enrollment for the user
 // For more details see https://api.voiceit.io/#create-face-enrollment
-func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, filePath string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlinkDetection ...bool) string {
 	file, _ := os.Open(filePath)
 	defer file.Close()
 
@@ -381,7 +381,6 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, contentLanguage string, 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	io.Copy(part, file)
 	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -483,13 +482,13 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
 // an enrollmentId returned during a voiceEnrollment/videoEnrollment and deletes
 // the voice/video enrollment for the user
 // For more details see https://api.voiceit.io/#delete-enrollment-for-user
-func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, EnrollmentId string) string {
+func (vi *VoiceIt2) DeleteEnrollmentForUser(userId string, faceEnrollmentId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/"+EnrollmentId, body)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/"+faceEnrollmentId, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
