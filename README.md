@@ -186,7 +186,7 @@ myVoiceIt.GetFaceEnrollmentsForuser("USER_ID_HERE")
 Delete all enrollments for user with the given userId(begins with 'usr_')
 
 ```go
-myVoiceIt.DeleteAllEnrollmentForUser( "USER_ID_HERE")
+myVoiceIt.DeleteAllEnrollmentsForUser( "USER_ID_HERE")
 ```
 
 #### Delete Enrollment for User
@@ -194,7 +194,7 @@ myVoiceIt.DeleteAllEnrollmentForUser( "USER_ID_HERE")
 Delete enrollment for user with given userId(begins with 'usr_') and enrollmentId(integer)
 
 ```go
-myVoiceIt.DeleteEnrollmentForUser( "USER_ID_HERE", "ENROLLMENT_ID_HERE")
+myVoiceIt.DeleteEnrollment( "USER_ID_HERE", "ENROLLMENT_ID_HERE")
 ```
 
 #### Delete Face Enrollment
