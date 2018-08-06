@@ -3,5 +3,5 @@ go:
   - "1.10.x"
   - master
 before_script:
-  - go get -t ./...
-script: go test ./...
+  - go get github.com/stretchr/testify
+script: go test
