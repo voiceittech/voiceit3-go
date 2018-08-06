@@ -2,8 +2,8 @@ package voiceit2
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -216,24 +216,24 @@ func downloadFromUrl(url string) {
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
 
-	// TODO: check file existence first with io.IsExist
+	log.Println("Downloading " + url + "...")
 	output, err := os.Create(fileName)
 	if err != nil {
-		fmt.Println("Error while creating", fileName, "-", err)
+		log.Println("Error while creating", fileName, "-", err)
 		return
 	}
 	defer output.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
+		log.Println("Error while downloading", url, "-", err)
 		return
 	}
 	defer response.Body.Close()
 
 	_, err = io.Copy(output, response.Body)
 	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
+		log.Println("Error while downloading", url, "-", err)
 		return
 	}
 
