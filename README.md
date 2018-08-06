@@ -1,6 +1,7 @@
 <img src="./go.png" width="100%" style="width:100%" />
 
 # VoiceIt2-Go
+![travisstatus](https://travis-ci.org/voiceittech/VoiceIt2-Go.svg?branch=master)
 
 A Go wrapper for VoiceIt's API 2.0 featuring Voice + Face Verification and Identification.
 
