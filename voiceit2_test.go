@@ -972,7 +972,7 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 	myVoiceIt.DeleteUser(userId)
 
 	os.Remove("faceEnrollmentArmaan1.mp4")
-	os.Remove("faceEnrollmentArmaan1.mp4")
-	os.Remove("faceEnrollmentArmaan1.mp4")
+	os.Remove("faceEnrollmentArmaan2.mp4")
+	os.Remove("faceEnrollmentArmaan3.mp4")
 	os.Remove("faceVerificationArmaan1.mp4")
 }
