@@ -12,8 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	voiceit2 "github.com/voiceittech/voiceit2-go"
+	voiceit2 "github.com/voiceittech/VoiceIt2-Go"
 )
 
 // Test API Key and Token in environment variables
