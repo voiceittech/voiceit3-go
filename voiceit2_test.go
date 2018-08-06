@@ -12,7 +12,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	voiceit2 "github.com/voiceittech/VoiceIt2-Go"
 )
 
 // Test API Key and Token in environment variables
@@ -44,7 +43,7 @@ func TestGetAllUsers(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 	var gaur GetAllUsersReturn
 	err := json.Unmarshal([]byte(myVoiceIt.GetAllUsers()), &gaur)
 	if err != nil {
@@ -84,7 +83,7 @@ func TestCreateUserDeleteUser(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser()
 	var cur CreateUserReturn
@@ -151,7 +150,7 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser()
 	var cur CreateUserReturn
@@ -287,7 +286,7 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser()
 	var cur CreateUserReturn
@@ -450,7 +449,7 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser()
 	var cur CreateUserReturn
@@ -632,7 +631,7 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser() * 2
 	var cur1 CreateUserReturn
@@ -771,7 +770,7 @@ func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser() * 2
 	var cur1 CreateUserReturn
@@ -912,7 +911,7 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := voiceit2.NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(apikey, apitoken)
 
 	// CreateUser() * 2
 	var cur CreateUserReturn
