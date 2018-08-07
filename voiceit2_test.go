@@ -49,7 +49,7 @@ func TestGetAllUsers(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	assert.NotEqual("", gaur.Message, "message return from GetAllUsers() call is empty")
+	assert.Equal("Successfully got all users", gaur.Message, "message return from GetAllUsers() not \"Successfully got all users\"")
 	assert.Equal(200, gaur.Status, "status return from GetAllUsers() call is not 200")
 	assert.NotEqual("", gaur.TimeTaken, "timeTaken return from GetAllUsers() call is empty")
 	assert.Equal(gaur.Count, len(gaur.Users), "count return from GetAllUsers() does not match the length of the returned number of users")
@@ -92,8 +92,8 @@ func TestCreateUserDeleteUser(t *testing.T) {
 		t.Error(err1.Error())
 	}
 
-	assert.NotEqual("", cur.Message, "message return from CreateUser() call is empty")
-	assert.Equal("Created user with userId : usr_", cur.Message[0:31], "message return from CreateUser() does not follow the pattern \"Created user with userId: usr_00000000000000000000000000000000\"")
+	r1, _ := regexp.Compile("Created user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cur.Message), "message return from CreateUser() does not follow the pattern \"Created user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(201, cur.Status, "status return from CreateUser() call is not 201")
 	assert.NotEqual("", cur.TimeTaken, "timeTaken return from CreateUser() call is empty")
 	assert.NotEqual(0, cur.CreatedAt, "createdAt for user did not return a real date/time integer")
@@ -108,8 +108,10 @@ func TestCreateUserDeleteUser(t *testing.T) {
 	if err2 != nil {
 		t.Error(err2.Error())
 	}
-	assert.NotEqual("", dur.Message, "message return from DeleteUser() call is empty")
-	assert.Equal("Deleted user with userId : usr_", dur.Message[0:31], "message return from DeleteUser() does not follow the convention \"Deleted user with userId : usr_00000000000000000000000000000000\"")
+
+	r2, _ := regexp.Compile("Deleted user with userId : usr_([a-z0-9]){32}")
+	assert.True(r2.MatchString(dur.Message), "message return from CreateUser() does not follow the pattern \"Deleted user with userId : usr_00000000000000000000000000000000\"")
+	// assert.NotEqual("", dur.Message, "message return from DeleteUser() call is empty")
 	assert.Equal(200, dur.Status, "status return from CreateUser() call is not 201")
 	assert.Equal("SUCC", dur.ResponseCode, "responseCode return from DeleteUser() is not \"SUCC\"")
 }
@@ -167,11 +169,14 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 		t.Error(err2.Error())
 	}
 	groupId := cgr.GroupId
-	assert.Equal(64, len(cgr.Message), "message return from CreateGroup() does not follow the pattern \"Created group with groupId: grp_00000000000000000000000000000000\"")
-	assert.Equal("Created group with groupId: grp_", string(cgr.Message[0:32]), "message return from CreateGroup() does not follow the pattern \"Created group with groupId: grp_00000000000000000000000000000000\"")
+	r1, _ := regexp.Compile("Created group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cgr.Message), "message return from CreateGroup() does not follow the pattern \"Created group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(201, cgr.Status, "status return from CreateGroup() is not 201")
 	assert.Equal("Sample Group Description", cgr.Description, "description return from CreateGroup() does not match passed value")
 	assert.Equal("SUCC", cgr.ResponseCode, "responseCode return from CreateGroup() not \"SUCC\"")
+	assert.NotEqual(0, cgr.CreatedAt, "createdAt return from CreateGroup() did not return a real date/time integer")
+	assert.NotEqual("", cgr.GroupId, "groupId return from CreateGroup() call is empty")
+	assert.NotEqual("", cgr.TimeTaken, "timeTaken return from CreateGroup() call is empty")
 
 	// AddUserToGroup()
 	var autgr AddUserToGroupReturn
@@ -179,10 +184,11 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err3 != nil {
 		t.Error(err3.Error())
 	}
-	r1, _ := regexp.Compile("Successfully added user usr_([a-z0-9]+){32} to group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r1.MatchString(autgr.Message), "message return from AddUserToGroup() does not follow the pattern \"Successfully added user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("Successfully added user with userId : usr_([a-z0-9]+){32} to group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r2.MatchString(autgr.Message), "message return from AddUserToGroup() does not follow the pattern \"Successfully added user with userId : usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, autgr.Status, "status return from AddUserToGroup() is not 200")
 	assert.Equal("SUCC", autgr.ResponseCode, "responseCode return from AddUserToGroup() not \"SUCC\"")
+	assert.NotNil(autgr.TimeTaken, "timeTaken return from AddUserToGroup() empty")
 
 	// RemoveUserFromGroup()
 	var rufgr RemoveUserFromGroupReturn
@@ -190,10 +196,11 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err4 != nil {
 		t.Error(err4.Error())
 	}
-	r2, _ := regexp.Compile("Successfully removed user usr_([a-z0-9]+){32} from group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r2.MatchString(rufgr.Message), "message return from RemoveUserFromGroup() does not follow the pattern \"Successfully removed user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
+	r3, _ := regexp.Compile("Successfully removed user usr_([a-z0-9]+){32} from group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r3.MatchString(rufgr.Message), "message return from RemoveUserFromGroup() does not follow the pattern \"Successfully removed user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, rufgr.Status, "status return from RemoveUserFromGroup() is not 200")
 	assert.Equal("SUCC", rufgr.ResponseCode, "responseCode return from RemoveUserFromGroup() not \"SUCC\"")
+	assert.NotNil(rufgr.TimeTaken, "timeTaken return from RemoveUserFromGroup() empty")
 
 	// DeleteGroup()
 	var dgr DeleteGroupReturn
@@ -201,10 +208,11 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err5 != nil {
 		t.Error(err5.Error())
 	}
-	r3, _ := regexp.Compile("Successfully deleted group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(dgr.Message), "message return from DeleteGroup() does not follow the pattern \"Successfully deleted group with groupId : grp_00000000000000000000000000000000\"")
+	r4, _ := regexp.Compile("Successfully deleted group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r4.MatchString(dgr.Message), "message return from DeleteGroup() does not follow the pattern \"Successfully deleted group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, dgr.Status, "status return from DeleteGroup() is not 200")
 	assert.Equal("SUCC", dgr.ResponseCode, "responseCode return from DeleteGroup() not \"SUCC\"")
+	assert.NotNil(dgr.TimeTaken, "timeTaken return from DeleteGroup() empty")
 
 	myVoiceIt.DeleteUser(userId)
 }
@@ -325,10 +333,10 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	}
 
 	// Run checks on enrollment returns
-	r1, _ := regexp.Compile("Successfully added video enrollment for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
+	r1, _ := regexp.Compile("Successfully enrolled video for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
 	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
 	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
@@ -341,6 +349,9 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
 	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
 	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
+	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
+	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
+	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
 
 	// Verify
 	var vvr VideoVerificationReturn
@@ -348,10 +359,14 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	if err5 != nil {
 		t.Error(err5.Error())
 	}
-	r2, _ := regexp.Compile("Successfully verified user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerification() does not follow the pattern \"Successfully verified user with userId : usr_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("Successfully verified video for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerification() does not follow the pattern \"Successfully verified video for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(200, vvr.Status, "status return from VideoVerification() is not 200")
 	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VideoVerification() is not \"SUCC\"")
+	assert.NotNil(vvr.TimeTaken, "timeTaken return from VideoVerification() empty")
+	assert.NotEqual(0, vvr.VoiceConfidence, "voiceConfidence return from VideoVerification() is 0 (or empty)")
+	assert.NotEqual(0, vvr.FaceConfidence, "faceConfidence return from VideoVerification() is 0 (or empty)")
+	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VideoVerification() is 0 (or empty)")
 
 	// Identify
 	// Create user to add users to
@@ -399,6 +414,11 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	}
 
 	assert.Equal(userId, vir.UserId, "VideoIdentification() failed to identify user "+userId+" from group "+groupId)
+	assert.Equal("Never forget tomorrow is a new day", vir.Text, "text return from VideoIdentification() empty")
+	assert.NotNil(vir.TimeTaken, "timeTaken return from VideoIdentification() empty")
+	assert.NotEqual(0, vir.VoiceConfidence, "voiceConfidence return from VideoIdentification() is 0 (or empty)")
+	assert.NotEqual(0, vir.FaceConfidence, "faceConfidence return from VideoIdentification() is 0 (or empty)")
+	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VideoIdentification() is 0 (or empty)")
 
 	// Delete Enrollments
 	var der1 DeleteEnrollmentReturn
@@ -418,14 +438,22 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	if err10 != nil {
 		t.Error(err10.Error())
 	}
-	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id))
-	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
+	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id) + " for user with userId : usr_([a-z0-9]){32}")
+	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id) + " for user with userId : usr_([a-z0-9]){32}")
+	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id) + " for user with userId : usr_([a-z0-9]){32}")
 
-	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id))
-	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
-
-	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id))
-	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
+	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.NotNil(der1.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.NotNil(der2.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.NotNil(der3.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
 
 	myVoiceIt.RemoveUserFromGroup(groupId, userId)
 	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
@@ -483,10 +511,10 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	}
 
 	// Run checks on enrollment returns
-	r1, _ := regexp.Compile("Successfully added video enrollment for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully added video enrollment for user with userId : usr_00000000000000000000000000000000\"")
+	r1, _ := regexp.Compile("Successfully enrolled video for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
 	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
 	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
@@ -499,6 +527,9 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
 	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
 	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
+	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
+	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
+	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
 
 	// Verify
 	var vvr VideoVerificationReturn
@@ -506,10 +537,14 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	if err5 != nil {
 		t.Error(err5.Error())
 	}
-	r2, _ := regexp.Compile("Successfully verified user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerification() does not follow the pattern \"Successfully verified user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, vvr.Status, "status return from VideoVerification() is not 200")
-	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VideoVerification() is not \"SUCC\"")
+	r2, _ := regexp.Compile("Successfully verified video for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerificationByUrl() does not follow the pattern \"Successfully verified video for user with userId : usr_00000000000000000000000000000000\"")
+	assert.Equal(200, vvr.Status, "status return from VideoVerificationByUrl() is not 200")
+	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VideoVerificationByUrl() is not \"SUCC\"")
+	assert.NotNil(vvr.TimeTaken, "timeTaken return from VideoVerificationByUrl() empty")
+	assert.NotEqual(0, vvr.VoiceConfidence, "voiceConfidence return from VideoVerificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vvr.FaceConfidence, "faceConfidence return from VideoVerificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VideoVerificationByUrl() is 0 (or empty)")
 
 	// Identify
 	// Create user to add users to
@@ -554,6 +589,11 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	}
 
 	assert.Equal(userId, vir.UserId, "VideoIdentificationByUrl() failed to identify user "+userId+" from group "+groupId)
+	assert.Equal("Never forget tomorrow is a new day", vir.Text, "text return from VideoIdentificationByUrl() empty")
+	assert.NotNil(vir.TimeTaken, "timeTaken return from VideoIdentificationByUrl() empty")
+	assert.NotEqual(0, vir.VoiceConfidence, "voiceConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vir.FaceConfidence, "faceConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
 
 	// Delete Enrollments
 	var der1 DeleteEnrollmentReturn
@@ -573,14 +613,23 @@ func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 	if err10 != nil {
 		t.Error(err10.Error())
 	}
-	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id))
-	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
 
-	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id))
-	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
+	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id) + " for user with userId : usr_([a-z0-9]){32}")
+	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id) + " for user with userId : usr_([a-z0-9]){32}")
+	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id) + " for user with userId : usr_([a-z0-9]){32}")
 
-	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id))
-	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0\"")
+	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.NotNil(der1.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.NotNil(der2.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.NotNil(der3.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
 
 	myVoiceIt.RemoveUserFromGroup(groupId, userId)
 	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
@@ -695,11 +744,10 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err8.Error())
 	}
 
-	// Test Enrollment Returns
-	r1, _ := regexp.Compile("Successfully enrolled user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
+	r1, _ := regexp.Compile("Successfully enrolled voice for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
 	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
 	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
@@ -712,6 +760,18 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
 	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
 	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
+	assert.NotEqual(0, cver1.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver2.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver3.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver1.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver2.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver3.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver1.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver2.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cver3.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
+	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
+	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
+	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
 
 	// Verification
 	var vvr VoiceVerificationReturn
@@ -720,10 +780,13 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err9.Error())
 	}
 
-	r2, _ := regexp.Compile("Successfully verified user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerification() does not follow pattern \"Successfully verified user with userId : usr_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("Successfully verified voice for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerification() does not follow pattern \"Successfully verified voice for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(200, vvr.Status, "status return from VoiceVerification() is not 200")
 	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VoiceVerification() is not \"SUCC\"")
+	assert.NotEqual(0, vvr.Confidence, "confidence return from VoiceVerification() is 0 (or empty)")
+	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VoiceVerification() is 0 (or empty)")
+	assert.NotNil(vvr.TimeTaken, "timeTaken return from VoiceVerification() is empty")
 
 	// Identification
 	var cgr CreateGroupReturn
@@ -741,11 +804,15 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err11.Error())
 	}
 
-	r3, _ := regexp.Compile("Successfully identified user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentification() does not follow the pattern \"Successfully identified user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
+	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentification() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentification() is different from true userId")
+	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentification() is different from true groupId")
 	assert.Equal(200, vir.Status, "status return from VoiceIdentification() not 200")
 	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from VoiceIdentification() not \"SUCC\"")
+	assert.NotEqual(0, vir.Confidence, "confidence return from VoiceIdentification() is 0 (or empty)")
+	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VoiceIdentification() is 0 (or empty)")
+	assert.NotNil(vir.TimeTaken, "timeTaken return from VoiceIdentification() is empty")
 
 	// Clean Up
 	myVoiceIt.RemoveUserFromGroup(groupId, userId1)
@@ -825,23 +892,34 @@ func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 		t.Error(err8.Error())
 	}
 
-	// Test Enrollment Returns
-	r1, _ := regexp.Compile("Successfully enrolled user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully added voice enrollment for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmenByUrlt() not \"en-US\"")
+	r1, _ := regexp.Compile("Successfully enrolled voice for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
+	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
 	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
 	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
-	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVoiceEnrollmenByUrlt() not \"Never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVoiceEnrollmenByUrlt() not \"Never forget tomorrow is a new day\"")
+	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
+	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
 	assert.Equal("Never forget tomorrow is a new day", cver3.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
 	assert.Equal(201, cver1.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
 	assert.Equal(201, cver2.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
 	assert.Equal(201, cver3.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
-	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVoiceEnrollmenByUrlt() not \"SUCC\"")
+	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
 	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
 	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
+	assert.NotEqual(0, cver1.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver2.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver3.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver1.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver2.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver3.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver1.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver2.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotEqual(0, cver3.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
+	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
+	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
+	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
 
 	// Verification By Url
 	var vvr VoiceVerificationReturn
@@ -850,10 +928,13 @@ func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 		t.Error(err9.Error())
 	}
 
-	r2, _ := regexp.Compile("Successfully verified user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerificationByUrl() does not follow pattern \"Successfully verified user with userId : usr_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("Successfully verified voice for user with userId : usr_([a-z0-9]){32}")
+	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerificationByUrl() does not follow pattern \"Successfully verified voice for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(200, vvr.Status, "status return from VoiceVerificationByUrl() is not 200")
 	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VoiceVerificationByUrl() is not \"SUCC\"")
+	assert.NotEqual(0, vvr.Confidence, "confidence return from VoiceVerificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VoiceVerificationByUrl() is 0 (or empty)")
+	assert.NotNil(vvr.TimeTaken, "timeTaken return from VoiceVerificationByUrl() is empty")
 
 	// Identification By Url
 	var cgr CreateGroupReturn
@@ -871,11 +952,15 @@ func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 		t.Error(err11.Error())
 	}
 
-	r3, _ := regexp.Compile("Successfully identified user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentificationByUrl() does not follow the pattern \"Successfully identified user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
+	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
+	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentificationByUrl() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentificationByUrl() is different from true userId")
+	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentificationByUrl() is different from true groupId")
 	assert.Equal(200, vir.Status, "status return from VoiceIdentificationByUrl() not 200")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from VoiceIdentificatioByUrln() not \"SUCC\"")
+	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from VoiceIdentificationByUrl() not \"SUCC\"")
+	assert.NotEqual(0, vir.Confidence, "confidence return from VoiceIdentificationByUrl() is 0 (or empty)")
+	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VoiceIdentificationByUrl() is 0 (or empty)")
+	assert.NotNil(vir.TimeTaken, "timeTaken return from VoiceIdentificationByUrl() is empty")
 
 	// Clean Up
 	myVoiceIt.RemoveUserFromGroup(groupId, userId1)
@@ -954,6 +1039,12 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 	assert.Equal("SUCC", cfer1.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
 	assert.Equal("SUCC", cfer2.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
 	assert.Equal("SUCC", cfer3.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
+	assert.NotEqual(0, cfer1.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cfer2.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
+	assert.NotEqual(0, cfer3.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
+	assert.NotNil(cfer1.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
+	assert.NotNil(cfer2.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
+	assert.NotNil(cfer3.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
 
 	var fvr FaceVerificationReturn
 	err5 := json.Unmarshal([]byte(myVoiceIt.FaceVerification(userId, "./faceVerificationArmaan1.mp4")), &fvr)
@@ -961,10 +1052,11 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err5.Error())
 	}
 
-	r2, _ := regexp.Compile("Successfully verified user with userId : usr_([a-z0-9]+){32}")
-	assert.True(r2.MatchString(fvr.Message), "message return from FaceVerification() does not follow the pattern \"Successfully verified user with userId : usr_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("Successfully verified face for user with userId : usr_([a-z0-9]+){32}")
+	assert.True(r2.MatchString(fvr.Message), "message return from FaceVerification() does not follow the pattern \"Successfully verified face for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(200, fvr.Status, "status return from FaceVerification() is not 200")
 	assert.Equal("SUCC", fvr.ResponseCode, "status return from FaceVerification() is not \"SUCC\"")
+	assert.NotNil(cfer3.TimeTaken, "timeTaken return from FaceVerification() is or empty")
 
 	myVoiceIt.DeleteAllEnrollmentsForUser(userId)
 	myVoiceIt.DeleteUser(userId)
