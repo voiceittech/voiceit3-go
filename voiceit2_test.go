@@ -2,6 +2,7 @@ package voiceit2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -38,28 +39,6 @@ type GetAllUser struct {
 	UserId    string `json:"userId"`
 }
 
-// Try getting all users
-func TestGetAllUsers(t *testing.T) {
-	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
-	var gaur GetAllUsersReturn
-	err := json.Unmarshal([]byte(myVoiceIt.GetAllUsers()), &gaur)
-	if err != nil {
-		t.Error(err.Error())
-	}
-	assert.Equal("Successfully got all users", gaur.Message, "message return from GetAllUsers() not \"Successfully got all users\"")
-	assert.Equal(200, gaur.Status, "status return from GetAllUsers() call is not 200")
-	assert.NotEqual("", gaur.TimeTaken, "timeTaken return from GetAllUsers() call is empty")
-	assert.Equal(gaur.Count, len(gaur.Users), "count return from GetAllUsers() does not match the length of the returned number of users")
-	for _, elem := range gaur.Users {
-		assert.NotEqual(0, elem.CreatedAt, "createdAt for user did not return a real date/time integer")
-		assert.NotNil(elem.UserId, "userId return from GetAllUsers() call is empty")
-	}
-	assert.Equal("SUCC", gaur.ResponseCode, "responseCode return from GetAllUsers() call not success")
-}
-
 // CreateUser() /DeleteUser
 
 type CreateUserReturn struct {
@@ -73,6 +52,14 @@ type CreateUserReturn struct {
 
 type DeleteUserReturn struct {
 	Message      string `json:"message"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	ResponseCode string `json:"responseCode"`
+}
+
+type CheckUserExistsReturn struct {
+	Message      string `json:"message"`
+	Exists       bool   `json:"exists"`
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
@@ -102,15 +89,28 @@ func TestCreateUserDeleteUser(t *testing.T) {
 	assert.Equal("usr_", string(cur.UserId[0:4]), "userId return from CreateUser() does not follow the convention \"usr_00000000000000000000000000000000\"")
 	assert.Equal("SUCC", cur.ResponseCode, "responseCode return from CreateUser() is not \"SUCC\"")
 
-	// DeleteUser()
-	var dur DeleteUserReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.DeleteUser(cur.UserId)), &dur)
+	// CheckUserExists()
+	var cuer CheckUserExistsReturn
+	err2 := json.Unmarshal([]byte(myVoiceIt.CheckUserExists(cur.UserId)), &cuer)
 	if err2 != nil {
 		t.Error(err2.Error())
 	}
 
-	r2, _ := regexp.Compile("Deleted user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(dur.Message), "message return from CreateUser() does not follow the pattern \"Deleted user with userId : usr_00000000000000000000000000000000\"")
+	r2, _ := regexp.Compile("User with userId : usr_([a-z0-9]){32} exists")
+	assert.True(r2.MatchString(cuer.Message), "message return from CheckUserExists() does not follow the pattern \"User with userId : usr_00000000000000000000000000000000 exists\"")
+	assert.True(cuer.Exists, "exists return from CheckUserExists() is false despite the fact that user was created previously")
+	assert.Equal(200, cuer.Status, "status return from CheckUserExists() call is not 201")
+	assert.NotEqual("", cuer.TimeTaken, "timeTaken return from CheckUserExists() call is empty")
+
+	// DeleteUser()
+	var dur DeleteUserReturn
+	err3 := json.Unmarshal([]byte(myVoiceIt.DeleteUser(cur.UserId)), &dur)
+	if err3 != nil {
+		t.Error(err3.Error())
+	}
+
+	r3, _ := regexp.Compile("Deleted user with userId : usr_([a-z0-9]){32}")
+	assert.True(r3.MatchString(dur.Message), "message return from CreateUser() does not follow the pattern \"Deleted user with userId : usr_00000000000000000000000000000000\"")
 	// assert.NotEqual("", dur.Message, "message return from DeleteUser() call is empty")
 	assert.Equal(200, dur.Status, "status return from CreateUser() call is not 201")
 	assert.Equal("SUCC", dur.ResponseCode, "responseCode return from DeleteUser() is not \"SUCC\"")
@@ -169,6 +169,7 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 		t.Error(err2.Error())
 	}
 	groupId := cgr.GroupId
+	fmt.Println("cgr", cgr)
 	r1, _ := regexp.Compile("Created group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r1.MatchString(cgr.Message), "message return from CreateGroup() does not follow the pattern \"Created group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(201, cgr.Status, "status return from CreateGroup() is not 201")
@@ -184,7 +185,7 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err3 != nil {
 		t.Error(err3.Error())
 	}
-	r2, _ := regexp.Compile("Successfully added user with userId : usr_([a-z0-9]+){32} to group with groupId : grp_([a-z0-9]){32}")
+	r2, _ := regexp.Compile("Successfully added user with userId : usr_([a-z0-9]){32} to group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r2.MatchString(autgr.Message), "message return from AddUserToGroup() does not follow the pattern \"Successfully added user with userId : usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, autgr.Status, "status return from AddUserToGroup() is not 200")
 	assert.Equal("SUCC", autgr.ResponseCode, "responseCode return from AddUserToGroup() not \"SUCC\"")
@@ -196,7 +197,7 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err4 != nil {
 		t.Error(err4.Error())
 	}
-	r3, _ := regexp.Compile("Successfully removed user usr_([a-z0-9]+){32} from group with groupId : grp_([a-z0-9]){32}")
+	r3, _ := regexp.Compile("Successfully removed user usr_([a-z0-9]){32} from group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r3.MatchString(rufgr.Message), "message return from RemoveUserFromGroup() does not follow the pattern \"Successfully removed user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, rufgr.Status, "status return from RemoveUserFromGroup() is not 200")
 	assert.Equal("SUCC", rufgr.ResponseCode, "responseCode return from RemoveUserFromGroup() not \"SUCC\"")
@@ -215,6 +216,70 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	assert.NotNil(dgr.TimeTaken, "timeTaken return from DeleteGroup() empty")
 
 	myVoiceIt.DeleteUser(userId)
+	myVoiceIt.DeleteGroup(groupId)
+}
+
+type GetGroupsForUserReturn struct {
+	Message      string   `json:"message"`
+	Groups       []string `json:"groups"`
+	Count        int      `json:"count"`
+	Status       int      `json:"status"`
+	TimeTaken    string   `json:"timeTaken"`
+	ResponseCode string   `json:"responseCode"`
+}
+
+// Try getting all users, getting all groups, showing all groups for users
+func TestGetAllUsersGroupsGroupsForUsers(t *testing.T) {
+	assert := assert.New(t)
+	apikey := os.Getenv("VIAPIKEY")
+	apitoken := os.Getenv("VIAPITOKEN")
+	myVoiceIt := NewClient(apikey, apitoken)
+
+	var cur CreateUserReturn
+	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
+	if err1 != nil {
+		t.Error(err1.Error())
+	}
+	userId := cur.UserId
+
+	var gaur GetAllUsersReturn
+	err2 := json.Unmarshal([]byte(myVoiceIt.GetAllUsers()), &gaur)
+	if err2 != nil {
+		t.Error(err2.Error())
+	}
+	assert.Equal("Successfully got all users", gaur.Message, "message return from GetAllUsers() not \"Successfully got all users\"")
+	assert.Equal(200, gaur.Status, "status return from GetAllUsers() call is not 200")
+	assert.NotEqual("", gaur.TimeTaken, "timeTaken return from GetAllUsers() call is empty")
+	assert.Equal(gaur.Count, len(gaur.Users), "count return from GetAllUsers() does not match the length of the returned number of users")
+	for _, elem := range gaur.Users {
+		assert.NotEqual(0, elem.CreatedAt, "createdAt for user did not return a real date/time integer")
+		assert.NotNil(elem.UserId, "userId return from GetAllUsers() call is empty")
+	}
+	assert.Equal("SUCC", gaur.ResponseCode, "responseCode return from GetAllUsers() call not success")
+
+	var cgr CreateGroupReturn
+	err3 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("Sample Group Description")), &cgr)
+	if err3 != nil {
+		t.Error(err3.Error())
+	}
+	groupId := cgr.GroupId
+
+	myVoiceIt.AddUserToGroup(groupId, userId)
+
+	var ggfur GetGroupsForUserReturn
+	err4 := json.Unmarshal([]byte(myVoiceIt.GetGroupsForUser(userId)), &ggfur)
+	if err4 != nil {
+		t.Error(err4.Error())
+	}
+
+	r1, _ := regexp.Compile("Successfully returned all groups that user with userId : usr_([a-z0-9]){32}")
+	assert.True(r1.MatchString(ggfur.Message), "message return from GetGroupsForUser() does not follow the pattern \"Successfully returned all groups that user with userId : usr_00000000000000000000000000000000\"")
+	assert.Equal(200, ggfur.Status, "status return from GetGroupsForUser() not 200")
+	assert.Equal("SUCC", ggfur.ResponseCode, "responseCode return from GetGroupsForUser() not \"SUCC\"")
+	assert.Equal(1, ggfur.Count, "count return from GetGroupsForUser() not 1")
+	assert.Equal(1, len(ggfur.Groups), "size of groups array return from GetGroupsForUser() is not 1 (although exactly 1 group was associated with the new user)")
+	assert.Equal(groupId, ggfur.Groups[0], "the first element of group array returned from GetGroupsForUser() does not match the associated groupId")
+	assert.NotNil(ggfur.TimeTaken, "timeTaken return from GetGroupsForUser() is not returned")
 }
 
 // Helper function to download files to disk
@@ -283,6 +348,13 @@ type VideoIdentificationReturn struct {
 }
 
 type DeleteEnrollmentReturn struct {
+	Message      string `json:"message"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	ResponseCode string `json:"responseCode"`
+}
+
+type DeleteAllEnrollmentsForUserReturn struct {
 	Message      string `json:"message"`
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
@@ -459,7 +531,18 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
 	myVoiceIt.DeleteGroup(groupId)
 	myVoiceIt.DeleteUser(userId)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	var daefrr DeleteAllEnrollmentsForUserReturn
+	err11 := json.Unmarshal([]byte(myVoiceIt.DeleteAllEnrollmentsForUser(userId2)), &daefrr)
+	if err11 != nil {
+		t.Error(err11.Error())
+	}
+
+	r6, _ := regexp.Compile("All enrollments for user with userId : usr_([a-z0-9]){32} were deleted")
+	assert.True(r6.MatchString(daefrr.Message), "message return from DeleteAllEnrollmentsForUser() does not follow the pattern \"All enrollments for user with userId : usr_00000000000000000000000000000000 were deleted\"")
+	assert.Equal(200, daefrr.Status, "status return from DeleteAllEnrollmentsForUser() not 200")
+	assert.Equal("SUCC", daefrr.ResponseCode, "responseCode return from DeleteAllEnrollmentsForUser() not \"SUCC\"")
+	assert.NotNil(daefrr.TimeTaken, "timeTaken return from DeleteAllEnrollmentsForUser() is empty")
+
 	myVoiceIt.DeleteUser(userId2)
 
 	os.Remove("./videoEnrollmentArmaan1.mov")
@@ -804,7 +887,7 @@ func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err11.Error())
 	}
 
-	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
+	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]){32} in group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentification() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentification() is different from true userId")
 	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentification() is different from true groupId")
@@ -952,7 +1035,7 @@ func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
 		t.Error(err11.Error())
 	}
 
-	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]+){32} in group with groupId : grp_([a-z0-9]){32}")
+	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]){32} in group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentificationByUrl() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentificationByUrl() is different from true userId")
 	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentificationByUrl() is different from true groupId")
@@ -992,6 +1075,13 @@ type FaceVerificationReturn struct {
 	ResponseCode   string  `json:"responseCode"`
 }
 
+type DeleteFaceEnrollmentReturn struct {
+	Message      string `json:"message"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	ResponseCode string `json:"responseCode"`
+}
+
 func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
@@ -1029,7 +1119,7 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err4.Error())
 	}
 
-	r1, _ := regexp.Compile("Successfully enrolled face for user with userId : usr_([a-z0-9]+){32}")
+	r1, _ := regexp.Compile("Successfully enrolled face for user with userId : usr_([a-z0-9]){32}")
 	assert.True(r1.MatchString(cfer1.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
 	assert.True(r1.MatchString(cfer2.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
 	assert.True(r1.MatchString(cfer3.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
@@ -1052,13 +1142,47 @@ func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
 		t.Error(err5.Error())
 	}
 
-	r2, _ := regexp.Compile("Successfully verified face for user with userId : usr_([a-z0-9]+){32}")
+	r2, _ := regexp.Compile("Successfully verified face for user with userId : usr_([a-z0-9]){32}")
 	assert.True(r2.MatchString(fvr.Message), "message return from FaceVerification() does not follow the pattern \"Successfully verified face for user with userId : usr_00000000000000000000000000000000\"")
 	assert.Equal(200, fvr.Status, "status return from FaceVerification() is not 200")
 	assert.Equal("SUCC", fvr.ResponseCode, "status return from FaceVerification() is not \"SUCC\"")
 	assert.NotNil(cfer3.TimeTaken, "timeTaken return from FaceVerification() is or empty")
 
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId)
+	var dfefur1 DeleteFaceEnrollmentReturn
+	err6 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer1.FaceEnrollmentId))), &dfefur1)
+	if err6 != nil {
+		t.Error(err6.Error())
+	}
+
+	var dfefur2 DeleteFaceEnrollmentReturn
+	err7 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer2.FaceEnrollmentId))), &dfefur2)
+	if err7 != nil {
+		t.Error(err7.Error())
+	}
+
+	var dfefur3 DeleteFaceEnrollmentReturn
+	err8 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer3.FaceEnrollmentId))), &dfefur3)
+	if err8 != nil {
+		t.Error(err8.Error())
+	}
+
+	r3, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer1.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
+	r4, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer2.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
+	r5, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer3.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
+
+	assert.True(r3.MatchString(dfefur1.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r4.MatchString(dfefur2.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.True(r5.MatchString(dfefur3.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
+	assert.Equal(200, dfefur1.Status, "status return from DeleteFaceEnrollment() is not 200")
+	assert.Equal(200, dfefur2.Status, "status return from DeleteFaceEnrollment() is not 200")
+	assert.Equal(200, dfefur3.Status, "status return from DeleteFaceEnrollment() is not 200")
+	assert.Equal("SUCC", dfefur1.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", dfefur2.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
+	assert.Equal("SUCC", dfefur3.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
+	assert.NotNil(dfefur1.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
+	assert.NotNil(dfefur2.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
+	assert.NotNil(dfefur3.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
+
 	myVoiceIt.DeleteUser(userId)
 
 	os.Remove("faceEnrollmentArmaan1.mp4")
