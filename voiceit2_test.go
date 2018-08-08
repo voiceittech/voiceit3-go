@@ -2,7 +2,6 @@ package voiceit2
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -169,7 +168,6 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 		t.Error(err2.Error())
 	}
 	groupId := cgr.GroupId
-	fmt.Println("cgr", cgr)
 	r1, _ := regexp.Compile("Created group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r1.MatchString(cgr.Message), "message return from CreateGroup() does not follow the pattern \"Created group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(201, cgr.Status, "status return from CreateGroup() is not 201")
