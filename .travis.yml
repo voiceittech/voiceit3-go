@@ -4,3 +4,10 @@ go:
 before_script:
   - go get github.com/stretchr/testify
 script: go test
+notifications:
+  slack:
+    on_success: always # default: change
+    on_failure: always # default: always
+  email:
+    on_success: never
+    on_failure: never
