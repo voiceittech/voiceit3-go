@@ -1,13 +1,15 @@
 language: go
 go:
-  - "1.10.x"
+- 1.10.x
 before_script:
-  - go get github.com/stretchr/testify
+- go get github.com/stretchr/testify
 script: go test
 notifications:
   slack:
-    on_success: always # default: change
-    on_failure: always # default: always
+    rooms:
+      secure: XnOaiVxHgW/5f/Fn4ly5CpgosBwfZjmpO8BXGKxoIPSQLBz4uR2eAfNPW7zYuYYFq2wBNVq3B6yL8v5YUZfVKAwiqtvWU1RRUHk1Xqj06XoOBTAlzePIUP4L8fedC8GZAFc69qEqxbHJm+/xX//d++I7bO4AszG7R05JCJYGmwIxX5FrVn3grUsdKwt/RxrvgPdWlHbZuMEM7y8ChnbwLYg5ONwTnmHWrINtEw0a/7vrJCqc2AVO4af9AmALdA00iESBvJ7zcHYqskwgQfgnls1gjr0IyityfauO4UAvoqHY5HmWxwowIghMB8fb3CH4AZbyWhq7K0pJWEmqIs266rAjgPWgZUUg+xZ9LyvV3M7t7ZOxBcAR+yOUXWA0ge9DmXW6A9XEvnUdC28mlsaVNvTFxFeNmMvx0HO7uf9fpMr61Xf9/biNNtyWezcEYUAn6NAUC7VQzAGjdTS64CFkJC0O9KXnKQkxlOiZvK0Rr1ouI+LxPZJG59c/Z5gl1WLAHTF8ThsQEWCSH/Yfd8lxobEra5yI1tcsjV0jVW7lzy1C7aSqDFJBxA0326pOdP9rHXIWrNMqbzpJfb96thxR+Iw7aI4flqjy/b785YnAUY1M6U00Z1jUDQJ7H23Pku26AV4SylGtHvwASo+10mt9WtBaO0cAxKcSw7lMdqBrO7Y=
+    on_success: always
+    on_failure: always
   email:
     on_success: never
     on_failure: never
