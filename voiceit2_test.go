@@ -383,21 +383,21 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 
 	// Enrollment1
 	var cver1 CreateVideoEnrollmentReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan1.mov", false)), &cver1)
+	err2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan1.mov")), &cver1)
 	if err2 != nil {
 		t.Error(err2.Error())
 	}
 
 	// Enrollment2
 	var cver2 CreateVideoEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan2.mov", false)), &cver2)
+	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan2.mov")), &cver2)
 	if err3 != nil {
 		t.Error(err3.Error())
 	}
 
 	// Enrollment3
 	var cver3 CreateVideoEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan3.mov", false)), &cver3)
+	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan3.mov")), &cver3)
 	if err4 != nil {
 		t.Error(err4.Error())
 	}
@@ -425,7 +425,7 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 
 	// Verify
 	var vvr VideoVerificationReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.VideoVerification(userId, "en-US", "./videoVerificationArmaan1.mov", false)), &vvr)
+	err5 := json.Unmarshal([]byte(myVoiceIt.VideoVerification(userId, "en-US", "./videoVerificationArmaan1.mov")), &vvr)
 	if err5 != nil {
 		t.Error(err5.Error())
 	}
@@ -461,17 +461,17 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov")
 
 	var cve4 CreateVideoEnrollmentReturn
-	cveerr1 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen1.mov", false)), &cve4)
+	cveerr1 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen1.mov")), &cve4)
 	if cveerr1 != nil {
 		t.Error(cveerr1.Error())
 	}
 	var cve5 CreateVideoEnrollmentReturn
-	cveerr2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen2.mov", false)), &cve5)
+	cveerr2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen2.mov")), &cve5)
 	if cveerr2 != nil {
 		t.Error(cveerr2.Error())
 	}
 	var cve6 CreateVideoEnrollmentReturn
-	cveerr3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen3.mov", false)), &cve6)
+	cveerr3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen3.mov")), &cve6)
 	if cveerr3 != nil {
 		t.Error(cveerr3.Error())
 	}
