@@ -195,7 +195,7 @@ func TestCreateUserGroupInteractions(t *testing.T) {
 	if err4 != nil {
 		t.Error(err4.Error())
 	}
-	r3, _ := regexp.Compile("Successfully removed user usr_([a-z0-9]){32} from group with groupId : grp_([a-z0-9]){32}")
+	r3, _ := regexp.Compile("Successfully removed user with userId : usr_([a-z0-9]){32} from group with groupId : grp_([a-z0-9]){32}")
 	assert.True(r3.MatchString(rufgr.Message), "message return from RemoveUserFromGroup() does not follow the pattern \"Successfully removed user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
 	assert.Equal(200, rufgr.Status, "status return from RemoveUserFromGroup() is not 200")
 	assert.Equal("SUCC", rufgr.ResponseCode, "responseCode return from RemoveUserFromGroup() not \"SUCC\"")
