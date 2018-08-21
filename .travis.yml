@@ -1,8 +1,8 @@
 language: go
 go:
-- 1.10.x
+  - 1.10.x
 before_script:
-- go get github.com/stretchr/testify
+  - go get github.com/stretchr/testify
 script: go test
 notifications:
   slack:
