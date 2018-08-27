@@ -6,278 +6,132 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
 
-// Test API Key and Token in environment variables
-func TestKeyToken(t *testing.T) {
+func getMessage(arg string) string {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return dat["status"].(string)
+}
+
+func getStatus(arg string) int {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return int(dat["status"].(float64))
+}
+
+func getResponseCode(arg string) string {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return dat["responseCode"].(string)
+}
+
+func getUserId(arg string) string {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return dat["userId"].(string)
+}
+
+func getGroupId(arg string) string {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return dat["groupId"].(string)
+}
+
+func getEnrollmentId(arg string) int {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return int(dat["id"].(float64))
+}
+
+func getFaceEnrollmentId(arg string) int {
+	var dat map[string]interface{}
+	json.Unmarshal([]byte(arg), &dat)
+	return int(dat["faceEnrollmentId"].(float64))
+}
+
+func TestIO(t *testing.T) {
 	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	assert.NotEqual("", apikey, "Please set and export VIAPIKEY environment variable in order to test")
-	assert.NotEqual("", apitoken, "Please set and export VIAPITOKEN environment variable in order to test")
+	myVoiceIt := NewClient(os.Getenv("VIAPIKEY"), os.Getenv("VIAPITOKEN"))
+	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
+	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateVideoEnrollment (should return real error)")
+	_, err = myVoiceIt.CreateFaceEnrollment("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateFaceEnrollment (should return real error)")
+	_, err = myVoiceIt.VoiceVerification("", "", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VoiceVerification(should return real error)")
+	_, err = myVoiceIt.VideoVerification("", "", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
+	_, err = myVoiceIt.FaceVerification("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
+	_, err = myVoiceIt.VoiceIdentification("", "en-US", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VoiceIdentification(should return real error)")
+	_, err = myVoiceIt.VideoIdentification("", "", "", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VideoIdentification(should return real error)")
+	_, err = myVoiceIt.FaceIdentification("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to FaceIdentification(should return real error)")
 }
 
-// GetAllUsers()
-type GetAllUsersReturn struct {
-	Message      string       `json:"message"`
-	Count        int          `json:"count"`
-	Status       int          `json:"status"`
-	TimeTaken    string       `json:"timeTaken"`
-	Users        []GetAllUser `json:"users"`
-	ResponseCode string       `json:"responseCode"`
-}
-
-type GetAllUser struct {
-	CreatedAt int    `json:"createdAt"`
-	UserId    string `json:"userId"`
-}
-
-// CreateUser() /DeleteUser
-
-type CreateUserReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	CreatedAt    int    `json:"createdAt"`
-	UserId       string `json:"userId"`
-	ResponseCode string `json:"responseCode"`
-}
-
-type DeleteUserReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-type CheckUserExistsReturn struct {
-	Message      string `json:"message"`
-	Exists       bool   `json:"exists"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-// Try creating user and deleting same user
-func TestCreateUserDeleteUser(t *testing.T) {
+func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
+	myVoiceIt := NewClient(os.Getenv("VIAPIKEY"), os.Getenv("VIAPITOKEN"))
+	ret := myVoiceIt.CreateUser()
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	userId := getUserId(ret)
 
-	// CreateUser()
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
+	ret = myVoiceIt.GetAllUsers()
+	var gau structs.GetAllUsersReturn
+	json.Unmarshal([]byte(ret), &gau)
+	assert.Equal(200, gau.Status, ret)
+	assert.Equal("SUCC", gau.ResponseCode, ret)
+	assert.True(0 < len(gau.Users), ret)
 
-	r1, _ := regexp.Compile("Created user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cur.Message), "message return from CreateUser() does not follow the pattern \"Created user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(201, cur.Status, "status return from CreateUser() call is not 201")
-	assert.NotEqual("", cur.TimeTaken, "timeTaken return from CreateUser() call is empty")
-	assert.NotEqual(0, cur.CreatedAt, "createdAt for user did not return a real date/time integer")
-	assert.NotNil(cur.UserId, "userId return from CreateUser() call is empty")
-	assert.Equal(36, len(cur.UserId), "userId return from CreateUser() not a string of length 36")
-	assert.Equal("usr_", string(cur.UserId[0:4]), "userId return from CreateUser() does not follow the convention \"usr_00000000000000000000000000000000\"")
-	assert.Equal("SUCC", cur.ResponseCode, "responseCode return from CreateUser() is not \"SUCC\"")
+	ret = myVoiceIt.CheckUserExists(userId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	// CheckUserExists()
-	var cuer CheckUserExistsReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CheckUserExists(cur.UserId)), &cuer)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	groupId := getGroupId(ret)
 
-	r2, _ := regexp.Compile("User with userId : usr_([a-z0-9]){32} exists")
-	assert.True(r2.MatchString(cuer.Message), "message return from CheckUserExists() does not follow the pattern \"User with userId : usr_00000000000000000000000000000000 exists\"")
-	assert.True(cuer.Exists, "exists return from CheckUserExists() is false despite the fact that user was created previously")
-	assert.Equal(200, cuer.Status, "status return from CheckUserExists() call is not 201")
-	assert.NotEqual("", cuer.TimeTaken, "timeTaken return from CheckUserExists() call is empty")
+	ret = myVoiceIt.CheckGroupExists(groupId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	// DeleteUser()
-	var dur DeleteUserReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.DeleteUser(cur.UserId)), &dur)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
+	ret = myVoiceIt.GetGroup(groupId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	r3, _ := regexp.Compile("Deleted user with userId : usr_([a-z0-9]){32}")
-	assert.True(r3.MatchString(dur.Message), "message return from CreateUser() does not follow the pattern \"Deleted user with userId : usr_00000000000000000000000000000000\"")
-	// assert.NotEqual("", dur.Message, "message return from DeleteUser() call is empty")
-	assert.Equal(200, dur.Status, "status return from CreateUser() call is not 201")
-	assert.Equal("SUCC", dur.ResponseCode, "responseCode return from DeleteUser() is not \"SUCC\"")
-}
+	ret = myVoiceIt.AddUserToGroup(groupId, userId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-type CreateGroupReturn struct {
-	Message      string `json:"message"`
-	Description  string `json:"description"`
-	GroupId      string `json:"groupId"`
-	Status       int    `json:"status"`
-	CreatedAt    int    `json:"createdAt"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
+	ret = myVoiceIt.GetGroupsForUser(userId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	var ggfu structs.GetGroupsForUserReturn
+	json.Unmarshal([]byte(ret), &ggfu)
+	assert.Equal(1, len(ggfu.Groups), ret)
 
-type AddUserToGroupReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
+	ret = myVoiceIt.RemoveUserFromGroup(groupId, userId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-type RemoveUserFromGroupReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
+	ret = myVoiceIt.DeleteUser(userId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-type DeleteGroupReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-// Test create Group, Create User, Add user to that group, remove user from group, delete user, delete group
-func TestCreateUserGroupInteractions(t *testing.T) {
-	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
-
-	// CreateUser()
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId := cur.UserId
-
-	// CreateGroup()
-	var cgr CreateGroupReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("Sample Group Description")), &cgr)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-	groupId := cgr.GroupId
-	r1, _ := regexp.Compile("Created group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cgr.Message), "message return from CreateGroup() does not follow the pattern \"Created group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(201, cgr.Status, "status return from CreateGroup() is not 201")
-	assert.Equal("Sample Group Description", cgr.Description, "description return from CreateGroup() does not match passed value")
-	assert.Equal("SUCC", cgr.ResponseCode, "responseCode return from CreateGroup() not \"SUCC\"")
-	assert.NotEqual(0, cgr.CreatedAt, "createdAt return from CreateGroup() did not return a real date/time integer")
-	assert.NotEqual("", cgr.GroupId, "groupId return from CreateGroup() call is empty")
-	assert.NotEqual("", cgr.TimeTaken, "timeTaken return from CreateGroup() call is empty")
-
-	// AddUserToGroup()
-	var autgr AddUserToGroupReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.AddUserToGroup(groupId, userId)), &autgr)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
-	r2, _ := regexp.Compile("Successfully added user with userId : usr_([a-z0-9]){32} to group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r2.MatchString(autgr.Message), "message return from AddUserToGroup() does not follow the pattern \"Successfully added user with userId : usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(200, autgr.Status, "status return from AddUserToGroup() is not 200")
-	assert.Equal("SUCC", autgr.ResponseCode, "responseCode return from AddUserToGroup() not \"SUCC\"")
-	assert.NotNil(autgr.TimeTaken, "timeTaken return from AddUserToGroup() empty")
-
-	// RemoveUserFromGroup()
-	var rufgr RemoveUserFromGroupReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.RemoveUserFromGroup(groupId, userId)), &rufgr)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
-	r3, _ := regexp.Compile("Successfully removed user with userId : usr_([a-z0-9]){32} from group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(rufgr.Message), "message return from RemoveUserFromGroup() does not follow the pattern \"Successfully removed user usr_00000000000000000000000000000000 to group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(200, rufgr.Status, "status return from RemoveUserFromGroup() is not 200")
-	assert.Equal("SUCC", rufgr.ResponseCode, "responseCode return from RemoveUserFromGroup() not \"SUCC\"")
-	assert.NotNil(rufgr.TimeTaken, "timeTaken return from RemoveUserFromGroup() empty")
-
-	// DeleteGroup()
-	var dgr DeleteGroupReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.DeleteGroup(groupId)), &dgr)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
-	r4, _ := regexp.Compile("Successfully deleted group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r4.MatchString(dgr.Message), "message return from DeleteGroup() does not follow the pattern \"Successfully deleted group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(200, dgr.Status, "status return from DeleteGroup() is not 200")
-	assert.Equal("SUCC", dgr.ResponseCode, "responseCode return from DeleteGroup() not \"SUCC\"")
-	assert.NotNil(dgr.TimeTaken, "timeTaken return from DeleteGroup() empty")
-
-	myVoiceIt.DeleteUser(userId)
-	myVoiceIt.DeleteGroup(groupId)
-}
-
-type GetGroupsForUserReturn struct {
-	Message      string   `json:"message"`
-	Groups       []string `json:"groups"`
-	Count        int      `json:"count"`
-	Status       int      `json:"status"`
-	TimeTaken    string   `json:"timeTaken"`
-	ResponseCode string   `json:"responseCode"`
-}
-
-// Try getting all users, getting all groups, showing all groups for users
-func TestGetAllUsersGroupsGroupsForUsers(t *testing.T) {
-	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
-
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId := cur.UserId
-
-	var gaur GetAllUsersReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.GetAllUsers()), &gaur)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-	assert.Equal("Successfully got all users", gaur.Message, "message return from GetAllUsers() not \"Successfully got all users\"")
-	assert.Equal(200, gaur.Status, "status return from GetAllUsers() call is not 200")
-	assert.NotEqual("", gaur.TimeTaken, "timeTaken return from GetAllUsers() call is empty")
-	assert.Equal(gaur.Count, len(gaur.Users), "count return from GetAllUsers() does not match the length of the returned number of users")
-	for _, elem := range gaur.Users {
-		assert.NotEqual(0, elem.CreatedAt, "createdAt for user did not return a real date/time integer")
-		assert.NotNil(elem.UserId, "userId return from GetAllUsers() call is empty")
-	}
-	assert.Equal("SUCC", gaur.ResponseCode, "responseCode return from GetAllUsers() call not success")
-
-	var cgr CreateGroupReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("Sample Group Description")), &cgr)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
-	groupId := cgr.GroupId
-
-	myVoiceIt.AddUserToGroup(groupId, userId)
-
-	var ggfur GetGroupsForUserReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.GetGroupsForUser(userId)), &ggfur)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
-
-	r1, _ := regexp.Compile("Successfully returned all groups that user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(ggfur.Message), "message return from GetGroupsForUser() does not follow the pattern \"Successfully returned all groups that user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, ggfur.Status, "status return from GetGroupsForUser() not 200")
-	assert.Equal("SUCC", ggfur.ResponseCode, "responseCode return from GetGroupsForUser() not \"SUCC\"")
-	assert.Equal(1, ggfur.Count, "count return from GetGroupsForUser() not 1")
-	assert.Equal(1, len(ggfur.Groups), "size of groups array return from GetGroupsForUser() is not 1 (although exactly 1 group was associated with the new user)")
-	assert.Equal(groupId, ggfur.Groups[0], "the first element of group array returned from GetGroupsForUser() does not match the associated groupId")
-	assert.NotNil(ggfur.TimeTaken, "timeTaken return from GetGroupsForUser() is not returned")
+	ret = myVoiceIt.DeleteGroup(groupId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 }
 
 // Helper function to download files to disk
@@ -308,240 +162,182 @@ func downloadFromUrl(url string) {
 
 }
 
-type CreateVideoEnrollmentReturn struct {
-	Message         string  `json:"message"`
-	ContentLanguage string  `json:"contentLanguage"`
-	Id              int     `json:"id"`
-	Status          int     `json:"status"`
-	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
-	CreatedAt       int     `json:"createdAt"`
-	TimeTaken       string  `json:"timeTaken"`
-	ResponseCode    string  `json:"responseCode"`
-}
-
-type VideoVerificationReturn struct {
-	Message         string  `json:"message"`
-	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
-	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
-	BlinksCount     int     `json:"blinksCount"`
-	TimeTaken       string  `json:"timeTaken"`
-	ResponseCode    string  `json:"responseCode"`
-}
-
-type VideoIdentificationReturn struct {
-	Message         string  `json:"message"`
-	UserId          string  `json:"userId"`
-	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
-	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
-	BlinksCount     int     `json:"blinksCount"`
-	TimeTaken       string  `json:"timeTaken"`
-	ResponseCode    string  `json:"responseCode"`
-}
-
-type DeleteEnrollmentReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-type DeleteAllEnrollmentsForUserReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-// Test video enrollment/verification/identification (and deleting each individually)
-func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
+func TestVideo(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
 	myVoiceIt := NewClient(apikey, apitoken)
+	ret := myVoiceIt.CreateUser()
+	userId1 := getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 := getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId := getGroupId(ret)
+	myVoiceIt.AddUserToGroup(groupId, userId1)
+	myVoiceIt.AddUserToGroup(groupId, userId2)
 
-	// CreateUser()
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId := cur.UserId
-
-	// Make 3 enrollments
-	// Download 3 enrollment video
+	// Video Enrollments
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan3.mov")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov")
-
-	// Enrollment1
-	var cver1 CreateVideoEnrollmentReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan1.mov")), &cver1)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-
-	// Enrollment2
-	var cver2 CreateVideoEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan2.mov")), &cver2)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
-
-	// Enrollment3
-	var cver3 CreateVideoEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId, "en-US", "./videoEnrollmentArmaan3.mov")), &cver3)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
-
-	// Run checks on enrollment returns
-	r1, _ := regexp.Compile("Successfully enrolled video for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollment() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
-	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
-	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVideoEnrollment() is not \"en-US\"")
-	assert.Equal(201, cver1.Status, "status return from CreateVideoEnrollment() is not 201")
-	assert.Equal(201, cver2.Status, "status return from CreateVideoEnrollment() is not 201")
-	assert.Equal(201, cver3.Status, "status return from CreateVideoEnrollment() is not 201")
-	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVideoEnrollment() from videoEnrollmentArmaan1.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVideoEnrollment() from videoEnrollmentArmaan2.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver3.Text, "text return from CreateVideoEnrollment() from videoEnrollmentArmaan3.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVideoEnrollment() is not \"SUCC\"")
-	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
-	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
-	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVideoEnrollment() empty")
-
-	// Verify
-	var vvr VideoVerificationReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.VideoVerification(userId, "en-US", "./videoVerificationArmaan1.mov")), &vvr)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
-	r2, _ := regexp.Compile("Successfully verified video for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerification() does not follow the pattern \"Successfully verified video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, vvr.Status, "status return from VideoVerification() is not 200")
-	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VideoVerification() is not \"SUCC\"")
-	assert.NotNil(vvr.TimeTaken, "timeTaken return from VideoVerification() empty")
-	assert.NotEqual(0, vvr.VoiceConfidence, "voiceConfidence return from VideoVerification() is 0 (or empty)")
-	assert.NotEqual(0, vvr.FaceConfidence, "faceConfidence return from VideoVerification() is 0 (or empty)")
-	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VideoVerification() is 0 (or empty)")
-
-	// Identify
-	// Create user to add users to
-	var cgr CreateGroupReturn
-	err6 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("")), &cgr)
-	if err6 != nil {
-		t.Error(err6.Error())
-	}
-	groupId := cgr.GroupId
-	myVoiceIt.AddUserToGroup(groupId, userId)
-
-	// Create another user to use VideoIdentification()
-	var cur2 CreateUserReturn
-	cur2err := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur2)
-	if cur2err != nil {
-		t.Error(err1.Error())
-	}
-	userId2 := cur2.UserId
-	myVoiceIt.AddUserToGroup(groupId, userId2)
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov")
 
-	var cve4 CreateVideoEnrollmentReturn
-	cveerr1 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen1.mov")), &cve4)
-	if cveerr1 != nil {
-		t.Error(cveerr1.Error())
+	ret, err := myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
 	}
-	var cve5 CreateVideoEnrollmentReturn
-	cveerr2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen2.mov")), &cve5)
-	if cveerr2 != nil {
-		t.Error(cveerr2.Error())
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	enrollmentId := getEnrollmentId(ret)
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan2.mov")
+	if err != nil {
+		t.Fatal(err.Error())
 	}
-	var cve6 CreateVideoEnrollmentReturn
-	cveerr3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "./videoEnrollmentStephen3.mov")), &cve6)
-	if cveerr3 != nil {
-		t.Error(cveerr3.Error())
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentArmaan3.mov")
+	if err != nil {
+		t.Fatal(err.Error())
 	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen2.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentStephen3.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Get Video Enrollment
+	ret = myVoiceIt.GetVideoEnrollments(userId1)
+	var gve1 structs.GetVideoEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve1)
+	assert.Equal(200, gve1.Status, ret)
+	assert.Equal("SUCC", gve1.ResponseCode, ret)
+	assert.Equal(3, len(gve1.VideoEnrollments), ret)
+
+	// Video Verification
+	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationArmaan1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
 	// Video Identification
-	var vir VideoIdentificationReturn
-	err7 := json.Unmarshal([]byte(myVoiceIt.VideoIdentification(groupId, "en-US", "./videoVerificationArmaan1.mov")), &vir)
-	if err7 != nil {
-		t.Error(err7.Error())
+	ret, err = myVoiceIt.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationArmaan1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
+	// Delete Video Enrollment
+	ret = myVoiceIt.DeleteVideoEnrollment(userId1, enrollmentId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.GetVideoEnrollments(userId1)
+	var gve2 structs.GetVideoEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve2)
+	for _, videoEnrollment := range gve2.VideoEnrollments {
+		assert.NotEqual(enrollmentId, videoEnrollment.VideoEnrollmentId, ret)
 	}
 
-	assert.Equal(userId, vir.UserId, "VideoIdentification() failed to identify user "+userId+" from group "+groupId)
-	assert.Equal("Never forget tomorrow is a new day", vir.Text, "text return from VideoIdentification() empty")
-	assert.NotNil(vir.TimeTaken, "timeTaken return from VideoIdentification() empty")
-	assert.NotEqual(0, vir.VoiceConfidence, "voiceConfidence return from VideoIdentification() is 0 (or empty)")
-	assert.NotEqual(0, vir.FaceConfidence, "faceConfidence return from VideoIdentification() is 0 (or empty)")
-	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VideoIdentification() is 0 (or empty)")
+	// Delete All Video Enrollments
+	ret = myVoiceIt.DeleteAllVideoEnrollments(userId1)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	// Delete Enrollments
-	var der1 DeleteEnrollmentReturn
-	err8 := json.Unmarshal([]byte(myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver1.Id))), &der1)
-	if err8 != nil {
-		t.Error(err8.Error())
-	}
-	var der2 DeleteEnrollmentReturn
-	der2str := myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver2.Id))
-	err9 := json.Unmarshal([]byte(der2str), &der2)
-	if err9 != nil {
-		t.Error(err9.Error())
-	}
+	var gve3 structs.GetVideoEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve3)
+	assert.Equal(0, len(gve3.VideoEnrollments), ret)
 
-	var der3 DeleteEnrollmentReturn
-	err10 := json.Unmarshal([]byte(myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver3.Id))), &der3)
-	if err10 != nil {
-		t.Error(err10.Error())
-	}
-	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id) + " for user with userId : usr_([a-z0-9]){32}")
-	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id) + " for user with userId : usr_([a-z0-9]){32}")
-	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id) + " for user with userId : usr_([a-z0-9]){32}")
+	// Delete All Enrollments
+	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.NotNil(der1.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.NotNil(der2.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.NotNil(der3.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
+	ret = myVoiceIt.GetVideoEnrollments(userId2)
+	var gve4 structs.GetVideoEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve4)
+	assert.Equal(0, len(gve4.VideoEnrollments), ret)
 
-	myVoiceIt.RemoveUserFromGroup(groupId, userId)
-	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
-	myVoiceIt.DeleteGroup(groupId)
-	myVoiceIt.DeleteUser(userId)
-	var daefrr DeleteAllEnrollmentsForUserReturn
-	err11 := json.Unmarshal([]byte(myVoiceIt.DeleteAllEnrollmentsForUser(userId2)), &daefrr)
-	if err11 != nil {
-		t.Error(err11.Error())
-	}
-
-	r6, _ := regexp.Compile("All enrollments for user with userId : usr_([a-z0-9]){32} were deleted")
-	assert.True(r6.MatchString(daefrr.Message), "message return from DeleteAllEnrollmentsForUser() does not follow the pattern \"All enrollments for user with userId : usr_00000000000000000000000000000000 were deleted\"")
-	assert.Equal(200, daefrr.Status, "status return from DeleteAllEnrollmentsForUser() not 200")
-	assert.Equal("SUCC", daefrr.ResponseCode, "responseCode return from DeleteAllEnrollmentsForUser() not \"SUCC\"")
-	assert.NotNil(daefrr.TimeTaken, "timeTaken return from DeleteAllEnrollmentsForUser() is empty")
-
+	// Reset for ...ByUrl calls
+	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
+	ret = myVoiceIt.CreateUser()
+	userId1 = getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 = getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId = getGroupId(ret)
+	myVoiceIt.AddUserToGroup(groupId, userId1)
+	myVoiceIt.AddUserToGroup(groupId, userId2)
+
+	// Video Enrollments By Url
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan3.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Video Verification
+	ret = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Video Identification
+	ret = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
+	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
+	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	myVoiceIt.DeleteUser(userId1)
+	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
 
 	os.Remove("./videoEnrollmentArmaan1.mov")
 	os.Remove("./videoEnrollmentArmaan2.mov")
@@ -550,641 +346,369 @@ func TestVideoEnrollmentVerificationIdentification(t *testing.T) {
 	os.Remove("./videoEnrollmentStephen1.mov")
 	os.Remove("./videoEnrollmentStephen2.mov")
 	os.Remove("./videoEnrollmentStephen3.mov")
-
 }
 
-// Test video enrollment/verification/identification by URL (and deleting each individually)
-func TestVideoEnrollmentVerificationIdentificationByUrl(t *testing.T) {
+func TestVoice(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
 	myVoiceIt := NewClient(apikey, apitoken)
-
-	// CreateUser()
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId := cur.UserId
-
-	// Make 3 enrollments
-
-	// Enrollment1
-	var cver1 CreateVideoEnrollmentReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan1.mov", false)), &cver1)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-
-	// Enrollment2
-	var cver2 CreateVideoEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan2.mov", false)), &cver2)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
-
-	// Enrollment3
-	var cver3 CreateVideoEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentArmaan3.mov", false)), &cver3)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
-
-	// Run checks on enrollment returns
-	r1, _ := regexp.Compile("Successfully enrolled video for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVideoEnrollmentByUrl() does not follow the pattern \"Successfully enrolled video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
-	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
-	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVideoEnrollmentByUrl() is not \"en-US\"")
-	assert.Equal(201, cver1.Status, "status return from CreateVideoEnrollmentByUrl() is not 201")
-	assert.Equal(201, cver2.Status, "status return from CreateVideoEnrollmentByUrl() is not 201")
-	assert.Equal(201, cver3.Status, "status return from CreateVideoEnrollmentByUrl() is not 201")
-	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVideoEnrollmentByUrl() from videoEnrollmentArmaan1.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVideoEnrollmentByUrl() from videoEnrollmentArmaan2.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver3.Text, "text return from CreateVideoEnrollmentByUrl() from videoEnrollmentArmaan3.mov is not \"never forget tomorrow is a new day\"")
-	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
-	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
-	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVideoEnrollmentByUrl() is not \"SUCC\"")
-	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
-	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
-	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVideoEnrollmentByUrl() empty")
-
-	// Verify
-	var vvr VideoVerificationReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.VideoVerificationByUrl(userId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov", false)), &vvr)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
-	r2, _ := regexp.Compile("Successfully verified video for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VideoVerificationByUrl() does not follow the pattern \"Successfully verified video for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, vvr.Status, "status return from VideoVerificationByUrl() is not 200")
-	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VideoVerificationByUrl() is not \"SUCC\"")
-	assert.NotNil(vvr.TimeTaken, "timeTaken return from VideoVerificationByUrl() empty")
-	assert.NotEqual(0, vvr.VoiceConfidence, "voiceConfidence return from VideoVerificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vvr.FaceConfidence, "faceConfidence return from VideoVerificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VideoVerificationByUrl() is 0 (or empty)")
-
-	// Identify
-	// Create user to add users to
-	var cgr CreateGroupReturn
-	err6 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("")), &cgr)
-	if err6 != nil {
-		t.Error(err6.Error())
-	}
-	groupId := cgr.GroupId
-	myVoiceIt.AddUserToGroup(groupId, userId)
-
-	// Create another user to use VideoIdentification()
-	var cur2 CreateUserReturn
-	cur2err := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur2)
-	if cur2err != nil {
-		t.Error(err1.Error())
-	}
-	userId2 := cur2.UserId
+	ret := myVoiceIt.CreateUser()
+	userId1 := getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 := getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId := getGroupId(ret)
+	myVoiceIt.AddUserToGroup(groupId, userId1)
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
-	var cve4 CreateVideoEnrollmentReturn
-	cveerr1 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov", false)), &cve4)
-	if cveerr1 != nil {
-		t.Error(cveerr1.Error())
-	}
-	var cve5 CreateVideoEnrollmentReturn
-	cveerr2 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov", false)), &cve5)
-	if cveerr2 != nil {
-		t.Error(cveerr2.Error())
-	}
-	var cve6 CreateVideoEnrollmentReturn
-	cveerr3 := json.Unmarshal([]byte(myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov", false)), &cve6)
-	if cveerr3 != nil {
-		t.Error(cveerr3.Error())
-	}
-
-	// Video Identification
-	var vir VideoIdentificationReturn
-	err7 := json.Unmarshal([]byte(myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoVerificationArmaan1.mov")), &vir)
-	if err7 != nil {
-		t.Error(err7.Error())
-	}
-
-	assert.Equal(userId, vir.UserId, "VideoIdentificationByUrl() failed to identify user "+userId+" from group "+groupId)
-	assert.Equal("Never forget tomorrow is a new day", vir.Text, "text return from VideoIdentificationByUrl() empty")
-	assert.NotNil(vir.TimeTaken, "timeTaken return from VideoIdentificationByUrl() empty")
-	assert.NotEqual(0, vir.VoiceConfidence, "voiceConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vir.FaceConfidence, "faceConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VideoIdentificationByUrl() is 0 (or empty)")
-
-	// Delete Enrollments
-	var der1 DeleteEnrollmentReturn
-	err8 := json.Unmarshal([]byte(myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver1.Id))), &der1)
-	if err8 != nil {
-		t.Error(err8.Error())
-	}
-	var der2 DeleteEnrollmentReturn
-	der2str := myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver2.Id))
-	err9 := json.Unmarshal([]byte(der2str), &der2)
-	if err9 != nil {
-		t.Error(err9.Error())
-	}
-
-	var der3 DeleteEnrollmentReturn
-	err10 := json.Unmarshal([]byte(myVoiceIt.DeleteEnrollment(userId, strconv.Itoa(cver3.Id))), &der3)
-	if err10 != nil {
-		t.Error(err10.Error())
-	}
-
-	r3, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver1.Id) + " for user with userId : usr_([a-z0-9]){32}")
-	r4, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver2.Id) + " for user with userId : usr_([a-z0-9]){32}")
-	r5, _ := regexp.Compile("Deleted enrollment with id : " + strconv.Itoa(cver3.Id) + " for user with userId : usr_([a-z0-9]){32}")
-
-	assert.True(r3.MatchString(der1.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r4.MatchString(der2.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r5.MatchString(der3.Message), "message return from DeleteEnrollment() does not follow the pattern \"Deleted enrollment with id : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.NotNil(der1.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.NotNil(der2.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.NotNil(der3.TimeTaken, "timeTaken return from DeleteEnrollment() empty")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal(200, vir.Status, "status return from DeleteEnrollment() is not 200")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from DeleteEnrollment() is not \"SUCC\"")
-
-	myVoiceIt.RemoveUserFromGroup(groupId, userId)
-	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
-	myVoiceIt.DeleteGroup(groupId)
-	myVoiceIt.DeleteUser(userId)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
-	myVoiceIt.DeleteUser(userId2)
-
-}
-
-// Test voice enrollment/verification/identification
-
-type CreateVoiceEnrollmentReturn struct {
-	Message         string  `json:"message"`
-	ContentLanguage string  `json:"contentLanguage"`
-	Id              int     `json:"id"`
-	Status          int     `json:"status"`
-	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
-	CreatedAt       int     `json:"createdAt"`
-	TimeTaken       string  `json:"timeTaken"`
-	ResponseCode    string  `json:"responseCode"`
-}
-
-type VoiceVerificationReturn struct {
-	Message        string  `json:"message"`
-	Status         int     `json:"status"`
-	Confidence     float32 `json:"confidence"`
-	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
-	TimeTaken      string  `json:"timeTaken"`
-	ResponseCode   string  `json:"responseCode"`
-}
-
-type VoiceIdentificationReturn struct {
-	Message        string  `json:"message"`
-	UserId         string  `json:"userId"`
-	GroupId        string  `json:"groupId"`
-	Confidence     float32 `json:"confidence"`
-	Status         int     `json:"status"`
-	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
-	TimeTaken      string  `json:"timeTaken"`
-	ResponseCode   string  `json:"responseCode"`
-}
-
-func TestVoiceEnrollmentVerificationIdentification(t *testing.T) {
-	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
-
-	// CreateUser() * 2
-	var cur1 CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur1)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId1 := cur1.UserId
-
-	var cur2 CreateUserReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur2)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-	userId2 := cur2.UserId
-
-	// Enroll Voice * 3 * 2
-
+	// Voice Enrollments
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan1.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan2.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan3.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
-
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav")
 
-	var cver1 CreateVoiceEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "./enrollmentArmaan1.wav")), &cver1)
-	if err3 != nil {
-		t.Error(err3.Error())
+	ret, err := myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan1.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	enrollmentId := getEnrollmentId(ret)
+
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan2.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan3.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen1.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen2.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentStephen3.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Get Voice Enrollment
+	ret = myVoiceIt.GetVoiceEnrollments(userId1)
+	var gve1 structs.GetVoiceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve1)
+	assert.Equal(200, gve1.Status, ret)
+	assert.Equal("SUCC", gve1.ResponseCode, ret)
+	assert.Equal(3, len(gve1.VoiceEnrollments), ret)
+
+	// Voice Verification
+	ret, err = myVoiceIt.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationArmaan1.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Voice Identification
+	ret, err = myVoiceIt.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationArmaan1.wav")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
+	// Delete Voice Enrollment
+	ret = myVoiceIt.DeleteVoiceEnrollment(userId1, enrollmentId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.GetVoiceEnrollments(userId1)
+	var gve2 structs.GetVoiceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve2)
+	for _, videoEnrollment := range gve2.VoiceEnrollments {
+		assert.NotEqual(enrollmentId, videoEnrollment.VoiceEnrollmentId, ret)
 	}
 
-	var cver2 CreateVoiceEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "./enrollmentArmaan2.wav")), &cver2)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
+	// Delete All Voice Enrollments
+	ret = myVoiceIt.DeleteAllVoiceEnrollments(userId1)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var cver3 CreateVoiceEnrollmentReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "./enrollmentArmaan3.wav")), &cver3)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
+	var gve3 structs.GetVoiceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &gve3)
+	assert.Equal(0, len(gve3.VoiceEnrollments), ret)
 
-	var cver4 CreateVoiceEnrollmentReturn
-	err6 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "./enrollmentStephen1.wav")), &cver4)
-	if err6 != nil {
-		t.Error(err6.Error())
-	}
+	// Delete All Enrollments
+	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var cver5 CreateVoiceEnrollmentReturn
-	err7 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "./enrollmentStephen2.wav")), &cver5)
-	if err7 != nil {
-		t.Error(err7.Error())
-	}
-
-	var cver6 CreateVoiceEnrollmentReturn
-	err8 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "./enrollmentStephen3.wav")), &cver6)
-	if err8 != nil {
-		t.Error(err8.Error())
-	}
-
-	r1, _ := regexp.Compile("Successfully enrolled voice for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollment() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
-	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
-	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVoiceEnrollment() not \"en-US\"")
-	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVoiceEnrollment() not \"Never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVoiceEnrollment() not \"Never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver3.Text, "text return from CreateVoiceEnrollment() not \"Never forget tomorrow is a new day\"")
-	assert.Equal(201, cver1.Status, "status return from CreateVoiceEnrollment() not 201")
-	assert.Equal(201, cver2.Status, "status return from CreateVoiceEnrollment() not 201")
-	assert.Equal(201, cver3.Status, "status return from CreateVoiceEnrollment() not 201")
-	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
-	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
-	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVoiceEnrollment() not \"SUCC\"")
-	assert.NotEqual(0, cver1.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver2.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver3.Id, "id return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver1.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver2.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver3.TextConfidence, "textConfidence return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver1.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver2.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cver3.CreatedAt, "createdAt return from CreateVoiceEnrollment() is 0 (or empty)")
-	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
-	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
-	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVoiceEnrollment() is empty")
-
-	// Verification
-	var vvr VoiceVerificationReturn
-	err9 := json.Unmarshal([]byte(myVoiceIt.VoiceVerification(userId1, "en-US", "./verificationArmaan1.wav")), &vvr)
-	if err9 != nil {
-		t.Error(err9.Error())
-	}
-
-	r2, _ := regexp.Compile("Successfully verified voice for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerification() does not follow pattern \"Successfully verified voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, vvr.Status, "status return from VoiceVerification() is not 200")
-	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VoiceVerification() is not \"SUCC\"")
-	assert.NotEqual(0, vvr.Confidence, "confidence return from VoiceVerification() is 0 (or empty)")
-	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VoiceVerification() is 0 (or empty)")
-	assert.NotNil(vvr.TimeTaken, "timeTaken return from VoiceVerification() is empty")
-
-	// Identification
-	var cgr CreateGroupReturn
-	err10 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("Sample Group Description")), &cgr)
-	if err10 != nil {
-		t.Error(err10.Error())
-	}
-	groupId := cgr.GroupId
+	// Reset for ...ByUrl calls
+	myVoiceIt.DeleteUser(userId1)
+	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
+	ret = myVoiceIt.CreateUser()
+	userId1 = getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 = getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId = getGroupId(ret)
 	myVoiceIt.AddUserToGroup(groupId, userId1)
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
-	var vir VoiceIdentificationReturn
-	err11 := json.Unmarshal([]byte(myVoiceIt.VoiceIdentification(groupId, "en-US", "./verificationArmaan1.wav")), &vir)
-	if err11 != nil {
-		t.Error(err11.Error())
-	}
+	// Voice Enrollments By Url
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan1.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]){32} in group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentification() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentification() is different from true userId")
-	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentification() is different from true groupId")
-	assert.Equal(200, vir.Status, "status return from VoiceIdentification() not 200")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from VoiceIdentification() not \"SUCC\"")
-	assert.NotEqual(0, vir.Confidence, "confidence return from VoiceIdentification() is 0 (or empty)")
-	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VoiceIdentification() is 0 (or empty)")
-	assert.NotNil(vir.TimeTaken, "timeTaken return from VoiceIdentification() is empty")
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan2.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	// Clean Up
-	myVoiceIt.RemoveUserFromGroup(groupId, userId1)
-	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan3.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Voice Verification
+	ret = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Voice Identification
+	ret = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
 	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
 	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
-	myVoiceIt.DeleteGroup(groupId)
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
 
-	os.Remove("enrollmentArmaan1.wav")
-	os.Remove("enrollmentArmaan2.wav")
-	os.Remove("enrollmentArmaan3.wav")
-	os.Remove("verificationArmaan1.wav")
-	os.Remove("enrollmentStephen1.wav")
-	os.Remove("enrollmentStephen2.wav")
-	os.Remove("enrollmentStephen3.wav")
-
+	os.Remove("./enrollmentArmaan1.wav")
+	os.Remove("./enrollmentArmaan2.wav")
+	os.Remove("./enrollmentArmaan3.wav")
+	os.Remove("./verificationArmaan1.wav")
+	os.Remove("./enrollmentStephen1.wav")
+	os.Remove("./enrollmentStephen2.wav")
+	os.Remove("./enrollmentStephen3.wav")
 }
 
-func TestVoiceEnrollmentVerificationIdentificationByUrl(t *testing.T) {
+func TestFace(t *testing.T) {
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
 	myVoiceIt := NewClient(apikey, apitoken)
-
-	// CreateUser() * 2
-	var cur1 CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur1)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId1 := cur1.UserId
-
-	var cur2 CreateUserReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur2)
-	if err2 != nil {
-		t.Error(err2.Error())
-	}
-	userId2 := cur2.UserId
-
-	// Enroll Voice * 3 * 2
-
-	var cver1 CreateVoiceEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan1.wav")), &cver1)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
-
-	var cver2 CreateVoiceEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan2.wav")), &cver2)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
-
-	var cver3 CreateVoiceEnrollmentReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan3.wav")), &cver3)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
-
-	var cver4 CreateVoiceEnrollmentReturn
-	err6 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav")), &cver4)
-	if err6 != nil {
-		t.Error(err6.Error())
-	}
-
-	var cver5 CreateVoiceEnrollmentReturn
-	err7 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav")), &cver5)
-	if err7 != nil {
-		t.Error(err7.Error())
-	}
-
-	var cver6 CreateVoiceEnrollmentReturn
-	err8 := json.Unmarshal([]byte(myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav")), &cver6)
-	if err8 != nil {
-		t.Error(err8.Error())
-	}
-
-	r1, _ := regexp.Compile("Successfully enrolled voice for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cver1.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver2.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cver3.Message), "message return from CreateVoiceEnrollmentByUrl() does not follow pattern \"Successfully enrolled voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal("en-US", cver1.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
-	assert.Equal("en-US", cver2.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
-	assert.Equal("en-US", cver3.ContentLanguage, "contentLanguage return from CreateVoiceEnrollmentByUrl() not \"en-US\"")
-	assert.Equal("Never forget tomorrow is a new day", cver1.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver2.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
-	assert.Equal("Never forget tomorrow is a new day", cver3.Text, "text return from CreateVoiceEnrollmentByUrl() not \"Never forget tomorrow is a new day\"")
-	assert.Equal(201, cver1.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
-	assert.Equal(201, cver2.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
-	assert.Equal(201, cver3.Status, "status return from CreateVoiceEnrollmentByUrl() not 201")
-	assert.Equal("SUCC", cver1.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
-	assert.Equal("SUCC", cver2.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
-	assert.Equal("SUCC", cver3.ResponseCode, "responseCode return from CreateVoiceEnrollmentByUrl() not \"SUCC\"")
-	assert.NotEqual(0, cver1.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver2.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver3.Id, "id return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver1.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver2.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver3.TextConfidence, "textConfidence return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver1.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver2.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotEqual(0, cver3.CreatedAt, "createdAt return from CreateVoiceEnrollmentByUrl() is 0 (or empty)")
-	assert.NotNil(cver1.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
-	assert.NotNil(cver2.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
-	assert.NotNil(cver3.TimeTaken, "timeTaken return from CreateVoiceEnrollmentByUrl() is empty")
-
-	// Verification By Url
-	var vvr VoiceVerificationReturn
-	err9 := json.Unmarshal([]byte(myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")), &vvr)
-	if err9 != nil {
-		t.Error(err9.Error())
-	}
-
-	r2, _ := regexp.Compile("Successfully verified voice for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(vvr.Message), "message return from VoiceVerificationByUrl() does not follow pattern \"Successfully verified voice for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, vvr.Status, "status return from VoiceVerificationByUrl() is not 200")
-	assert.Equal("SUCC", vvr.ResponseCode, "responseCode return from VoiceVerificationByUrl() is not \"SUCC\"")
-	assert.NotEqual(0, vvr.Confidence, "confidence return from VoiceVerificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vvr.TextConfidence, "textConfidence return from VoiceVerificationByUrl() is 0 (or empty)")
-	assert.NotNil(vvr.TimeTaken, "timeTaken return from VoiceVerificationByUrl() is empty")
-
-	// Identification By Url
-	var cgr CreateGroupReturn
-	err10 := json.Unmarshal([]byte(myVoiceIt.CreateGroup("Sample Group Description")), &cgr)
-	if err10 != nil {
-		t.Error(err10.Error())
-	}
-	groupId := cgr.GroupId
+	ret := myVoiceIt.CreateUser()
+	userId1 := getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 := getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId := getGroupId(ret)
 	myVoiceIt.AddUserToGroup(groupId, userId1)
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
-	var vir VoiceIdentificationReturn
-	err11 := json.Unmarshal([]byte(myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")), &vir)
-	if err11 != nil {
-		t.Error(err11.Error())
-	}
-
-	r3, _ := regexp.Compile("Successfully identified voice for user with userId : usr_([a-z0-9]){32} in group with groupId : grp_([a-z0-9]){32}")
-	assert.True(r3.MatchString(vir.Message), "message return from VoiceIdentificationByUrl() does not follow the pattern \"Successfully identified voice for user with userId : usr_00000000000000000000000000000000 in group with groupId : grp_00000000000000000000000000000000\"")
-	assert.Equal(userId1, vir.UserId, "userId return from VoiceIdentificationByUrl() is different from true userId")
-	assert.Equal(groupId, vir.GroupId, "groupId return from VoiceIdentificationByUrl() is different from true groupId")
-	assert.Equal(200, vir.Status, "status return from VoiceIdentificationByUrl() not 200")
-	assert.Equal("SUCC", vir.ResponseCode, "responseCode return from VoiceIdentificationByUrl() not \"SUCC\"")
-	assert.NotEqual(0, vir.Confidence, "confidence return from VoiceIdentificationByUrl() is 0 (or empty)")
-	assert.NotEqual(0, vir.TextConfidence, "textConfidence return from VoiceIdentificationByUrl() is 0 (or empty)")
-	assert.NotNil(vir.TimeTaken, "timeTaken return from VoiceIdentificationByUrl() is empty")
-
-	// Clean Up
-	myVoiceIt.RemoveUserFromGroup(groupId, userId1)
-	myVoiceIt.RemoveUserFromGroup(groupId, userId2)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
-	myVoiceIt.DeleteGroup(groupId)
-	myVoiceIt.DeleteUser(userId1)
-	myVoiceIt.DeleteUser(userId2)
-}
-
-// Test face enrollment/verification/identification
-type CreateFaceEnrollmentReturn struct {
-	Message          string `json:"message"`
-	Status           int    `json:"status"`
-	BlinksCount      int    `json:"blinksCount"`
-	CreatedAt        int    `json:"createdAt"`
-	TimeTaken        string `json:"timeTaken"`
-	FaceEnrollmentId int    `json:"faceEnrollmentId"`
-	ResponseCode     string `json:"responseCode"`
-}
-
-type FaceVerificationReturn struct {
-	Message        string  `json:"message"`
-	Status         int     `json:"status"`
-	FaceConfidence float32 `json:"faceConfidence"`
-	BlinksCount    int     `json:"blinksCount"`
-	TimeTaken      string  `json:"timeTaken"`
-	ResponseCode   string  `json:"responseCode"`
-}
-
-type DeleteFaceEnrollmentReturn struct {
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	TimeTaken    string `json:"timeTaken"`
-	ResponseCode string `json:"responseCode"`
-}
-
-func TestFaceEnrollmentVerificationIdentification(t *testing.T) {
-	assert := assert.New(t)
-	apikey := os.Getenv("VIAPIKEY")
-	apitoken := os.Getenv("VIAPITOKEN")
-	myVoiceIt := NewClient(apikey, apitoken)
-
-	// CreateUser() * 2
-	var cur CreateUserReturn
-	err1 := json.Unmarshal([]byte(myVoiceIt.CreateUser()), &cur)
-	if err1 != nil {
-		t.Error(err1.Error())
-	}
-	userId := cur.UserId
-
+	// Face Enrollments
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan1.mp4")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan2.mp4")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan3.mp4")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov")
 
-	var cfer1 CreateFaceEnrollmentReturn
-	err2 := json.Unmarshal([]byte(myVoiceIt.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan1.mp4", false)), &cfer1)
-	if err2 != nil {
-		t.Error(err2.Error())
+	ret, err := myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan1.mp4")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	faceEnrollmentId := getFaceEnrollmentId(ret)
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan2.mp4")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentArmaan3.mp4")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentStephen1.mov")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Get Face Enrollment
+	ret = myVoiceIt.GetFaceEnrollments(userId1)
+	var fve1 structs.GetFaceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &fve1)
+	assert.Equal(200, fve1.Status, ret)
+	assert.Equal("SUCC", fve1.ResponseCode, ret)
+	assert.Equal(3, len(fve1.FaceEnrollments), ret)
+
+	// Face Verification
+	ret, err = myVoiceIt.FaceVerification(userId1, "./faceVerificationArmaan1.mp4")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	// Face Identification
+	ret, err = myVoiceIt.FaceIdentification(groupId, "./faceVerificationArmaan1.mp4")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
+	ret = myVoiceIt.GetFaceEnrollments(userId1)
+
+	// Delete Face Enrollment
+	ret = myVoiceIt.DeleteFaceEnrollment(userId1, faceEnrollmentId)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.GetFaceEnrollments(userId1)
+	var fve2 structs.GetFaceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &fve2)
+
+	for _, faceEnrollment := range fve2.FaceEnrollments {
+		assert.NotEqual(faceEnrollmentId, faceEnrollment.FaceEnrollmentId, ret)
 	}
 
-	var cfer2 CreateFaceEnrollmentReturn
-	err3 := json.Unmarshal([]byte(myVoiceIt.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan2.mp4", false)), &cfer2)
-	if err3 != nil {
-		t.Error(err3.Error())
-	}
+	// Delete All Face Enrollments
+	ret = myVoiceIt.DeleteAllFaceEnrollments(userId1)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var cfer3 CreateFaceEnrollmentReturn
-	err4 := json.Unmarshal([]byte(myVoiceIt.CreateFaceEnrollment(userId, "./faceEnrollmentArmaan3.mp4", false)), &cfer3)
-	if err4 != nil {
-		t.Error(err4.Error())
-	}
+	var fve3 structs.GetFaceEnrollmentsReturn
+	json.Unmarshal([]byte(ret), &fve3)
+	assert.Equal(0, len(fve3.FaceEnrollments), ret)
 
-	r1, _ := regexp.Compile("Successfully enrolled face for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r1.MatchString(cfer1.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cfer2.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r1.MatchString(cfer3.Message), "message return from CreateFaceEnrollment() does not follow the pattern \"Successfully enrolled face for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(201, cfer1.Status, "status return from CreateFaceEnrollment() is not 201")
-	assert.Equal(201, cfer2.Status, "status return from CreateFaceEnrollment() is not 201")
-	assert.Equal(201, cfer3.Status, "status return from CreateFaceEnrollment() is not 201")
-	assert.Equal("SUCC", cfer1.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", cfer2.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", cfer3.ResponseCode, "responseCode return from CreateFaceEnrollment() is not \"SUCC\"")
-	assert.NotEqual(0, cfer1.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cfer2.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
-	assert.NotEqual(0, cfer3.CreatedAt, "created return from CreateFaceEnrollment() is 0 (or empty)")
-	assert.NotNil(cfer1.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
-	assert.NotNil(cfer2.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
-	assert.NotNil(cfer3.TimeTaken, "timeTaken return from CreateFaceEnrollment() is or empty")
+	// Delete All Enrollments
+	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var fvr FaceVerificationReturn
-	err5 := json.Unmarshal([]byte(myVoiceIt.FaceVerification(userId, "./faceVerificationArmaan1.mp4")), &fvr)
-	if err5 != nil {
-		t.Error(err5.Error())
-	}
+	// Reset for ...ByUrl calls
+	myVoiceIt.DeleteUser(userId1)
+	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
+	ret = myVoiceIt.CreateUser()
+	userId1 = getUserId(ret)
+	ret = myVoiceIt.CreateUser()
+	userId2 = getUserId(ret)
+	ret = myVoiceIt.CreateGroup("Sample Group Description")
+	groupId = getGroupId(ret)
+	myVoiceIt.AddUserToGroup(groupId, userId1)
+	myVoiceIt.AddUserToGroup(groupId, userId2)
 
-	r2, _ := regexp.Compile("Successfully verified face for user with userId : usr_([a-z0-9]){32}")
-	assert.True(r2.MatchString(fvr.Message), "message return from FaceVerification() does not follow the pattern \"Successfully verified face for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, fvr.Status, "status return from FaceVerification() is not 200")
-	assert.Equal("SUCC", fvr.ResponseCode, "status return from FaceVerification() is not \"SUCC\"")
-	assert.NotNil(cfer3.TimeTaken, "timeTaken return from FaceVerification() is or empty")
+	// Face Enrollments By Url
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan1.mp4")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var dfefur1 DeleteFaceEnrollmentReturn
-	err6 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer1.FaceEnrollmentId))), &dfefur1)
-	if err6 != nil {
-		t.Error(err6.Error())
-	}
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan2.mp4")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var dfefur2 DeleteFaceEnrollmentReturn
-	err7 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer2.FaceEnrollmentId))), &dfefur2)
-	if err7 != nil {
-		t.Error(err7.Error())
-	}
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceEnrollmentArmaan3.mp4")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	var dfefur3 DeleteFaceEnrollmentReturn
-	err8 := json.Unmarshal([]byte(myVoiceIt.DeleteFaceEnrollment(userId, strconv.Itoa(cfer3.FaceEnrollmentId))), &dfefur3)
-	if err8 != nil {
-		t.Error(err8.Error())
-	}
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen1.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	r3, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer1.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
-	r4, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer2.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
-	r5, _ := regexp.Compile("Deleted face enrollment with faceEnrollmentId : " + strconv.Itoa(cfer3.FaceEnrollmentId) + " for user with userId : usr_([a-z0-9]){32}")
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen2.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	assert.True(r3.MatchString(dfefur1.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r4.MatchString(dfefur2.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.True(r5.MatchString(dfefur3.Message), "message return from DeleteFaceEnrollment() does not follow the pattern \"Deleted face enrollment with faceEnrollmentId : 0 for user with userId : usr_00000000000000000000000000000000\"")
-	assert.Equal(200, dfefur1.Status, "status return from DeleteFaceEnrollment() is not 200")
-	assert.Equal(200, dfefur2.Status, "status return from DeleteFaceEnrollment() is not 200")
-	assert.Equal(200, dfefur3.Status, "status return from DeleteFaceEnrollment() is not 200")
-	assert.Equal("SUCC", dfefur1.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", dfefur2.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
-	assert.Equal("SUCC", dfefur3.ResponseCode, "responseCode return from DeleteFaceEnrollment() is not \"SUCC\"")
-	assert.NotNil(dfefur1.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
-	assert.NotNil(dfefur2.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
-	assert.NotNil(dfefur3.TimeTaken, "timeTaken return from DeleteFaceEnrollment() is empty")
+	ret = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/videoEnrollmentStephen3.mov")
+	assert.Equal(201, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	myVoiceIt.DeleteUser(userId)
+	// Face Verification
+	ret = myVoiceIt.FaceVerificationByUrl(userId1, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 
-	os.Remove("faceEnrollmentArmaan1.mp4")
-	os.Remove("faceEnrollmentArmaan2.mp4")
-	os.Remove("faceEnrollmentArmaan3.mp4")
-	os.Remove("faceVerificationArmaan1.mp4")
+	// Face Identification
+	ret = myVoiceIt.FaceIdentificationByUrl(groupId, "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/faceVerificationArmaan1.mp4")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
+	assert.Equal(userId1, getUserId(ret), ret)
+
+	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
+	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	myVoiceIt.DeleteUser(userId1)
+	myVoiceIt.DeleteUser(userId2)
+	myVoiceIt.DeleteGroup(groupId)
+
+	os.Remove("./faceEnrollmentArmaan1.mp4")
+	os.Remove("./faceEnrollmentArmaan2.mp4")
+	os.Remove("./faceEnrollmentArmaan3.mp4")
+	os.Remove("./faceVerificationArmaan1.mp4")
+	os.Remove("./videoEnrollmentStephen1.mov")
+	os.Remove("./videoEnrollmentStephen2.mov")
+	os.Remove("./videoEnrollmentStephen3.mov")
 }
