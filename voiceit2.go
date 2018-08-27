@@ -286,16 +286,16 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
 	return string(reply)
 }
 
-// GetAllEnrollmentsForUser takes the userId generated during a createUser
-// and returns a list of all video/voice enrollments for the user
-// For more details see https://api.voiceit.io/#get-all-enrollments-for-user
-func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
+// GetVoiceEnrollments takes the userId generated during a createUser
+// and returns a list of all voice enrollments for the user
+// For more details see https://api.voiceit.io/#get-voice-enrollments
+func (vi *VoiceIt2) GetVoiceEnrollments(userId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/"+userId, body)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -307,10 +307,31 @@ func (vi *VoiceIt2) GetAllEnrollmentsForUser(userId string) string {
 	return string(reply)
 }
 
-// GetFaceEnrollmentsForUser takes the userId generated during a createUser
+// GetVideoEnrollments takes the userId generated during a createUser
+// and returns a list of all video enrollments for the user
+// For more details see https://api.voiceit.io/#get-video-enrollments
+func (vi *VoiceIt2) GetVideoEnrollments(userId string) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.Close()
+
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId, body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// GetFaceEnrollments takes the userId generated during a createUser
 // and returns a list of all face enrollments for the user
-// For more details see https://api.voiceit.io/#get-user-39-s-face-enrollments
-func (vi *VoiceIt2) GetFaceEnrollmentsForUser(userId string) string {
+// For more details see https://api.voiceit.io/#get-face-enrollments
+func (vi *VoiceIt2) GetFaceEnrollments(userId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -330,11 +351,15 @@ func (vi *VoiceIt2) GetFaceEnrollmentsForUser(userId string) string {
 
 // CreateVoiceEnrollment takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a audio recording to create a voice enrollment for the user
 // For more details see https://api.voiceit.io/#create-voice-enrollment
-func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, filePath string) string {
+func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, phrase string, filePath string) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -344,9 +369,10 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
 	io.Copy(part, file)
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -355,14 +381,15 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
 // CreateVoiceEnrollmentByUrl takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a audio recording to create a voice enrollment for the user
 // For more details see https://api.voiceit.io/#create-voice-enrollment-by-url
-func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage string, fileUrl string) string {
+func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage string, phrase string, fileUrl string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -370,9 +397,10 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
 	_ = writer.WriteField("fileUrl", fileUrl)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -387,8 +415,11 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 // CreateFaceEnrollment takes the userId generated during a createUser and
 // absolute file path for a video recording to create a face enrollment for the user
 // For more details see https://api.voiceit.io/#create-face-enrollment
-func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlinkDetection ...bool) string {
-	file, _ := os.Open(filePath)
+func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlinkDetection ...bool) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -411,16 +442,47 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlink
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply), nil
+}
+
+// CreateFaceEnrollmentByUrl takes the userId generated during a createUser
+// and a fully qualified URL to a video recording to verify the user's face
+// For more details see https://api.voiceit.io/#create-face-enrollment-by-url
+func (vi *VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string, doBlinkDetection ...bool) string {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	_ = writer.WriteField("userId", userId)
+	_ = writer.WriteField("fileUrl", fileUrl)
+	if len(doBlinkDetection) > 0 {
+		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
+	}
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
 	return string(reply)
 }
 
 // CreateVideoEnrollment takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment
-func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, filePath string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -430,6 +492,7 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 	io.Copy(part, file)
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -444,14 +507,15 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
 // CreateVideoEnrollment takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment-by-url
-func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -459,6 +523,7 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
 	_ = writer.WriteField("fileUrl", fileUrl)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -480,13 +545,13 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
 // a faceEnrollmentId returned during a faceEnrollment and deletes the specific
 // faceEnrollment for the user
 // For more details see https://api.voiceit.io/#delete-face-enrollment
-func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string) string {
+func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId int) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/face/"+userId+"/"+faceEnrollmentId, body)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/face/"+userId+"/"+strconv.Itoa(faceEnrollmentId), body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -498,17 +563,99 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId string)
 	return string(reply)
 }
 
-// DeleteEnrollmentForUser takes the userId generated during a createUser and
-// an enrollmentId returned during a voiceEnrollment/videoEnrollment and deletes
-// the voice/video enrollment for the user
-// For more details see https://api.voiceit.io/#delete-enrollment-for-user
-func (vi *VoiceIt2) DeleteEnrollment(userId string, faceEnrollmentId string) string {
+// DeleteAllFaceEnrollments takes the userId generated during a createUser
+// For more details see https://api.voiceit.io/#delete-all-face-enrollments
+func (vi *VoiceIt2) DeleteAllFaceEnrollments(userId string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/"+faceEnrollmentId, body)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/face", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// DeleteVoiceEnrollment takes the userId generated during a createUser and
+// an enrollmentId returned during a voiceEnrollment/videoEnrollment and deletes
+// the voice enrollment for the user
+// For more details see https://api.voiceit.io/#delete-voice-enrollment
+func (vi *VoiceIt2) DeleteVoiceEnrollment(userId string, id int) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.Close()
+
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/voice/"+userId+"/"+strconv.Itoa(id), body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// DeleteAllVoiceEnrollments takes the userId generated during a createUser
+// For more details https://api.voiceit.io/#delete-all-voice-enrollments
+func (vi *VoiceIt2) DeleteAllVoiceEnrollments(userId string) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.Close()
+
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/voice", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// DeleteVideoEnrollment takes the userId generated during a createUser and
+// an enrollmentId returned during a voiceEnrollment/videoEnrollment and deletes
+// the voice/video enrollment for the user
+// For more details see https://api.voiceit.io/#delete-video-enrollment
+func (vi *VoiceIt2) DeleteVideoEnrollment(userId string, id int) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.Close()
+
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/video/"+userId+"/"+strconv.Itoa(id), body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// DeleteAllVideoEnrollments takes the userId generated during a createUser
+// For more details see https://api.voiceit.io/#delete-all-video-enrollments
+func (vi *VoiceIt2) DeleteAllVideoEnrollments(userId string) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.Close()
+
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/video", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -522,6 +669,7 @@ func (vi *VoiceIt2) DeleteEnrollment(userId string, faceEnrollmentId string) str
 
 // DeleteAllEnrollmentsForUser takes the userId generated during a createUser
 // and deletes all video/voice enrollments for the user
+// For more details see https://api.voiceit.io/#delete-all-enrollments-for-user
 func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
 
 	body := &bytes.Buffer{}
@@ -542,11 +690,15 @@ func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
 
 // VoiceVerification takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a audio recording to verify the user's voice
 // For more details see https://api.voiceit.io/#verify-a-user-39-s-voice
-func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, filePath string) string {
+func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, phrase string, filePath string) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -556,9 +708,10 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, fil
 	io.Copy(part, file)
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -567,14 +720,15 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, fil
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
-// VoiceVerification takes the userId generated during a createUser,
+// VoiceVerificationByUrl takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a audio recording to verify the user's voice
-// For more details see https://api.voiceit.io/#verify-a-user-39-s-voice
-func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string, fileUrl string) string {
+// For more details see https://api.voiceit.io/#verify-a-user-39-s-voice-by-url
+func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string, phrase string, fileUrl string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -582,9 +736,10 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
 	_ = writer.WriteField("fileUrl", fileUrl)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -599,9 +754,12 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
 // FaceVerification takes the userId generated during a createUser and a
 // absolute file path for a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-39-s-face
-func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDetection ...bool) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -624,16 +782,48 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDete
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply), nil
+}
+
+// FaceVerificationByUrl takes the userId generated during a createUser
+// and a fully qualified URL to a video recording to verify the user's face
+// For more details see https://api.voiceit.io/#verify-a-user-39-s-face-by-url
+func (vi *VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string, doBlinkDetection ...bool) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	_ = writer.WriteField("fileUrl", fileUrl)
+
+	_ = writer.WriteField("userId", userId)
+	if len(doBlinkDetection) > 0 {
+		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
+	}
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
 	return string(reply)
 }
 
 // VideoVerification takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification
-func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, filePath string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -643,6 +833,7 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, fil
 	io.Copy(part, file)
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -657,14 +848,15 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, fil
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
-// VideoVerification takes the userId generated during a createUser,
+// VideoVerificationByUrl takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification-by-url
-func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -672,6 +864,7 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
 	_ = writer.WriteField("userId", userId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
 	_ = writer.WriteField("fileUrl", fileUrl)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -691,12 +884,16 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
 
 // VoiceIdentification takes the groupId generated during a createGroup,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a audio recording to idetify the user's voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-voice
-func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, filePath string) string {
+func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, phrase string, filePath string) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -706,9 +903,10 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
 	io.Copy(part, file)
 	_ = writer.WriteField("groupId", groupId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -717,15 +915,16 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
-// VoiceIdentification takes the groupId generated during a createGroup,
+// VoiceIdentificationByUrl takes the groupId generated during a createGroup,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a audio recording to idetify the user's voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-voice-by-url
-func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage string, fileUrl string) string {
+func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage string, phrase string, fileUrl string) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -733,9 +932,10 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 	_ = writer.WriteField("fileUrl", fileUrl)
 	_ = writer.WriteField("groupId", groupId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl", body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -749,12 +949,16 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 
 // VideoIdentification takes the groupId generated during a createGroup,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to idetify the user's face and voice
 // amongst others in the group
-// For more details see https://api.voiceit.io/#video-identification
-func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, filePath string, doBlinkDetection ...bool) string {
+// For more details see https://api.voiceit.io/#identify-a-user-39-s-voice-amp-face
+func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
 
-	file, _ := os.Open(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
 	defer file.Close()
 
 	body := &bytes.Buffer{}
@@ -764,6 +968,7 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
 	io.Copy(part, file)
 	_ = writer.WriteField("groupId", groupId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -778,15 +983,16 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 	reply, _ := ioutil.ReadAll(resp.Body)
-	return string(reply)
+	return string(reply), nil
 }
 
-// VideoIdentification takes the groupId generated during a createGroup,
+// VideoIdentificationByUrl takes the groupId generated during a createGroup,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to idetify the user's face and voice
 // amongst others in the group
-// For more details see https://api.voiceit.io/#video-identification
-func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage string, fileUrl string, doBlinkDetection ...bool) string {
+// For more details see https://api.voiceit.io/#identify-a-user-39-s-voice-amp-face-by-url
+func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -794,6 +1000,7 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
 	_ = writer.WriteField("fileUrl", fileUrl)
 	_ = writer.WriteField("groupId", groupId)
 	_ = writer.WriteField("contentLanguage", contentLanguage)
+	_ = writer.WriteField("phrase", phrase)
 	if len(doBlinkDetection) > 0 {
 		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
 	}
@@ -803,6 +1010,84 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// FaceIdentification takes the groupId generated during a createGroup,
+// and absolute file path for a face recording to idetify the user's face
+// amongst others in the group
+// For more details see https://api.voiceit.io/#identify-a-user-39-s-face
+func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string, doBlinkDetection ...bool) (string, error) {
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	io.Copy(part, file)
+	_ = writer.WriteField("groupId", groupId)
+	if len(doBlinkDetection) > 0 {
+		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
+	}
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply), nil
+}
+
+// FaceIdentificationByUrl takes the groupId generated during a createGroup,
+// and a fully qualified URL to a face recording to idetify the user's face
+// amongst others in the group
+// For more details see https://api.voiceit.io/#identify-a-user-39-s-face-by-url
+func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string, doBlinkDetection ...bool) string {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	_ = writer.WriteField("fileUrl", fileUrl)
+	_ = writer.WriteField("groupId", groupId)
+	if len(doBlinkDetection) > 0 {
+		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
+	}
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl", body)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
+
+// GetPhrases takes the contentLanguage
+// For more details see https://api.voiceit.io/#get-phrases
+func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/phrases/"+contentLanguage, nil)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
 
 	client := &http.Client{}
 	resp, _ := client.Do(req)
