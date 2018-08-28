@@ -54,8 +54,8 @@ func (vi *VoiceIt2) CreateUser() string {
 	return string(reply)
 }
 
-// GetUser takes the userId generated during a createUser and returns
-// a user exists for the given userId
+// CheckUserExists takes the userId generated during a createUser and returns
+// a JSON object which contains the boolean "exists" which shows whether a given user exists
 // For more details see https://api.voiceit.io/#check-if-a-specific-user-exists
 func (vi *VoiceIt2) CheckUserExists(userId string) string {
 	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId, nil)
@@ -213,8 +213,8 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
 	return string(reply)
 }
 
-// DeleteUser takes the userId generated during a createUser and deletes
-// the user profile and all associated face and voice enrollments
+// DeleteGroup takes the groupId generated during a createGroup and deletes
+// the group profile disassociates all users associated with it
 // For more details see https://api.voiceit.io/#delete-a-specific-group
 func (vi *VoiceIt2) DeleteGroup(groupId string) string {
 	body := &bytes.Buffer{}
