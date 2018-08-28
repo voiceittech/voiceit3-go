@@ -953,7 +953,7 @@ func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string, doBl
 // GetPhrases takes the contentLanguage
 // For more details see https://api.voiceit.io/#get-phrases
 func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/phrases/"+contentLanguage, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
