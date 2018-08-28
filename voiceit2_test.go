@@ -132,6 +132,10 @@ func TestBasics(t *testing.T) {
 	ret = myVoiceIt.DeleteGroup(groupId)
 	assert.Equal(200, getStatus(ret), ret)
 	assert.Equal("SUCC", getResponseCode(ret), ret)
+
+	ret = myVoiceIt.GetPhrases("en-US")
+	assert.Equal(200, getStatus(ret), ret)
+	assert.Equal("SUCC", getResponseCode(ret), ret)
 }
 
 // Helper function to download files to disk
