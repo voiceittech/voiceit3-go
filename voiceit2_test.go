@@ -233,8 +233,8 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
 	// Get Video Enrollment
-	ret = myVoiceIt.GetVideoEnrollments(userId1)
-	var gve1 structs.GetVideoEnrollmentsReturn
+	ret = myVoiceIt.GetAllVideoEnrollments(userId1)
+	var gve1 structs.GetAllVideoEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve1)
 	assert.Equal(200, gve1.Status, "message: "+ret)
 	assert.Equal("SUCC", gve1.ResponseCode, "message: "+ret)
@@ -262,8 +262,8 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	ret = myVoiceIt.GetVideoEnrollments(userId1)
-	var gve2 structs.GetVideoEnrollmentsReturn
+	ret = myVoiceIt.GetAllVideoEnrollments(userId1)
+	var gve2 structs.GetAllVideoEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve2)
 	for _, videoEnrollment := range gve2.VideoEnrollments {
 		assert.NotEqual(enrollmentId, videoEnrollment.VideoEnrollmentId, "message: "+ret)
@@ -274,7 +274,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	var gve3 structs.GetVideoEnrollmentsReturn
+	var gve3 structs.GetAllVideoEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve3)
 	assert.Equal(0, len(gve3.VideoEnrollments), "message: "+ret)
 
@@ -283,8 +283,8 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	ret = myVoiceIt.GetVideoEnrollments(userId2)
-	var gve4 structs.GetVideoEnrollmentsReturn
+	ret = myVoiceIt.GetAllVideoEnrollments(userId2)
+	var gve4 structs.GetAllVideoEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve4)
 	assert.Equal(0, len(gve4.VideoEnrollments), "message: "+ret)
 
@@ -419,8 +419,8 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
 	// Get Voice Enrollment
-	ret = myVoiceIt.GetVoiceEnrollments(userId1)
-	var gve1 structs.GetVoiceEnrollmentsReturn
+	ret = myVoiceIt.GetAllVoiceEnrollments(userId1)
+	var gve1 structs.GetAllVoiceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve1)
 	assert.Equal(200, gve1.Status, "message: "+ret)
 	assert.Equal("SUCC", gve1.ResponseCode, "message: "+ret)
@@ -448,8 +448,8 @@ func TestVoice(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	ret = myVoiceIt.GetVoiceEnrollments(userId1)
-	var gve2 structs.GetVoiceEnrollmentsReturn
+	ret = myVoiceIt.GetAllVoiceEnrollments(userId1)
+	var gve2 structs.GetAllVoiceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve2)
 	for _, videoEnrollment := range gve2.VoiceEnrollments {
 		assert.NotEqual(enrollmentId, videoEnrollment.VoiceEnrollmentId, "message: "+ret)
@@ -460,7 +460,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	var gve3 structs.GetVoiceEnrollmentsReturn
+	var gve3 structs.GetAllVoiceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &gve3)
 	assert.Equal(0, len(gve3.VoiceEnrollments), "message: "+ret)
 
@@ -600,8 +600,8 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
 	// Get Face Enrollment
-	ret = myVoiceIt.GetFaceEnrollments(userId1)
-	var fve1 structs.GetFaceEnrollmentsReturn
+	ret = myVoiceIt.GetAllFaceEnrollments(userId1)
+	var fve1 structs.GetAllFaceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &fve1)
 	assert.Equal(200, fve1.Status, "message: "+ret)
 	assert.Equal("SUCC", fve1.ResponseCode, "message: "+ret)
@@ -624,15 +624,15 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 	assert.Equal(userId1, getUserId(ret), "message: "+ret)
 
-	ret = myVoiceIt.GetFaceEnrollments(userId1)
+	ret = myVoiceIt.GetAllFaceEnrollments(userId1)
 
 	// Delete Face Enrollment
 	ret = myVoiceIt.DeleteFaceEnrollment(userId1, faceEnrollmentId)
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	ret = myVoiceIt.GetFaceEnrollments(userId1)
-	var fve2 structs.GetFaceEnrollmentsReturn
+	ret = myVoiceIt.GetAllFaceEnrollments(userId1)
+	var fve2 structs.GetAllFaceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &fve2)
 
 	for _, faceEnrollment := range fve2.FaceEnrollments {
@@ -644,7 +644,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
-	var fve3 structs.GetFaceEnrollmentsReturn
+	var fve3 structs.GetAllFaceEnrollmentsReturn
 	json.Unmarshal([]byte(ret), &fve3)
 	assert.Equal(0, len(fve3.FaceEnrollments), "message: "+ret)
 
