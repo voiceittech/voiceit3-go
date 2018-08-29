@@ -233,10 +233,10 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
 	return string(reply)
 }
 
-// GetVoiceEnrollments takes the userId generated during a createUser
+// GetAllVoiceEnrollments takes the userId generated during a createUser
 // and returns a list of all voice enrollments for the user
 // For more details see https://api.voiceit.io/#get-voice-enrollments
-func (vi *VoiceIt2) GetVoiceEnrollments(userId string) string {
+func (vi *VoiceIt2) GetAllVoiceEnrollments(userId string) string {
 	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -248,10 +248,10 @@ func (vi *VoiceIt2) GetVoiceEnrollments(userId string) string {
 	return string(reply)
 }
 
-// GetVideoEnrollments takes the userId generated during a createUser
+// GetAllVideoEnrollments takes the userId generated during a createUser
 // and returns a list of all video enrollments for the user
 // For more details see https://api.voiceit.io/#get-video-enrollments
-func (vi *VoiceIt2) GetVideoEnrollments(userId string) string {
+func (vi *VoiceIt2) GetAllVideoEnrollments(userId string) string {
 	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -263,10 +263,10 @@ func (vi *VoiceIt2) GetVideoEnrollments(userId string) string {
 	return string(reply)
 }
 
-// GetFaceEnrollments takes the userId generated during a createUser
+// GetAllFaceEnrollments takes the userId generated during a createUser
 // and returns a list of all face enrollments for the user
 // For more details see https://api.voiceit.io/#get-face-enrollments
-func (vi *VoiceIt2) GetFaceEnrollments(userId string) string {
+func (vi *VoiceIt2) GetAllFaceEnrollments(userId string) string {
 	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+userId, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")

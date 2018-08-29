@@ -7,7 +7,7 @@ type VoiceEnrollment struct {
 	Text              string `json:"text"`
 }
 
-type GetVoiceEnrollmentsReturn struct {
+type GetAllVoiceEnrollmentsReturn struct {
 	Message          string            `json:"message"`
 	Count            int               `json:"count"`
 	Status           int               `json:"status"`
@@ -21,7 +21,7 @@ type FaceEnrollment struct {
 	FaceEnrollmentId int `json:"faceEnrollmentId"`
 }
 
-type GetFaceEnrollmentsReturn struct {
+type GetAllFaceEnrollmentsReturn struct {
 	Message         string           `json:"message"`
 	Count           int              `json:"count"`
 	Status          int              `json:"status"`
@@ -37,7 +37,7 @@ type VideoEnrollment struct {
 	Text              string `json:"text"`
 }
 
-type GetVideoEnrollmentsReturn struct {
+type GetAllVideoEnrollmentsReturn struct {
 	Message          string            `json:"message"`
 	Count            int               `json:"count"`
 	Status           int               `json:"status"`
