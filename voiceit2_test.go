@@ -8,9 +8,8 @@ import (
 	"os"
 	"strings"
 	"testing"
-
+	"./structs"
 	"github.com/stretchr/testify/assert"
-	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
 
 func getMessage(arg string) string {
