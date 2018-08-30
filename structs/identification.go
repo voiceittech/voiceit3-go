@@ -60,7 +60,7 @@ type VideoIdentificationReturn struct {
 	ResponseCode    string  `json:"responseCode"`
 }
 
-type VideoIdentificationReturnByUrl struct {
+type VideoIdentificationByUrlReturn struct {
 	Message         string  `json:"message"`
 	UserId          string  `json:"userId"`
 	GroupId         string  `json:"groupId"`
