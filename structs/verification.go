@@ -50,7 +50,7 @@ type VideoVerificationReturn struct {
 	ResponseCode    string  `json:"responseCode"`
 }
 
-type VideoVerificationReturnByUrl struct {
+type VideoVerificationByUrlReturn struct {
 	Message         string  `json:"message"`
 	Status          int     `json:"status"`
 	VoiceConfidence float32 `json:"voiceConfidence"`
