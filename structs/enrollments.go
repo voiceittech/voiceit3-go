@@ -156,7 +156,7 @@ type DeleteAllVideoEnrollmentsReturn struct {
 	ResponseCode string `json:"responseCode"`
 }
 
-type DeleteAllEnrollmentsForUserReturn struct {
+type DeleteAllEnrollmentsReturn struct {
 	Message      string `json:"message"`
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`

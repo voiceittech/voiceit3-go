@@ -556,10 +556,10 @@ func (vi *VoiceIt2) DeleteAllVideoEnrollments(userId string) string {
 	return string(reply)
 }
 
-// DeleteAllEnrollmentsForUser takes the userId generated during a createUser
+// DeleteAllEnrollments takes the userId generated during a createUser
 // and deletes all video/voice enrollments for the user
 // For more details see https://api.voiceit.io/#delete-all-enrollments-for-user
-func (vi *VoiceIt2) DeleteAllEnrollmentsForUser(userId string) string {
+func (vi *VoiceIt2) DeleteAllEnrollments(userId string) string {
 	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/all", nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")

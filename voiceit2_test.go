@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
-
+	"./structs"
 	"github.com/stretchr/testify/assert"
 	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
@@ -279,7 +279,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(0, len(gve3.VideoEnrollments), "message: "+ret)
 
 	// Delete All Enrollments
-	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	ret = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
@@ -337,8 +337,8 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 	assert.Equal(userId1, getUserId(ret), "message: "+ret)
 
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	myVoiceIt.DeleteAllEnrollments(userId1)
+	myVoiceIt.DeleteAllEnrollments(userId2)
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
@@ -465,7 +465,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(0, len(gve3.VoiceEnrollments), "message: "+ret)
 
 	// Delete All Enrollments
-	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	ret = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
@@ -518,8 +518,8 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 	assert.Equal(userId1, getUserId(ret), "message: "+ret)
 
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	myVoiceIt.DeleteAllEnrollments(userId1)
+	myVoiceIt.DeleteAllEnrollments(userId2)
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
@@ -649,7 +649,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(0, len(fve3.FaceEnrollments), "message: "+ret)
 
 	// Delete All Enrollments
-	ret = myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	ret = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(200, getStatus(ret), "message: "+ret)
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 
@@ -702,8 +702,8 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", getResponseCode(ret), "message: "+ret)
 	assert.Equal(userId1, getUserId(ret), "message: "+ret)
 
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId1)
-	myVoiceIt.DeleteAllEnrollmentsForUser(userId2)
+	myVoiceIt.DeleteAllEnrollments(userId1)
+	myVoiceIt.DeleteAllEnrollments(userId2)
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
