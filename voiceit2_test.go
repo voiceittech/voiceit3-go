@@ -2,12 +2,14 @@ package voiceit2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
@@ -48,6 +50,7 @@ func TestIO(t *testing.T) {
 }
 
 func TestBasics(t *testing.T) {
+	fmt.Println("TestBasics()")
 	assert := assert.New(t)
 	myVoiceIt := NewClient(os.Getenv("VIAPIKEY"), os.Getenv("VIAPITOKEN"))
 	ret := myVoiceIt.CreateUser()
@@ -130,6 +133,7 @@ func TestBasics(t *testing.T) {
 
 // Helper function to download files to disk
 func downloadFromUrl(url string) {
+	fmt.Println("downloadFromUrl()")
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
 
@@ -157,6 +161,7 @@ func downloadFromUrl(url string) {
 }
 
 func TestVideo(t *testing.T) {
+	fmt.Println("TestVideo()")
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
@@ -385,6 +390,7 @@ func TestVideo(t *testing.T) {
 }
 
 func TestVoice(t *testing.T) {
+	fmt.Println("TestVoice()")
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
@@ -608,6 +614,7 @@ func TestVoice(t *testing.T) {
 }
 
 func TestFace(t *testing.T) {
+	fmt.Println("TestFace()")
 	assert := assert.New(t)
 	apikey := os.Getenv("VIAPIKEY")
 	apitoken := os.Getenv("VIAPITOKEN")
