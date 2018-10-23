@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	voiceit2 "github.com/voiceittech/VoiceIt2-Go"
 	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
 
@@ -29,7 +28,7 @@ func getGroupId(arg string) string {
 
 func TestIO(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &voiceit2.VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
 	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
 		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
 		myVoiceIt.BaseUrl = "http://localhost:9000"
@@ -61,7 +60,7 @@ func TestIO(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &voiceit2.VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
 	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
 		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
 		myVoiceIt.BaseUrl = "http://localhost:9000"
@@ -185,7 +184,7 @@ func downloadFromUrl(url string) {
 
 func TestVideo(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &voiceit2.VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
 	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
 		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
 		myVoiceIt.BaseUrl = "http://localhost:9000"
@@ -421,7 +420,7 @@ func TestVideo(t *testing.T) {
 
 func TestVoice(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &voiceit2.VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
 	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
 		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
 		myVoiceIt.BaseUrl = "http://localhost:9000"
@@ -649,7 +648,7 @@ func TestVoice(t *testing.T) {
 
 func TestFace(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &voiceit2.VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
 	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
 		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
 		myVoiceIt.BaseUrl = "http://localhost:9000"
