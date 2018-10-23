@@ -3,7 +3,7 @@ go:
   - 1.10.x
 before_script:
   - go get github.com/stretchr/testify
-script: go test
+script: go test -timeout 999999999s
 notifications:
   slack:
     rooms:

@@ -2,7 +2,6 @@ package voiceit2
 
 import (
 	"bytes"
-	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -149,7 +148,7 @@ func (vi *VoiceIt2) CheckGroupExists(groupId string) string {
 func (vi *VoiceIt2) CreateGroup(description string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	_ = writer.WriteField("description", description)
+	writer.WriteField("description", description)
 
 	writer.Close()
 
@@ -172,8 +171,8 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("userId", userId)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("userId", userId)
 
 	writer.Close()
 
@@ -196,8 +195,8 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("userId", userId)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("userId", userId)
 
 	writer.Close()
 
@@ -288,16 +287,17 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("recording", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice", body)
@@ -321,10 +321,10 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("phrase", phrase)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl", body)
@@ -342,22 +342,20 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 // CreateFaceEnrollment takes the userId generated during a createUser and
 // absolute file path for a video recording to create a face enrollment for the user
 // For more details see https://api.voiceit.io/#create-face-enrollment
-func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face", body)
@@ -375,15 +373,12 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string, doBlink
 // CreateFaceEnrollmentByUrl takes the userId generated during a createUser
 // and a fully qualified URL to a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#create-face-enrollment-by-url
-func (vi *VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("userId", userId)
+	writer.WriteField("fileUrl", fileUrl)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl", body)
@@ -403,25 +398,23 @@ func (vi *VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string, doB
 // the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment
-func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
 
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video", body)
@@ -429,6 +422,7 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
+	// client := &http.Client{}
 	client := &http.Client{}
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
@@ -441,17 +435,14 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment-by-url
-func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage string, phrase string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video/byUrl", body)
@@ -581,16 +572,17 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, phr
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("recording", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice", body)
@@ -614,10 +606,10 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("phrase", phrase)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl", body)
@@ -635,22 +627,20 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
 // FaceVerification takes the userId generated during a createUser and a
 // absolute file path for a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-39-s-face
-func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) FaceVerification(userId string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face", body)
@@ -668,14 +658,11 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string, doBlinkDete
 // FaceVerificationByUrl takes the userId generated during a createUser
 // and a fully qualified URL to a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-39-s-face-by-url
-func (vi *VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("userId", userId)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("userId", userId)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl", body)
@@ -695,24 +682,22 @@ func (vi *VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string, doBlink
 // the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification
-func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phrase string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video", body)
@@ -732,17 +717,14 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phr
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification-by-url
-func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string, phrase string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("userId", userId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("userId", userId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video/byUrl", body)
@@ -768,16 +750,17 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("recording", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
+	part.Write(fileContents)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice", body)
@@ -802,10 +785,10 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl", body)
@@ -826,24 +809,22 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 // and absolute file path for a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-voice-amp-face
-func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, phrase string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, phrase string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video", body)
@@ -864,17 +845,14 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
 // and a fully qualified URL to a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-voice-amp-face-by-url
-func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage string, phrase string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage string, phrase string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("groupId", groupId)
-	_ = writer.WriteField("contentLanguage", contentLanguage)
-	_ = writer.WriteField("phrase", phrase)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("groupId", groupId)
+	writer.WriteField("contentLanguage", contentLanguage)
+	writer.WriteField("phrase", phrase)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl", body)
@@ -893,22 +871,20 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
 // and absolute file path for a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-face
-func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string, doBlinkDetection ...bool) (string, error) {
+func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	fileContents, _ := ioutil.ReadAll(file)
+	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, _ := writer.CreateFormFile("video", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	_ = writer.WriteField("groupId", groupId)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	part.Write(fileContents)
+	writer.WriteField("groupId", groupId)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face", body)
@@ -927,15 +903,12 @@ func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string, doBlinkD
 // and a fully qualified URL to a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-39-s-face-by-url
-func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string, doBlinkDetection ...bool) string {
+func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) string {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	_ = writer.WriteField("fileUrl", fileUrl)
-	_ = writer.WriteField("groupId", groupId)
-	if len(doBlinkDetection) > 0 {
-		_ = writer.WriteField("doBlinkDetection", strconv.FormatBool(doBlinkDetection[0]))
-	}
+	writer.WriteField("fileUrl", fileUrl)
+	writer.WriteField("groupId", groupId)
 	writer.Close()
 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl", body)
