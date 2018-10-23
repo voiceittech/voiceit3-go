@@ -8,6 +8,7 @@ type VoiceVerificationReturn struct {
 	TextConfidence float32 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	// UserId         string  `json:"userId"`
 }
 
 type VoiceVerificationByUrlReturn struct {
@@ -18,6 +19,7 @@ type VoiceVerificationByUrlReturn struct {
 	TextConfidence float32 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	// UserId         string  `json:"userId"`
 }
 
 type FaceVerificationReturn struct {
@@ -27,6 +29,7 @@ type FaceVerificationReturn struct {
 	BlinksCount    int     `json:"blinksCount"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	// UserId         string  `json:"userId"`
 }
 
 type FaceVerificationByUrlReturn struct {
@@ -36,6 +39,7 @@ type FaceVerificationByUrlReturn struct {
 	BlinksCount    int     `json:"blinksCount"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	// UserId         string  `json:"userId"`
 }
 
 type VideoVerificationReturn struct {
@@ -48,6 +52,7 @@ type VideoVerificationReturn struct {
 	BlinksCount     int     `json:"blinksCount"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	// UserId          string  `json:"userId"`
 }
 
 type VideoVerificationByUrlReturn struct {
@@ -60,4 +65,5 @@ type VideoVerificationByUrlReturn struct {
 	BlinksCount     int     `json:"blinksCount"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	// UserId          string  `json:"userId"`
 }

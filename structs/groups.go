@@ -5,6 +5,7 @@ type Group struct {
 	Description string   `json:"description"`
 	GroupId     string   `json:"groupId"`
 	Users       []string `json:"users"`
+	// UserCount   int      `json:"userCount"`
 }
 
 type GetAllGroupsReturn struct {
@@ -17,14 +18,15 @@ type GetAllGroupsReturn struct {
 }
 
 type GetGroupReturn struct {
-	Message      string   `json:"message"`
-	Description  string   `json:"description"`
-	GroupId      string   `json:"groupId"`
-	CreatedAt    int      `json:"createdAt"`
-	Users        []string `json:"users"`
-	Status       int      `json:"status"`
-	TimeTaken    string   `json:"timeTaken"`
-	ResponseCode string   `json:"responseCode"`
+	Message     string   `json:"message"`
+	Description string   `json:"description"`
+	GroupId     string   `json:"groupId"`
+	CreatedAt   int      `json:"createdAt"`
+	Users       []string `json:"users"`
+	// UserCount    int      `json:"userCount"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	ResponseCode string `json:"responseCode"`
 }
 
 type CheckGroupExistsReturn struct {
