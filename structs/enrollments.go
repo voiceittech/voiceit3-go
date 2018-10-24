@@ -73,7 +73,6 @@ type CreateVoiceEnrollmentByUrlReturn struct {
 type CreateFaceEnrollmentReturn struct {
 	Message          string `json:"message"`
 	Status           int    `json:"status"`
-	BlinksCount      int    `json:"blinksCount"`
 	TimeTaken        string `json:"timeTaken"`
 	FaceEnrollmentId int    `json:"faceEnrollmentId"`
 	CreatedAt        int    `json:"createdAt"`
@@ -83,7 +82,6 @@ type CreateFaceEnrollmentReturn struct {
 type CreateFaceEnrollmentByUrlReturn struct {
 	Message          string `json:"message"`
 	Status           int    `json:"status"`
-	BlinksCount      int    `json:"blinksCount"`
 	TimeTaken        string `json:"timeTaken"`
 	FaceEnrollmentId int    `json:"faceEnrollmentId"`
 	CreatedAt        int    `json:"createdAt"`
