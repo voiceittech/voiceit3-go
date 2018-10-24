@@ -422,7 +422,6 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	// client := &http.Client{}
 	client := &http.Client{}
 	resp, _ := client.Do(req)
 	defer resp.Body.Close()
