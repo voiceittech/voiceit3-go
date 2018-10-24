@@ -30,7 +30,6 @@ type FaceIdentificationReturn struct {
 	GroupId        string  `json:"groupId"`
 	Status         int     `json:"status"`
 	FaceConfidence float32 `json:"faceConfidence"`
-	BlinksCount    int     `json:"blinksCount"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -41,7 +40,6 @@ type FaceIdentificationByUrlReturn struct {
 	GroupId        string  `json:"groupId"`
 	Status         int     `json:"status"`
 	FaceConfidence float32 `json:"faceConfidence"`
-	BlinksCount    int     `json:"blinksCount"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -55,7 +53,6 @@ type VideoIdentificationReturn struct {
 	FaceConfidence  float32 `json:"faceConfidence"`
 	Text            string  `json:"text"`
 	TextConfidence  float32 `json:"textConfidence"`
-	BlinksCount     int     `json:"blinksCount"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }
@@ -69,7 +66,6 @@ type VideoIdentificationByUrlReturn struct {
 	FaceConfidence  float32 `json:"faceConfidence"`
 	Text            string  `json:"text"`
 	TextConfidence  float32 `json:"textConfidence"`
-	BlinksCount     int     `json:"blinksCount"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }
