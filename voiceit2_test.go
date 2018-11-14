@@ -2,7 +2,6 @@ package voiceit2
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -28,16 +27,7 @@ func getGroupId(arg string) string {
 
 func TestIO(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
-	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
-		myVoiceIt.BaseUrl = "http://localhost:9000"
-	} else if os.Getenv("VOICEIT2_GO_ENV") == "staging" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"staging\", hitting https://staging-api.voiceit.io")
-		myVoiceIt.BaseUrl = "https://staging-api.voiceit.io"
-	} else {
-		myVoiceIt.BaseUrl = "https://api.voiceit.io"
-	}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
 	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
@@ -60,16 +50,7 @@ func TestIO(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
-	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
-		myVoiceIt.BaseUrl = "http://localhost:9000"
-	} else if os.Getenv("VOICEIT2_GO_ENV") == "staging" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"staging\", hitting https://staging-api.voiceit.io")
-		myVoiceIt.BaseUrl = "https://staging-api.voiceit.io"
-	} else {
-		myVoiceIt.BaseUrl = "https://api.voiceit.io"
-	}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret := myVoiceIt.CreateUser()
 	var cu structs.CreateUserReturn
 	json.Unmarshal([]byte(ret), &cu)
@@ -135,6 +116,12 @@ func TestBasics(t *testing.T) {
 	assert.Equal(200, rufg.Status, "RemoveUserFromGroup() message: "+rufg.Message)
 	assert.Equal("SUCC", rufg.ResponseCode, "RemoveUserFromGroup() message: "+rufg.Message)
 
+	ret = myVoiceIt.CreateUserToken(userId)
+	var cut structs.CreateUserTokenReturn
+	json.Unmarshal([]byte(ret), &cut)
+	assert.Equal(201, cut.Status, "CreateUserToken() message: "+cut.Message)
+	assert.Equal("SUCC", cut.ResponseCode, "CreateUserToken() message: "+cut.Message)
+
 	ret = myVoiceIt.DeleteUser(userId)
 	var du structs.DeleteUserReturn
 	json.Unmarshal([]byte(ret), &du)
@@ -184,16 +171,7 @@ func downloadFromUrl(url string) {
 
 func TestVideo(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
-	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
-		myVoiceIt.BaseUrl = "http://localhost:9000"
-	} else if os.Getenv("VOICEIT2_GO_ENV") == "staging" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"staging\", hitting https://staging-api.voiceit.io")
-		myVoiceIt.BaseUrl = "https://staging-api.voiceit.io"
-	} else {
-		myVoiceIt.BaseUrl = "https://api.voiceit.io"
-	}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret := myVoiceIt.CreateUser()
 	userId1 := getUserId(ret)
 	ret = myVoiceIt.CreateUser()
@@ -420,16 +398,7 @@ func TestVideo(t *testing.T) {
 
 func TestVoice(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
-	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
-		myVoiceIt.BaseUrl = "http://localhost:9000"
-	} else if os.Getenv("VOICEIT2_GO_ENV") == "staging" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"staging\", hitting https://staging-api.voiceit.io")
-		myVoiceIt.BaseUrl = "https://staging-api.voiceit.io"
-	} else {
-		myVoiceIt.BaseUrl = "https://api.voiceit.io"
-	}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret := myVoiceIt.CreateUser()
 	userId1 := getUserId(ret)
 	ret = myVoiceIt.CreateUser()
@@ -440,15 +409,15 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Voice Enrollments
-	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan1.wav")
-	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan2.wav")
-	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan3.wav")
-	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel3.wav")
+	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen1.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen2.wav")
 	downloadFromUrl("https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentStephen3.wav")
 
-	ret, err := myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan1.wav")
+	ret, err := myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -458,7 +427,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVoiceEnrollment() message: "+cve1.Message)
 	enrollmentId := cve1.Id
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan2.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel2.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -467,7 +436,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve2.Status, "CreateVoiceEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVoiceEnrollment() message: "+cve2.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentArmaan3.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentNoel3.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -512,7 +481,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(3, len(gve1.VoiceEnrollments), "GetAllVoiceEnrollments() message: "+gve1.Message)
 
 	// Voice Verification
-	ret, err = myVoiceIt.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationArmaan1.wav")
+	ret, err = myVoiceIt.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationNoel1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -522,7 +491,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", vv.ResponseCode, "VoiceVerification() message: "+vv.Message)
 
 	// Voice Identification
-	ret, err = myVoiceIt.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationArmaan1.wav")
+	ret, err = myVoiceIt.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationNoel1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -580,19 +549,19 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Voice Enrollments By Url
-	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan1.wav")
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel1.wav")
 	var cvebu1 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal([]byte(ret), &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 
-	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan2.wav")
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel2.wav")
 	var cvebu2 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal([]byte(ret), &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 
-	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentArmaan3.wav")
+	ret = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/enrollmentNoel3.wav")
 	var cvebu3 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal([]byte(ret), &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
@@ -617,14 +586,14 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu6.Message)
 
 	// Voice Verification
-	ret = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
+	ret = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav")
 	var vvbu structs.VoiceVerificationByUrlReturn
 	json.Unmarshal([]byte(ret), &vvbu)
 	assert.Equal(200, vvbu.Status, "VoiceVerificationByUrl() message: "+vvbu.Message)
 	assert.Equal("SUCC", vvbu.ResponseCode, "VoiceVerificationByUrl() message: "+vvbu.Message)
 
 	// Voice Identification
-	ret = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationArmaan1.wav")
+	ret = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/verificationNoel1.wav")
 	var vibu structs.VoiceIdentificationByUrlReturn
 	json.Unmarshal([]byte(ret), &vibu)
 	assert.Equal(200, vibu.Status, "VoiceIdentificationByUrl() message: "+vibu.Message)
@@ -637,10 +606,10 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
 
-	os.Remove("./enrollmentArmaan1.wav")
-	os.Remove("./enrollmentArmaan2.wav")
-	os.Remove("./enrollmentArmaan3.wav")
-	os.Remove("./verificationArmaan1.wav")
+	os.Remove("./enrollmentNoel1.wav")
+	os.Remove("./enrollmentNoel2.wav")
+	os.Remove("./enrollmentNoel3.wav")
+	os.Remove("./verificationNoel1.wav")
 	os.Remove("./enrollmentStephen1.wav")
 	os.Remove("./enrollmentStephen2.wav")
 	os.Remove("./enrollmentStephen3.wav")
@@ -648,16 +617,7 @@ func TestVoice(t *testing.T) {
 
 func TestFace(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN")}
-	if os.Getenv("VOICEIT2_GO_ENV") == "localhost" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"voiceittest\", hitting http://localhost:9000")
-		myVoiceIt.BaseUrl = "http://localhost:9000"
-	} else if os.Getenv("VOICEIT2_GO_ENV") == "staging" {
-		fmt.Println("Since $VOICEIT2_GO_ENV is set to \"staging\", hitting https://staging-api.voiceit.io")
-		myVoiceIt.BaseUrl = "https://staging-api.voiceit.io"
-	} else {
-		myVoiceIt.BaseUrl = "https://api.voiceit.io"
-	}
+	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret := myVoiceIt.CreateUser()
 	userId1 := getUserId(ret)
 	ret = myVoiceIt.CreateUser()

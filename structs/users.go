@@ -45,3 +45,12 @@ type GetGroupsForUserReturn struct {
 	TimeTaken    string   `json:"timeTaken"`
 	ResponseCode string   `json:"responseCode"`
 }
+
+type CreateUserTokenReturn struct {
+	Message      string `json:"message"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	UserToken    string `json:"userToken"`
+	CreatedAt    int    `json:"createdAt"`
+	ResponseCode string `json:"responseCode"`
+}
