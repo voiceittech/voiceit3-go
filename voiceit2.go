@@ -937,7 +937,7 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 }
 
 // CreateUserToken takes the userId
-// For more details see https://staging-api.voiceit.io/?go#user-token-generation
+// For more details see https://api.voiceit.io/?go#user-token-generation
 func (vi *VoiceIt2) CreateUserToken(userId string) string {
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token", nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
