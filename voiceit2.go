@@ -2,32 +2,51 @@ package voiceit2
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
 )
 
 type VoiceIt2 struct {
-	ApiKey   string
-	ApiToken string
-	BaseUrl  string
+	ApiKey          string
+	ApiToken        string
+	BaseUrl         string
+	NotificationUrl string
 }
 
+// NewClient returns a new VoiceIt2 client
 func NewClient(key string, tok string) *VoiceIt2 {
 	return &VoiceIt2{
-		ApiKey:   key,
-		ApiToken: tok,
-		BaseUrl:  "https://api.voiceit.io",
+		ApiKey:          key,
+		ApiToken:        tok,
+		BaseUrl:         "https://api.voiceit.io",
+		NotificationUrl: "",
 	}
+}
+
+// AddNotificationUrl adds a notification URL field in the VoiceIt2 object.
+// If one is already specified, it will be overwritten
+// For more details, see https://api.voiceit.io/#webhook-notification
+func (vi *VoiceIt2) AddNotificationUrl(notificationUrl string) {
+	vi.NotificationUrl = "?notificationURL=" + url.QueryEscape(notificationUrl)
+	fmt.Println("vi.NotificationUrl=", vi.NotificationUrl)
+}
+
+// RemoveNotificationUrl removes the notification URL field from the VoiceIt2 struct
+func (vi *VoiceIt2) RemoveNotificationUrl() {
+	vi.NotificationUrl = ""
+	fmt.Println("vi.NotificationUrl=", vi.NotificationUrl)
 }
 
 // GetAllUsers returns a list of all users associated with the API Key
 // For more details see https://api.voiceit.io/#get-all-users
 func (vi *VoiceIt2) GetAllUsers() string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users", nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -42,7 +61,7 @@ func (vi *VoiceIt2) GetAllUsers() string {
 // that is used for all future calls related to the user profile
 // For more details see https://api.voiceit.io/#create-a-user
 func (vi *VoiceIt2) CreateUser() string {
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users", nil)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -57,7 +76,7 @@ func (vi *VoiceIt2) CreateUser() string {
 // a JSON object which contains the boolean "exists" which shows whether a given user exists
 // For more details see https://api.voiceit.io/#check-if-a-specific-user-exists
 func (vi *VoiceIt2) CheckUserExists(userId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -72,7 +91,7 @@ func (vi *VoiceIt2) CheckUserExists(userId string) string {
 // the user profile and all associated face and voice enrollments
 // For more details see https://api.voiceit.io/#delete-a-specific-user
 func (vi *VoiceIt2) DeleteUser(userId string) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+userId, nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -87,7 +106,7 @@ func (vi *VoiceIt2) DeleteUser(userId string) string {
 // a list of all groups that the user belongs to
 // For more details see https://api.voiceit.io/#get-groups-for-user
 func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+"/groups", nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+"/groups"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -101,7 +120,7 @@ func (vi *VoiceIt2) GetGroupsForUser(userId string) string {
 // GetAllGroups returns a list of all groups associated with the API Key
 // For more details see https://api.voiceit.io/#get-all-groups
 func (vi *VoiceIt2) GetAllGroups() string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups", nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -116,7 +135,7 @@ func (vi *VoiceIt2) GetAllGroups() string {
 // and returns the group along with a list of associated users in the group
 // For more details see https://api.voiceit.io/#get-a-specific-group
 func (vi *VoiceIt2) GetGroup(groupId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -131,7 +150,7 @@ func (vi *VoiceIt2) GetGroup(groupId string) string {
 // and returns whether the group exists for the given groupId
 // For more details see https://api.voiceit.io/#check-if-group-exists
 func (vi *VoiceIt2) CheckGroupExists(groupId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+"/exists", nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+"/exists"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -152,7 +171,7 @@ func (vi *VoiceIt2) CreateGroup(description string) string {
 
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/groups", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/groups"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -176,7 +195,7 @@ func (vi *VoiceIt2) AddUserToGroup(groupId string, userId string) string {
 
 	writer.Close()
 
-	req, _ := http.NewRequest("PUT", vi.BaseUrl+"/groups/addUser", body)
+	req, _ := http.NewRequest("PUT", vi.BaseUrl+"/groups/addUser"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -200,7 +219,7 @@ func (vi *VoiceIt2) RemoveUserFromGroup(groupId string, userId string) string {
 
 	writer.Close()
 
-	req, _ := http.NewRequest("PUT", vi.BaseUrl+"/groups/removeUser", body)
+	req, _ := http.NewRequest("PUT", vi.BaseUrl+"/groups/removeUser"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -220,7 +239,7 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
 	writer := multipart.NewWriter(body)
 	writer.Close()
 
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+groupId, body)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -236,7 +255,7 @@ func (vi *VoiceIt2) DeleteGroup(groupId string) string {
 // and returns a list of all voice enrollments for the user
 // For more details see https://api.voiceit.io/#get-voice-enrollments
 func (vi *VoiceIt2) GetAllVoiceEnrollments(userId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -251,7 +270,7 @@ func (vi *VoiceIt2) GetAllVoiceEnrollments(userId string) string {
 // and returns a list of all video enrollments for the user
 // For more details see https://api.voiceit.io/#get-video-enrollments
 func (vi *VoiceIt2) GetAllVideoEnrollments(userId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -266,7 +285,7 @@ func (vi *VoiceIt2) GetAllVideoEnrollments(userId string) string {
 // and returns a list of all face enrollments for the user
 // For more details see https://api.voiceit.io/#get-face-enrollments
 func (vi *VoiceIt2) GetAllFaceEnrollments(userId string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+userId, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+userId+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -300,7 +319,7 @@ func (vi *VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string,
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -327,7 +346,7 @@ func (vi *VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage st
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -358,7 +377,7 @@ func (vi *VoiceIt2) CreateFaceEnrollment(userId string, filePath string) (string
 	writer.WriteField("userId", userId)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -381,7 +400,7 @@ func (vi *VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) str
 	writer.WriteField("fileUrl", fileUrl)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -417,7 +436,7 @@ func (vi *VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string,
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -444,7 +463,7 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -461,7 +480,7 @@ func (vi *VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage st
 // faceEnrollment for the user
 // For more details see https://api.voiceit.io/#delete-face-enrollment
 func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId int) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/face/"+userId+"/"+strconv.Itoa(faceEnrollmentId), nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/face/"+userId+"/"+strconv.Itoa(faceEnrollmentId)+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -475,7 +494,7 @@ func (vi *VoiceIt2) DeleteFaceEnrollment(userId string, faceEnrollmentId int) st
 // DeleteAllFaceEnrollments takes the userId generated during a createUser
 // For more details see https://api.voiceit.io/#delete-all-face-enrollments
 func (vi *VoiceIt2) DeleteAllFaceEnrollments(userId string) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/face", nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/face"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -491,7 +510,7 @@ func (vi *VoiceIt2) DeleteAllFaceEnrollments(userId string) string {
 // the voice enrollment for the user
 // For more details see https://api.voiceit.io/#delete-voice-enrollment
 func (vi *VoiceIt2) DeleteVoiceEnrollment(userId string, id int) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/voice/"+userId+"/"+strconv.Itoa(id), nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/voice/"+userId+"/"+strconv.Itoa(id)+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -505,7 +524,7 @@ func (vi *VoiceIt2) DeleteVoiceEnrollment(userId string, id int) string {
 // DeleteAllVoiceEnrollments takes the userId generated during a createUser
 // For more details https://api.voiceit.io/#delete-all-voice-enrollments
 func (vi *VoiceIt2) DeleteAllVoiceEnrollments(userId string) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/voice", nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/voice"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -521,7 +540,7 @@ func (vi *VoiceIt2) DeleteAllVoiceEnrollments(userId string) string {
 // the voice/video enrollment for the user
 // For more details see https://api.voiceit.io/#delete-video-enrollment
 func (vi *VoiceIt2) DeleteVideoEnrollment(userId string, id int) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/video/"+userId+"/"+strconv.Itoa(id), nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/video/"+userId+"/"+strconv.Itoa(id)+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -535,7 +554,7 @@ func (vi *VoiceIt2) DeleteVideoEnrollment(userId string, id int) string {
 // DeleteAllVideoEnrollments takes the userId generated during a createUser
 // For more details see https://api.voiceit.io/#delete-all-video-enrollments
 func (vi *VoiceIt2) DeleteAllVideoEnrollments(userId string) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/video", nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/video"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -550,7 +569,7 @@ func (vi *VoiceIt2) DeleteAllVideoEnrollments(userId string) string {
 // and deletes all video/voice enrollments for the user
 // For more details see https://api.voiceit.io/#delete-all-enrollments-for-user
 func (vi *VoiceIt2) DeleteAllEnrollments(userId string) string {
-	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/all", nil)
+	req, _ := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/all"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -584,7 +603,7 @@ func (vi *VoiceIt2) VoiceVerification(userId string, contentLanguage string, phr
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -611,7 +630,7 @@ func (vi *VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -642,7 +661,7 @@ func (vi *VoiceIt2) FaceVerification(userId string, filePath string) (string, er
 	writer.WriteField("userId", userId)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -664,7 +683,7 @@ func (vi *VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) string 
 	writer.WriteField("userId", userId)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -699,7 +718,7 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phr
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -726,7 +745,7 @@ func (vi *VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -762,7 +781,7 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -790,7 +809,7 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -826,7 +845,7 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -854,7 +873,7 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
 	writer.WriteField("phrase", phrase)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -886,7 +905,7 @@ func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string) (string,
 	writer.WriteField("groupId", groupId)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -910,7 +929,7 @@ func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) stri
 	writer.WriteField("groupId", groupId)
 	writer.Close()
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl", body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -925,7 +944,7 @@ func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) stri
 // GetPhrases takes the contentLanguage
 // For more details see https://api.voiceit.io/#get-phrases
 func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
-	req, _ := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage, nil)
+	req, _ := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
@@ -939,7 +958,7 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 // CreateUserToken takes the userId
 // For more details see https://api.voiceit.io/?go#user-token-generation
 func (vi *VoiceIt2) CreateUserToken(userId string) string {
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token", nil)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
