@@ -139,6 +139,9 @@ func TestBasics(t *testing.T) {
 	json.Unmarshal([]byte(ret), &gp)
 	assert.Equal(200, gp.Status, "GetPhrases() message: "+gp.Message)
 	assert.Equal("SUCC", gp.ResponseCode, "GetPhrases() message: "+gp.Message)
+
+	myVoiceIt.AddNotificationUrl("https://voiceit.io")
+	assert.Equal("?notificationURL=https%3A%2F%2Fvoiceit.io", myVoiceIt.NotificationUrl, nil)
 }
 
 // Helper function to download files to disk
