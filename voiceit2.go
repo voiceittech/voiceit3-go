@@ -2,7 +2,6 @@ package voiceit2
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -34,13 +33,11 @@ func NewClient(key string, tok string) *VoiceIt2 {
 // For more details, see https://api.voiceit.io/#webhook-notification
 func (vi *VoiceIt2) AddNotificationUrl(notificationUrl string) {
 	vi.NotificationUrl = "?notificationURL=" + url.QueryEscape(notificationUrl)
-	fmt.Println("vi.NotificationUrl=", vi.NotificationUrl)
 }
 
 // RemoveNotificationUrl removes the notification URL field from the VoiceIt2 struct
 func (vi *VoiceIt2) RemoveNotificationUrl() {
 	vi.NotificationUrl = ""
-	fmt.Println("vi.NotificationUrl=", vi.NotificationUrl)
 }
 
 // GetAllUsers returns a list of all users associated with the API Key
