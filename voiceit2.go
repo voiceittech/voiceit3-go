@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 type VoiceIt2 struct {
@@ -952,10 +953,18 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 	return string(reply)
 }
 
-// CreateUserToken takes the userId
+// CreateUserToken takes the userId and a timeout (time.Duration).
+// The returned user token can be used to construct a new VoiceIt2 instance which has user level rights for the given user.
+// The timeout controls the expiration of the user token.
 // For more details see https://api.voiceit.io/?go#user-token-generation
-func (vi *VoiceIt2) CreateUserToken(userId string) string {
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl, nil)
+func (vi *VoiceIt2) CreateUserToken(userId string, timeout time.Duration) string {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	writer.WriteField("timeOut", strconv.FormatFloat(timeout.Seconds(), 'f', 6, 64))
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 

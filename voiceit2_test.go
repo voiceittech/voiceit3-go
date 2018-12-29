@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/voiceittech/VoiceIt2-Go/structs"
@@ -116,7 +117,7 @@ func TestBasics(t *testing.T) {
 	assert.Equal(200, rufg.Status, "RemoveUserFromGroup() message: "+rufg.Message)
 	assert.Equal("SUCC", rufg.ResponseCode, "RemoveUserFromGroup() message: "+rufg.Message)
 
-	ret = myVoiceIt.CreateUserToken(userId)
+	ret = myVoiceIt.CreateUserToken(userId, 3*time.Second)
 	var cut structs.CreateUserTokenReturn
 	json.Unmarshal([]byte(ret), &cut)
 	assert.Equal(201, cut.Status, "CreateUserToken() message: "+cut.Message)
