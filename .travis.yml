@@ -5,6 +5,7 @@ before_script:
   - go get github.com/stretchr/testify
 script: go test -timeout 999999999s
 after_success:
+  - ./update.sh
   - ./email.sh
 notifications:
   slack:
