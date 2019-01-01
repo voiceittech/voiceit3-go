@@ -959,7 +959,12 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 // For more details see https://api.voiceit.io/?go#user-token-generation
 func (vi *VoiceIt2) CreateUserToken(userId string, timeout time.Duration) string {
 
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
+	var req *http.Request
+	if vi.NotificationUrl == "" {
+		req, _ = http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
+	} else {
+		req, _ = http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl+"&timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
+	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 
