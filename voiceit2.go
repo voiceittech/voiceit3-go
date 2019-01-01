@@ -958,13 +958,8 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 // The timeout controls the expiration of the user token.
 // For more details see https://api.voiceit.io/?go#user-token-generation
 func (vi *VoiceIt2) CreateUserToken(userId string, timeout time.Duration) string {
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
 
-	writer.WriteField("timeOut", strconv.FormatFloat(timeout.Seconds(), 'f', 6, 64))
-	writer.Close()
-
-	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl, body)
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+vi.NotificationUrl+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
 

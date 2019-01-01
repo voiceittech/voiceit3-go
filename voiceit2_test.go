@@ -52,6 +52,7 @@ func TestIO(t *testing.T) {
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
 	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+
 	ret := myVoiceIt.CreateUser()
 	var cu structs.CreateUserReturn
 	json.Unmarshal([]byte(ret), &cu)
