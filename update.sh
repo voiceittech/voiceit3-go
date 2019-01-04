@@ -13,9 +13,20 @@ if [[ $commit = *"RELEASE"* ]];
 then
   if [[ $major = "" ]] || [[ $minor = "" ]] || [[ $patch = "" ]];
   then
+    curl -X POST -H 'Content-type: application/json' --data '{
+      "icon_url": "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/TravisCI-Mascot-1.png",
+      "username": "Release Wrapper Gate",
+        "attachments": [
+            {
+                "text": "Packaging '$reponame' version '$version' failed. because script could not get current version",
+                "color": "danger"
+            }
+        ]
+    }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
     echo "Unable to get current version: cannot release." 1>&2
     exit 1
   fi
+  echo 'old version='$major'.'$minor'.'$patch
 
   if [[ $commit = *"RELEASEMAJOR"* ]];
   then
@@ -36,6 +47,8 @@ then
     echo "Must specify RELEASEMAJOR, RELEASEMINOR, or RELEASEPATCH in the title." 1>&2
     exit 1
   fi
+
+  echo 'new version='$major'.'$minor'.'$patch
   version='v'$major'.'$minor'.'$patch
   if [[ $wrapperplatformversion = $version ]];
   then
@@ -65,9 +78,9 @@ then
             }
         ]
     }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
+    exit 0
 
   else
-    echo "Specified release version to update package management (specified by including "$releasetype" in the commit title) does not match the platform version in wrapper source."
     curl -X POST -H 'Content-type: application/json' --data '{
       "icon_url": "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/TravisCI-Mascot-1.png",
       "username": "Release Wrapper Gate",
@@ -78,5 +91,7 @@ then
             }
         ]
     }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
+    echo "Specified release version to update package management (specified by including "$releasetype" in the commit title) does not match the platform version in wrapper source." 1>&2
+    exit 1
   fi
 fi
