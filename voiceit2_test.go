@@ -3,6 +3,7 @@ package voiceit2
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +28,13 @@ func getGroupId(arg string) string {
 }
 
 func TestIO(t *testing.T) {
+	if os.Getenv("BOXFUSE_ENV") == "voiceittest" {
+		writefileerr := ioutil.WriteFile(os.Getenv("HOME")+"/platformVersion", []byte(PlatformVersion), 0644)
+		if writefileerr != nil {
+			panic(writefileerr)
+		}
+	}
+
 	assert := assert.New(t)
 	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")

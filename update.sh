@@ -5,26 +5,78 @@ set -- $version
 major=$1
 minor=$2
 patch=$3
+wrapperplatformversion=$(cat ~/platformVersion)
+reponame=$(basename $(git remote get-url origin) | sed 's/.\{4\}$//')
 
 
 if [[ $commit = *"RELEASE"* ]];
 then
+  if [[ $major = "" ]] || [[ $minor = "" ]] || [[ $patch = "" ]];
+  then
+    echo "Unable to get current version: cannot release." 1>&2
+    exit 1
+  fi
+
   if [[ $commit = *"RELEASEMAJOR"* ]];
   then
+    releasetype="RELEASEMAJOR"
     major=$(($major+1))
     minor=0
     patch=0
   elif [[ $commit = *"RELEASEMINOR"* ]];
   then
+    releasetype="RELEASEMINOR"
     minor=$(($minor+1))
     patch=0
   elif [[ $commit = *"RELEASEPATCH"* ]];
   then
+    releasetype="RELEASEPATCH"
     patch=$(($patch+1))
   else
     echo "Must specify RELEASEMAJOR, RELEASEMINOR, or RELEASEPATCH in the title." 1>&2
     exit 1
   fi
-  version=$major'.'$minor'.'$patch
-  curl -u $GITHUBUSERNAME:$GITHUBPASSWORD -H "Content-Type: application/json" --request POST --data '{"tag_name": "v'$version'", "target_commitish": "master", "name": "v'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases
+  version='v'$major'.'$minor'.'$patch
+  if [[ $wrapperplatformversion = $version ]];
+  then
+    curl -u $GITHUBUSERNAME:$GITHUBPASSWORD -H "Content-Type: application/json" --request POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases &> /dev/null
+    if [ "$?" != "0" ]
+    then
+      curl -X POST -H 'Content-type: application/json' --data '{
+        "icon_url": "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/TravisCI-Mascot-1.png",
+        "username": "Release Wrapper Gate",
+          "attachments": [
+              {
+                  "text": "Packaging '$reponame' version '$version' failed.",
+                  "color": "danger"
+              }
+          ]
+      }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
+      exit 1
+    fi
+
+    curl -X POST -H 'Content-type: application/json' --data '{
+      "icon_url": "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/TravisCI-Mascot-1.png",
+      "username": "Release Wrapper Gate",
+        "attachments": [
+            {
+                "text": "Packaging '$reponame' version '$version' succeeded.",
+                "color": "good"
+            }
+        ]
+    }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
+
+  else
+    echo "Specified release version to update package management (specified by including "$releasetype" in the commit title) does not match the platform version in wrapper source."
+    curl -X POST -H 'Content-type: application/json' --data '{
+      "icon_url": "https://s3.amazonaws.com/voiceit-api2-testing-files/test-data/TravisCI-Mascot-1.png",
+      "username": "Release Wrapper Gate",
+        "attachments": [
+            {
+                "text": "Packaging '$reponame' version '$version' failed because the specified release version to update package management (specified by including '$releasetype' in the commit title) does not match the platform version inside the wrapper.",
+                "color": "danger"
+            }
+        ]
+    }' 'https://hooks.slack.com/services/'$SLACKPARAM1'/'$SLACKPARAM2'/'$SLACKPARAM3
+  fi
 fi
