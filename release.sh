@@ -26,7 +26,7 @@ then
     echo "Unable to get current version: cannot release." 1>&2
     exit 1
   fi
-  echo 'old version='$major'.'$minor'.'$patch
+  echo 'old version=v'$major'.'$minor'.'$patch
 
   if [[ $commit = *"RELEASEMAJOR"* ]];
   then
@@ -48,7 +48,7 @@ then
     exit 1
   fi
 
-  echo 'new version='$major'.'$minor'.'$patch
+  echo 'new version=v'$major'.'$minor'.'$patch
   version='v'$major'.'$minor'.'$patch
   if [[ $wrapperplatformversion = $version ]];
   then
