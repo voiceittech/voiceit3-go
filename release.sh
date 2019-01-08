@@ -1,6 +1,6 @@
 #!/bin/bash
 commit=$(git log -1 --pretty=%B | head -n 1)
-version=$(echo $(curl -s https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases/latest | grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-) | tr "." "\n")
+version=$(echo $(curl -u $GITHUBUSERNAME:$GITHUBPASSWORD -s https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases/latest | grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-) | tr "." "\n")
 set -- $version
 major=$1
 minor=$2
