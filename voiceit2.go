@@ -987,7 +987,7 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 	return string(reply)
 }
 
-// CreateUserToken takes the userId and a timeout (time.Duration).
+// CreateUserToken takes the userId (string) and a timeout (time.Duration).
 // The returned user token can be used to construct a new VoiceIt2 instance which has user level rights for the given user.
 // The timeout controls the expiration of the user token.
 // For more details see https://api.voiceit.io/?go#user-token-generation
