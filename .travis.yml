@@ -7,7 +7,6 @@ before_script:
 script: go test -timeout 999999s
 after_success:
   - ./release.sh
-  - ./email.sh
 notifications:
   slack:
     rooms:
