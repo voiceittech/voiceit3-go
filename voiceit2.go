@@ -1004,3 +1004,18 @@ func (vi *VoiceIt2) CreateUserToken(userId string, timeout time.Duration) string
 	reply, _ := ioutil.ReadAll(resp.Body)
 	return string(reply)
 }
+
+// ExpireUserTokens takes a userId (string).
+// For more details see https://api.voiceit.io/?go#user-token-expiration
+func (vi *VoiceIt2) ExpireUserTokens(userId string) string {
+	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/expireTokens"+vi.NotificationUrl, nil)
+	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
+	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+	reply, _ := ioutil.ReadAll(resp.Body)
+	return string(reply)
+}
