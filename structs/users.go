@@ -54,3 +54,10 @@ type CreateUserTokenReturn struct {
 	CreatedAt    int    `json:"createdAt"`
 	ResponseCode string `json:"responseCode"`
 }
+
+type ExpireUserTokensReturn struct {
+	Message      string `json:"message"`
+	Status       int    `json:"status"`
+	TimeTaken    string `json:"timeTaken"`
+	ResponseCode string `json:"responseCode"`
+}

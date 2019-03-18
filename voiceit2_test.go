@@ -132,6 +132,12 @@ func TestBasics(t *testing.T) {
 	assert.Equal(201, cut.Status, "CreateUserToken() message: "+cut.Message)
 	assert.Equal("SUCC", cut.ResponseCode, "CreateUserToken() message: "+cut.Message)
 
+	ret = myVoiceIt.ExpireUserTokens(userId)
+	var eutr structs.ExpireUserTokensReturn
+	json.Unmarshal([]byte(ret), &eutr)
+	assert.Equal(201, eutr.Status, "ExpireUserTokens() message: "+eutr.Message)
+	assert.Equal("SUCC", eutr.ResponseCode, "ExpireUserTokens() message: "+eutr.Message)
+
 	ret = myVoiceIt.DeleteUser(userId)
 	var du structs.DeleteUserReturn
 	json.Unmarshal([]byte(ret), &du)
