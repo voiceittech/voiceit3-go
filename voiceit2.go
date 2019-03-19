@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const PlatformVersion string = "v1.2.0"
+const PlatformVersion string = "v1.2.1"
 
 type VoiceIt2 struct {
 	ApiKey          string
@@ -65,6 +65,7 @@ func (vi *VoiceIt2) CreateUser() string {
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
 	resp, _ := client.Do(req)
@@ -752,6 +753,7 @@ func (vi *VoiceIt2) VideoVerification(userId string, contentLanguage string, phr
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/verification/video"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -816,6 +818,7 @@ func (vi *VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -844,6 +847,7 @@ func (vi *VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage str
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -880,6 +884,7 @@ func (vi *VoiceIt2) VideoIdentification(groupId string, contentLanguage string, 
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -908,6 +913,7 @@ func (vi *VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage str
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -940,6 +946,7 @@ func (vi *VoiceIt2) FaceIdentification(groupId string, filePath string) (string,
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -964,6 +971,7 @@ func (vi *VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) stri
 	req, _ := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl"+vi.NotificationUrl, body)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
@@ -979,6 +987,7 @@ func (vi *VoiceIt2) GetPhrases(contentLanguage string) string {
 	req, _ := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage+vi.NotificationUrl, nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
 	resp, _ := client.Do(req)
@@ -997,6 +1006,7 @@ func (vi *VoiceIt2) CreateUserToken(userId string, timeout time.Duration) string
 	req, _ = http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
+	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
 	resp, _ := client.Do(req)
