@@ -15,15 +15,15 @@ import (
 	"github.com/voiceittech/VoiceIt2-Go/structs"
 )
 
-func getUserId(arg string) string {
+func getUserId(arg []byte) string {
 	var dat map[string]interface{}
-	json.Unmarshal([]byte(arg), &dat)
+	json.Unmarshal(arg, &dat)
 	return dat["userId"].(string)
 }
 
-func getGroupId(arg string) string {
+func getGroupId(arg []byte) string {
 	var dat map[string]interface{}
-	json.Unmarshal([]byte(arg), &dat)
+	json.Unmarshal(arg, &dat)
 	return dat["groupId"].(string)
 }
 
@@ -64,7 +64,7 @@ func TestBasics(t *testing.T) {
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	var cu structs.CreateUserReturn
-	json.Unmarshal([]byte(ret), &cu)
+	json.Unmarshal(ret, &cu)
 	assert.Equal(201, cu.Status, "CreateUser() message: "+cu.Message)
 	assert.Equal("SUCC", cu.ResponseCode, "CreateUser() message: "+cu.Message)
 	userId := getUserId(ret)
@@ -72,22 +72,22 @@ func TestBasics(t *testing.T) {
 	ret, err = myVoiceIt.GetAllUsers()
 	assert.Equal(err, nil)
 	var gau structs.GetAllUsersReturn
-	json.Unmarshal([]byte(ret), &gau)
-	assert.Equal(200, gau.Status, "GetAllUsers() message: "+ret)
-	assert.Equal("SUCC", gau.ResponseCode, "GetAllUsers() message: "+ret)
-	assert.True(0 < len(gau.Users), "GetAllUsers() message: "+ret)
+	json.Unmarshal(ret, &gau)
+	assert.Equal(200, gau.Status, "GetAllUsers() message: "+gau.Message)
+	assert.Equal("SUCC", gau.ResponseCode, "GetAllUsers() message: "+gau.Message)
+	assert.True(0 < len(gau.Users), "GetAllUsers() message: "+gau.Message)
 
 	ret, err = myVoiceIt.CheckUserExists(userId)
 	assert.Equal(err, nil)
 	var cue structs.CheckUserExistsReturn
-	json.Unmarshal([]byte(ret), &cue)
+	json.Unmarshal(ret, &cue)
 	assert.Equal(200, cue.Status, "CheckUserExists() message: "+cue.Message)
 	assert.Equal("SUCC", cue.ResponseCode, "CheckUserExists() message: "+cue.Message)
 
 	ret, err = myVoiceIt.CreateGroup("Sample Group Description")
 	assert.Equal(err, nil)
 	var cg structs.CreateGroupReturn
-	json.Unmarshal([]byte(ret), &cg)
+	json.Unmarshal(ret, &cg)
 	assert.Equal(201, cg.Status, "CreateGroup() message: "+cg.Message)
 	assert.Equal("SUCC", cg.ResponseCode, "CreateGroup() message: "+cg.Message)
 	groupId := cg.GroupId
@@ -95,35 +95,35 @@ func TestBasics(t *testing.T) {
 	ret, err = myVoiceIt.CheckGroupExists(groupId)
 	assert.Equal(err, nil)
 	var cge structs.CheckGroupExistsReturn
-	json.Unmarshal([]byte(ret), &cge)
+	json.Unmarshal(ret, &cge)
 	assert.Equal(200, cge.Status, "CheckGroupExists() message: "+cge.Message)
 	assert.Equal("SUCC", cge.ResponseCode, "CheckGroupExists() message: "+cge.Message)
 
 	ret, err = myVoiceIt.AddUserToGroup(groupId, userId)
 	assert.Equal(err, nil)
 	var autg structs.AddUserToGroupReturn
-	json.Unmarshal([]byte(ret), &autg)
+	json.Unmarshal(ret, &autg)
 	assert.Equal(200, autg.Status, "AddUserToGroup() message: "+autg.Message)
 	assert.Equal("SUCC", autg.ResponseCode, "AddUserToGroup() message: "+autg.Message)
 
 	ret, err = myVoiceIt.GetGroup(groupId)
 	assert.Equal(err, nil)
 	var gg structs.GetGroupsForUserReturn
-	json.Unmarshal([]byte(ret), &gg)
+	json.Unmarshal(ret, &gg)
 	assert.Equal(200, gg.Status, "GetGroup() message: "+gg.Message)
 	assert.Equal("SUCC", gg.ResponseCode, "GetGroup() message: "+gg.Message)
 
 	ret, err = myVoiceIt.GetAllGroups()
 	assert.Equal(err, nil)
 	var gag structs.GetAllGroupsReturn
-	json.Unmarshal([]byte(ret), &gag)
+	json.Unmarshal(ret, &gag)
 	assert.Equal(200, gag.Status, "GetAllGroups() message: "+gag.Message)
 	assert.Equal("SUCC", gag.ResponseCode, "GetAllGroups() message: "+gag.Message)
 
 	ret, err = myVoiceIt.GetGroupsForUser(userId)
 	assert.Equal(err, nil)
 	var ggfu structs.GetGroupsForUserReturn
-	json.Unmarshal([]byte(ret), &ggfu)
+	json.Unmarshal(ret, &ggfu)
 	assert.Equal(200, ggfu.Status, "GetGroupsForUser() message: "+ggfu.Message)
 	assert.Equal("SUCC", ggfu.ResponseCode, "GetGroupsForUser() message: "+ggfu.Message)
 	assert.Equal(1, len(ggfu.Groups), "GetGroupsForUser() message: "+ggfu.Message)
@@ -132,42 +132,42 @@ func TestBasics(t *testing.T) {
 	ret, err = myVoiceIt.RemoveUserFromGroup(groupId, userId)
 	assert.Equal(err, nil)
 	var rufg structs.RemoveUserFromGroupReturn
-	json.Unmarshal([]byte(ret), &rufg)
+	json.Unmarshal(ret, &rufg)
 	assert.Equal(200, rufg.Status, "RemoveUserFromGroup() message: "+rufg.Message)
 	assert.Equal("SUCC", rufg.ResponseCode, "RemoveUserFromGroup() message: "+rufg.Message)
 
 	ret, err = myVoiceIt.CreateUserToken(userId, 3*time.Second)
 	assert.Equal(err, nil)
 	var cut structs.CreateUserTokenReturn
-	json.Unmarshal([]byte(ret), &cut)
+	json.Unmarshal(ret, &cut)
 	assert.Equal(201, cut.Status, "CreateUserToken() message: "+cut.Message)
 	assert.Equal("SUCC", cut.ResponseCode, "CreateUserToken() message: "+cut.Message)
 
 	ret, err = myVoiceIt.ExpireUserTokens(userId)
 	assert.Equal(err, nil)
 	var eutr structs.ExpireUserTokensReturn
-	json.Unmarshal([]byte(ret), &eutr)
+	json.Unmarshal(ret, &eutr)
 	assert.Equal(201, eutr.Status, "ExpireUserTokens() message: "+eutr.Message)
 	assert.Equal("SUCC", eutr.ResponseCode, "ExpireUserTokens() message: "+eutr.Message)
 
 	ret, err = myVoiceIt.DeleteUser(userId)
 	assert.Equal(err, nil)
 	var du structs.DeleteUserReturn
-	json.Unmarshal([]byte(ret), &du)
+	json.Unmarshal(ret, &du)
 	assert.Equal(200, du.Status, "DeleteUser() message: "+du.Message)
 	assert.Equal("SUCC", du.ResponseCode, "DeleteUser() message: "+du.Message)
 
 	ret, err = myVoiceIt.DeleteGroup(groupId)
 	assert.Equal(err, nil)
 	var dg structs.DeleteGroupReturn
-	json.Unmarshal([]byte(ret), &dg)
+	json.Unmarshal(ret, &dg)
 	assert.Equal(200, dg.Status, "DeleteGroup() message: "+dg.Message)
 	assert.Equal("SUCC", dg.ResponseCode, "DeleteGroup() message: "+dg.Message)
 
 	ret, err = myVoiceIt.GetPhrases("en-US")
 	assert.Equal(err, nil)
 	var gp structs.GetPhrasesReturn
-	json.Unmarshal([]byte(ret), &gp)
+	json.Unmarshal(ret, &gp)
 	assert.Equal(200, gp.Status, "GetPhrases() message: "+gp.Message)
 	assert.Equal("SUCC", gp.ResponseCode, "GetPhrases() message: "+gp.Message)
 
@@ -232,7 +232,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve1 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve1)
+	json.Unmarshal(ret, &cve1)
 	assert.Equal(201, cve1.Status, "CreateVideoEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVideoEnrollment() message: "+cve1.Message)
 	enrollmentId := cve1.Id
@@ -242,7 +242,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve2 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve2)
+	json.Unmarshal(ret, &cve2)
 	assert.Equal(201, cve2.Status, "CreateVideoEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVideoEnrollment() message: "+cve2.Message)
 
@@ -251,7 +251,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve3 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve3)
+	json.Unmarshal(ret, &cve3)
 	assert.Equal(201, cve3.Status, "CreateVideoEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVideoEnrollment() message: "+cve3.Message)
 
@@ -260,7 +260,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve4 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve4)
+	json.Unmarshal(ret, &cve4)
 	assert.Equal(201, cve4.Status, "CreateVideoEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVideoEnrollment() message: "+cve4.Message)
 
@@ -269,7 +269,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve5 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve5)
+	json.Unmarshal(ret, &cve5)
 	assert.Equal(201, cve5.Status, "CreateVideoEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVideoEnrollment() message: "+cve5.Message)
 
@@ -278,7 +278,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve6 structs.CreateVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve6)
+	json.Unmarshal(ret, &cve6)
 	assert.Equal(201, cve6.Status, "CreateVideoEnrollment() message: "+cve6.Message)
 	assert.Equal("SUCC", cve6.ResponseCode, "CreateVideoEnrollment() message: "+cve6.Message)
 
@@ -286,10 +286,10 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
 	assert.Equal(err, nil)
 	var gve1 structs.GetAllVideoEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &gve1)
-	assert.Equal(200, gve1.Status, "GetAllVideoEnrollments() message: "+ret)
-	assert.Equal("SUCC", gve1.ResponseCode, "GetAllVideoEnrollments() message: "+ret)
-	assert.Equal(3, len(gve1.VideoEnrollments), "GetAllVideoEnrollments() message: "+ret)
+	json.Unmarshal(ret, &gve1)
+	assert.Equal(200, gve1.Status, "GetAllVideoEnrollments() message: "+gve1.Message)
+	assert.Equal("SUCC", gve1.ResponseCode, "GetAllVideoEnrollments() message: "+gve1.Message)
+	assert.Equal(3, len(gve1.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve1.Message)
 
 	// Video Verification
 	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov")
@@ -297,7 +297,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var vv1 structs.VideoVerificationReturn
-	json.Unmarshal([]byte(ret), &vv1)
+	json.Unmarshal(ret, &vv1)
 	assert.Equal(200, vv1.Status, "VideoVerification() message: "+vv1.Message)
 	assert.Equal("SUCC", vv1.ResponseCode, "VideoVerification() message: "+vv1.Message)
 
@@ -307,7 +307,7 @@ func TestVideo(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var vi1 structs.VideoIdentificationReturn
-	json.Unmarshal([]byte(ret), &vi1)
+	json.Unmarshal(ret, &vi1)
 	assert.Equal(200, vi1.Status, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal("SUCC", vi1.ResponseCode, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal(userId1, vi1.UserId, "VideoIdentification() message: "+vi1.Message)
@@ -316,14 +316,14 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.DeleteVideoEnrollment(userId1, enrollmentId)
 	assert.Equal(err, nil)
 	var dve structs.DeleteVideoEnrollmentReturn
-	json.Unmarshal([]byte(ret), &dve)
+	json.Unmarshal(ret, &dve)
 	assert.Equal(200, dve.Status, "DeleteVideoEnrollment() message: "+dve.Message)
 	assert.Equal("SUCC", dve.ResponseCode, "DeleteVideoEnrollment() message: "+dve.Message)
 
 	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
 	assert.Equal(err, nil)
 	var gve2 structs.GetAllVideoEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &gve2)
+	json.Unmarshal(ret, &gve2)
 	// for _, videoEnrollment := range gve2.VideoEnrollments {
 	// assert.NotEqual(enrollmentId, videoEnrollment.VideoEnrollmentId, "GetAllVideoEnrollments() message: "+gve2.Message)
 	// }
@@ -332,14 +332,14 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.DeleteAllVideoEnrollments(userId1)
 	assert.Equal(err, nil)
 	var dave structs.DeleteAllVideoEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dave)
+	json.Unmarshal(ret, &dave)
 	assert.Equal(200, dave.Status, "DeleteAllVideoEnrollments() message: "+dave.Message)
 	assert.Equal("SUCC", dave.ResponseCode, "DeleteAllVideoEnrollments() message: "+dave.Message)
 
 	var gve3 structs.GetAllVideoEnrollmentsReturn
 	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
 	assert.Equal(err, nil)
-	json.Unmarshal([]byte(ret), &gve3)
+	json.Unmarshal(ret, &gve3)
 	assert.Equal(200, gve3.Status, "GetAllVideoEnrollments() message: "+gve3.Message)
 	assert.Equal("SUCC", gve3.ResponseCode, "GetAllVideoEnrollments() message: "+gve3.Message)
 	assert.Equal(0, len(gve3.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve3.Message)
@@ -348,14 +348,14 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(err, nil)
 	var dae structs.DeleteAllEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dae)
+	json.Unmarshal(ret, &dae)
 	assert.Equal(200, dae.Status, "DeleteAllEnrollments() message: "+dae.Message)
 	assert.Equal("SUCC", dae.ResponseCode, "DeleteAllEnrollments() message: "+dae.Message)
 
 	ret, err = myVoiceIt.GetAllVideoEnrollments(userId2)
 	assert.Equal(err, nil)
 	var gve4 structs.GetAllVideoEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &gve4)
+	json.Unmarshal(ret, &gve4)
 	assert.Equal(200, gve4.Status, "GetAllVideoEnrollments() message: "+gve4.Message)
 	assert.Equal("SUCC", gve4.ResponseCode, "GetAllVideoEnrollments() message: "+gve4.Message)
 	assert.Equal(0, len(gve4.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve4.Message)
@@ -380,42 +380,42 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB1.mov")
 	assert.Equal(err, nil)
 	var cvebu1 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu1)
+	json.Unmarshal(ret, &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB2.mov")
 	assert.Equal(err, nil)
 	var cvebu2 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu2)
+	json.Unmarshal(ret, &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB3.mov")
 	assert.Equal(err, nil)
 	var cvebu3 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu3)
+	json.Unmarshal(ret, &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC1.mov")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu4)
+	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC2.mov")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu5)
+	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 
 	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC3.mov")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVideoEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu6)
+	json.Unmarshal(ret, &cvebu6)
 	assert.Equal(201, cvebu6.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu6.Message)
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu6.Message)
 
@@ -423,7 +423,7 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationB1.mov")
 	assert.Equal(err, nil)
 	var vvbu structs.VideoVerificationByUrlReturn
-	json.Unmarshal([]byte(ret), &vvbu)
+	json.Unmarshal(ret, &vvbu)
 	assert.Equal(200, vvbu.Status, "VideoVerificationByUrl() message: "+vvbu.Message)
 	assert.Equal("SUCC", vvbu.ResponseCode, "VideoVerificationByUrl() message: "+vvbu.Message)
 
@@ -431,7 +431,7 @@ func TestVideo(t *testing.T) {
 	ret, err = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationB1.mov")
 	assert.Equal(err, nil)
 	var vibu structs.VideoIdentificationByUrlReturn
-	json.Unmarshal([]byte(ret), &vibu)
+	json.Unmarshal(ret, &vibu)
 	assert.Equal(200, vibu.Status, "VideoIdentificationByUrl() message: "+vibu.Message)
 	assert.Equal("SUCC", vibu.ResponseCode, "VideoIdentificationByUrl() message: "+vibu.Message)
 	assert.Equal(userId1, vibu.UserId, "VideoIdentificationByUrl() message: "+vibu.Message)
@@ -480,7 +480,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve1 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve1)
+	json.Unmarshal(ret, &cve1)
 	assert.Equal(201, cve1.Status, "CreateVoiceEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVoiceEnrollment() message: "+cve1.Message)
 	enrollmentId := cve1.Id
@@ -490,7 +490,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve2 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve2)
+	json.Unmarshal(ret, &cve2)
 	assert.Equal(201, cve2.Status, "CreateVoiceEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVoiceEnrollment() message: "+cve2.Message)
 
@@ -499,7 +499,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve3 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve3)
+	json.Unmarshal(ret, &cve3)
 	assert.Equal(201, cve3.Status, "CreateVoiceEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVoiceEnrollment() message: "+cve3.Message)
 
@@ -508,7 +508,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve4 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve4)
+	json.Unmarshal(ret, &cve4)
 	assert.Equal(201, cve4.Status, "CreateVoiceEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVoiceEnrollment() message: "+cve4.Message)
 
@@ -517,7 +517,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve5 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve5)
+	json.Unmarshal(ret, &cve5)
 	assert.Equal(201, cve5.Status, "CreateVoiceEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVoiceEnrollment() message: "+cve5.Message)
 
@@ -526,7 +526,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cve6 structs.CreateVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cve6)
+	json.Unmarshal(ret, &cve6)
 	assert.Equal(201, cve6.Status, "CreateVoiceEnrollment() message: "+cve6.Message)
 	assert.Equal("SUCC", cve6.ResponseCode, "CreateVoiceEnrollment() message: "+cve6.Message)
 
@@ -534,7 +534,7 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.GetAllVoiceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var gve1 structs.GetAllVoiceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &gve1)
+	json.Unmarshal(ret, &gve1)
 	assert.Equal(200, gve1.Status, "GetAllVoiceEnrollments() message: "+gve1.Message)
 	assert.Equal("SUCC", gve1.ResponseCode, "GetAllVoiceEnrollments() message: "+gve1.Message)
 	assert.Equal(3, len(gve1.VoiceEnrollments), "GetAllVoiceEnrollments() message: "+gve1.Message)
@@ -545,7 +545,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var vv structs.VoiceVerificationReturn
-	json.Unmarshal([]byte(ret), &vv)
+	json.Unmarshal(ret, &vv)
 	assert.Equal(200, vv.Status, "VoiceVerification() message: "+vv.Message)
 	assert.Equal("SUCC", vv.ResponseCode, "VoiceVerification() message: "+vv.Message)
 
@@ -555,7 +555,7 @@ func TestVoice(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var vi structs.VoiceIdentificationReturn
-	json.Unmarshal([]byte(ret), &vi)
+	json.Unmarshal(ret, &vi)
 	assert.Equal(200, vi.Status, "VoiceIdentification() message: "+vi.Message)
 	assert.Equal("SUCC", vi.ResponseCode, "VoiceIdentification() message: "+vi.Message)
 	assert.Equal(userId1, vi.UserId, "VoiceIdentification() message: "+vi.Message)
@@ -564,14 +564,14 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.DeleteVoiceEnrollment(userId1, enrollmentId)
 	assert.Equal(err, nil)
 	var dve structs.DeleteVoiceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &dve)
+	json.Unmarshal(ret, &dve)
 	assert.Equal(200, dve.Status, "DeleteVoiceEnrollment() message: "+dve.Message)
 	assert.Equal("SUCC", dve.ResponseCode, "DeleteVoiceEnrollment() message: "+dve.Message)
 
 	ret, err = myVoiceIt.GetAllVoiceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var gve2 structs.GetAllVoiceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &gve2)
+	json.Unmarshal(ret, &gve2)
 	assert.Equal(200, gve2.Status, "GetAllVoiceEnrollments() message: "+gve2.Message)
 	assert.Equal("SUCC", gve2.ResponseCode, "GetAllVoiceEnrollments() message: "+gve2.Message)
 
@@ -579,14 +579,14 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.DeleteAllVoiceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var dave structs.DeleteAllVoiceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dave)
+	json.Unmarshal(ret, &dave)
 	assert.Equal(200, dave.Status, "DeleteAllVoiceEnrollments() message: "+dave.Message)
 	assert.Equal("SUCC", dave.ResponseCode, "DeleteAllVoiceEnrollments() message: "+dave.Message)
 
 	var gve3 structs.GetAllVoiceEnrollmentsReturn
 	ret, err = myVoiceIt.GetAllVoiceEnrollments(userId1)
 	assert.Equal(err, nil)
-	json.Unmarshal([]byte(ret), &gve3)
+	json.Unmarshal(ret, &gve3)
 	assert.Equal(200, gve3.Status, "GetAllVoiceEnrollments() message: "+gve3.Message)
 	assert.Equal("SUCC", gve3.ResponseCode, "GetAllVoiceEnrollments() message: "+gve3.Message)
 	assert.Equal(0, len(gve3.VoiceEnrollments), "GetAllVoiceEnrollments() message: "+gve3.Message)
@@ -595,7 +595,7 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(err, nil)
 	var dae structs.DeleteAllEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dae)
+	json.Unmarshal(ret, &dae)
 	assert.Equal(200, dae.Status, "DeleteAllEnrollments() message: "+dae.Message)
 	assert.Equal("SUCC", dae.ResponseCode, "DeleteAllEnrollments() message: "+dae.Message)
 
@@ -619,42 +619,42 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA1.wav")
 	assert.Equal(err, nil)
 	var cvebu1 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu1)
+	json.Unmarshal(ret, &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA2.wav")
 	assert.Equal(err, nil)
 	var cvebu2 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu2)
+	json.Unmarshal(ret, &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA3.wav")
 	assert.Equal(err, nil)
 	var cvebu3 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu3)
+	json.Unmarshal(ret, &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC1.wav")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu4)
+	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC2.wav")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu5)
+	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 
 	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC3.wav")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVoiceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cvebu6)
+	json.Unmarshal(ret, &cvebu6)
 	assert.Equal(201, cvebu6.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu6.Message)
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu6.Message)
 
@@ -662,7 +662,7 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
 	assert.Equal(err, nil)
 	var vvbu structs.VoiceVerificationByUrlReturn
-	json.Unmarshal([]byte(ret), &vvbu)
+	json.Unmarshal(ret, &vvbu)
 	assert.Equal(200, vvbu.Status, "VoiceVerificationByUrl() message: "+vvbu.Message)
 	assert.Equal("SUCC", vvbu.ResponseCode, "VoiceVerificationByUrl() message: "+vvbu.Message)
 
@@ -670,7 +670,7 @@ func TestVoice(t *testing.T) {
 	ret, err = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
 	assert.Equal(err, nil)
 	var vibu structs.VoiceIdentificationByUrlReturn
-	json.Unmarshal([]byte(ret), &vibu)
+	json.Unmarshal(ret, &vibu)
 	assert.Equal(200, vibu.Status, "VoiceIdentificationByUrl() message: "+vibu.Message)
 	assert.Equal("SUCC", vibu.ResponseCode, "VoiceIdentificationByUrl() message: "+vibu.Message)
 	assert.Equal(userId1, vibu.UserId, "VoiceIdentificationByUrl() message: "+vibu.Message)
@@ -719,7 +719,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe1 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe1)
+	json.Unmarshal(ret, &cfe1)
 	assert.Equal(201, cfe1.Status, "CreateFaceEnrollment() message: "+cfe1.Message)
 	assert.Equal("SUCC", cfe1.ResponseCode, "CreateFaceEnrollment() message: "+cfe1.Message)
 	faceEnrollmentId := cfe1.FaceEnrollmentId
@@ -729,7 +729,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe2 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe2)
+	json.Unmarshal(ret, &cfe2)
 	assert.Equal(201, cfe2.Status, "CreateFaceEnrollment() message: "+cfe2.Message)
 	assert.Equal("SUCC", cfe2.ResponseCode, "CreateFaceEnrollment() message: "+cfe2.Message)
 
@@ -738,7 +738,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe3 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe3)
+	json.Unmarshal(ret, &cfe3)
 	assert.Equal(201, cfe3.Status, "CreateFaceEnrollment() message: "+cfe3.Message)
 	assert.Equal("SUCC", cfe3.ResponseCode, "CreateFaceEnrollment() message: "+cfe3.Message)
 
@@ -747,7 +747,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe4 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe4)
+	json.Unmarshal(ret, &cfe4)
 	assert.Equal(201, cfe4.Status, "CreateFaceEnrollment() message: "+cfe4.Message)
 	assert.Equal("SUCC", cfe4.ResponseCode, "CreateFaceEnrollment() message: "+cfe4.Message)
 
@@ -756,7 +756,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe5 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe5)
+	json.Unmarshal(ret, &cfe5)
 	assert.Equal(201, cfe5.Status, "CreateFaceEnrollment() message: "+cfe5.Message)
 	assert.Equal("SUCC", cfe5.ResponseCode, "CreateFaceEnrollment() message: "+cfe5.Message)
 
@@ -765,7 +765,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var cfe6 structs.CreateFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &cfe6)
+	json.Unmarshal(ret, &cfe6)
 	assert.Equal(201, cfe6.Status, "CreateFaceEnrollment() message: "+cfe6.Message)
 	assert.Equal("SUCC", cfe6.ResponseCode, "CreateFaceEnrollment() message: "+cfe6.Message)
 
@@ -773,10 +773,10 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var fve1 structs.GetAllFaceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &fve1)
-	assert.Equal(200, fve1.Status, "GetAllFaceEnrollments() message: "+ret)
-	assert.Equal("SUCC", fve1.ResponseCode, "GetAllFaceEnrollments() message: "+ret)
-	assert.Equal(3, len(fve1.FaceEnrollments), "GetAllFaceEnrollments() message: "+ret)
+	json.Unmarshal(ret, &fve1)
+	assert.Equal(200, fve1.Status, "GetAllFaceEnrollments() message: "+fve1.Message)
+	assert.Equal("SUCC", fve1.ResponseCode, "GetAllFaceEnrollments() message: "+fve1.Message)
+	assert.Equal(3, len(fve1.FaceEnrollments), "GetAllFaceEnrollments() message: "+fve1.Message)
 
 	// Face Verification
 	ret, err = myVoiceIt.FaceVerification(userId1, "./faceVerificationB1.mp4")
@@ -784,7 +784,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var fv structs.FaceVerificationReturn
-	json.Unmarshal([]byte(ret), &fv)
+	json.Unmarshal(ret, &fv)
 	assert.Equal(200, fv.Status, "FaceVerification() message: "+fv.Message)
 	assert.Equal("SUCC", fv.ResponseCode, "FaceVerification() message: "+fv.Message)
 
@@ -794,7 +794,7 @@ func TestFace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	var fi structs.FaceIdentificationReturn
-	json.Unmarshal([]byte(ret), &fi)
+	json.Unmarshal(ret, &fi)
 	assert.Equal(200, fi.Status, "FaceIdentification() message: "+fi.Message)
 	assert.Equal("SUCC", fi.ResponseCode, "FaceIdentification() message: "+fi.Message)
 	assert.Equal(userId1, fi.UserId, "FaceIdentification() message: "+fi.Message)
@@ -806,14 +806,14 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.DeleteFaceEnrollment(userId1, faceEnrollmentId)
 	assert.Equal(err, nil)
 	var dfe structs.DeleteFaceEnrollmentReturn
-	json.Unmarshal([]byte(ret), &dfe)
+	json.Unmarshal(ret, &dfe)
 	assert.Equal(200, dfe.Status, "DeleteFaceEnrollment() message: "+dfe.Message)
 	assert.Equal("SUCC", dfe.ResponseCode, "DeleteFaceEnrollment() message: "+dfe.Message)
 
 	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var fve2 structs.GetAllFaceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &fve2)
+	json.Unmarshal(ret, &fve2)
 	assert.Equal(200, fve2.Status, "GetAllFaceEnrollments() message: "+fve2.Message)
 	assert.Equal("SUCC", fve2.ResponseCode, "GetAllFaceEnrollments() message: "+fve2.Message)
 
@@ -821,23 +821,23 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.DeleteAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
 	var dafe structs.DeleteAllFaceEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dafe)
+	json.Unmarshal(ret, &dafe)
 	assert.Equal(200, dafe.Status, "DeleteAllFaceEnrollments() message: "+dafe.Message)
 	assert.Equal("SUCC", dafe.ResponseCode, "DeleteAllFaceEnrollments() message: "+dafe.Message)
 
 	var fve3 structs.GetAllFaceEnrollmentsReturn
 	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
-	json.Unmarshal([]byte(ret), &fve3)
+	json.Unmarshal(ret, &fve3)
 	assert.Equal(200, fve3.Status, "GetAllFaceEnrollments() message: "+fve3.Message)
 	assert.Equal("SUCC", fve3.ResponseCode, "GetAllFaceEnrollments() message: "+fve3.Message)
-	assert.Equal(0, len(fve3.FaceEnrollments), "GetAllFaceEnrollments() message: "+ret)
+	assert.Equal(0, len(fve3.FaceEnrollments), "GetAllFaceEnrollments() message: "+fve3.Message)
 
 	// Delete All Enrollments
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
 	assert.Equal(err, nil)
 	var dae structs.DeleteAllEnrollmentsReturn
-	json.Unmarshal([]byte(ret), &dae)
+	json.Unmarshal(ret, &dae)
 	assert.Equal(200, dae.Status, "DeleteAllEnrollments() message: "+dae.Message)
 	assert.Equal("SUCC", dae.ResponseCode, "DeleteAllEnrollments() message: "+dae.Message)
 
@@ -861,42 +861,42 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB1.mp4")
 	assert.Equal(err, nil)
 	var cfebu1 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu1)
+	json.Unmarshal(ret, &cfebu1)
 	assert.Equal(201, cfebu1.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu1.Message)
 	assert.Equal("SUCC", cfebu1.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu1.Message)
 
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB2.mp4")
 	assert.Equal(err, nil)
 	var cfebu2 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu2)
+	json.Unmarshal(ret, &cfebu2)
 	assert.Equal(201, cfebu2.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu2.Message)
 	assert.Equal("SUCC", cfebu2.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu2.Message)
 
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB3.mp4")
 	assert.Equal(err, nil)
 	var cfebu3 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu3)
+	json.Unmarshal(ret, &cfebu3)
 	assert.Equal(201, cfebu3.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu3.Message)
 	assert.Equal("SUCC", cfebu3.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu3.Message)
 
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC1.mov")
 	assert.Equal(err, nil)
 	var cfebu4 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu4)
+	json.Unmarshal(ret, &cfebu4)
 	assert.Equal(201, cfebu4.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu4.Message)
 	assert.Equal("SUCC", cfebu4.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu4.Message)
 
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC2.mov")
 	assert.Equal(err, nil)
 	var cfebu5 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu5)
+	json.Unmarshal(ret, &cfebu5)
 	assert.Equal(201, cfebu5.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu5.Message)
 	assert.Equal("SUCC", cfebu5.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu5.Message)
 
 	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC3.mov")
 	assert.Equal(err, nil)
 	var cfebu6 structs.CreateFaceEnrollmentByUrlReturn
-	json.Unmarshal([]byte(ret), &cfebu6)
+	json.Unmarshal(ret, &cfebu6)
 	assert.Equal(201, cfebu6.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu6.Message)
 	assert.Equal("SUCC", cfebu6.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu6.Message)
 
@@ -904,7 +904,7 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.FaceVerificationByUrl(userId1, "https://drive.voiceit.io/files/faceVerificationB1.mp4")
 	assert.Equal(err, nil)
 	var fvbu structs.FaceVerificationByUrlReturn
-	json.Unmarshal([]byte(ret), &fvbu)
+	json.Unmarshal(ret, &fvbu)
 	assert.Equal(200, fvbu.Status, "FaceVerificationByUrl() message: "+fvbu.Message)
 	assert.Equal("SUCC", fvbu.ResponseCode, "FaceVerificationByUrl() message: "+fvbu.Message)
 
@@ -912,7 +912,7 @@ func TestFace(t *testing.T) {
 	ret, err = myVoiceIt.FaceIdentificationByUrl(groupId, "https://drive.voiceit.io/files/faceVerificationB1.mp4")
 	assert.Equal(err, nil)
 	var fibu structs.FaceIdentificationByUrlReturn
-	json.Unmarshal([]byte(ret), &fibu)
+	json.Unmarshal(ret, &fibu)
 	assert.Equal(200, fibu.Status, "FaceIdentificationByUrl() message: "+fibu.Message)
 	assert.Equal("SUCC", fibu.ResponseCode, "FaceIdentificationByUrl() message: "+fibu.Message)
 	assert.Equal(userId1, fibu.UserId, "FaceIdentificationByUrl() message: "+fibu.Message)
