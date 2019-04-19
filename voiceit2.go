@@ -100,7 +100,7 @@ func (vi VoiceIt2) CreateUser() ([]byte, error) {
 }
 
 // CheckUserExists takes the userId generated during a createUser and returns
-// a JSON object which contains the boolean "exists" which shows whether a given user exists
+// an object which contains the boolean "exists" which shows whether a given user exists
 // For more details see https://api.voiceit.io/#check-if-a-specific-user-exists
 func (vi VoiceIt2) CheckUserExists(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
