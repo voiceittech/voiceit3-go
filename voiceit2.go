@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const PlatformVersion string = "v2.2.1"
+const PlatformVersion string = "v2.2.2"
 
 type VoiceIt2 struct {
 	ApiKey          string
