@@ -1,6 +1,5 @@
-module github.com/voiceittech/VoiceIt2-Go/v2
+module github.com/voiceittech/VoiceIt2-Go
 
 require (
 	github.com/stretchr/testify v1.2.2
-	github.com/voiceittech/VoiceIt2-Go v1.2.1
 )
