@@ -235,7 +235,6 @@ func TestVideo(t *testing.T) {
 	json.Unmarshal(ret, &cve1)
 	assert.Equal(201, cve1.Status, "CreateVideoEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVideoEnrollment() message: "+cve1.Message)
-	enrollmentId := cve1.Id
 
 	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov")
 	if err != nil {
@@ -311,41 +310,6 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, vi1.Status, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal("SUCC", vi1.ResponseCode, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal(userId1, vi1.UserId, "VideoIdentification() message: "+vi1.Message)
-
-	myVoiceIt.DeleteVideoEnrollment(userId1, enrollmentId)
-	/*
-		// Delete Video Enrollment
-		ret, err = myVoiceIt.DeleteVideoEnrollment(userId1, enrollmentId)
-		assert.Equal(err, nil)
-		var dve structs.DeleteVideoEnrollmentReturn
-		json.Unmarshal(ret, &dve)
-		assert.Equal(200, dve.Status, "DeleteVideoEnrollment() message: "+dve.Message)
-		assert.Equal("SUCC", dve.ResponseCode, "DeleteVideoEnrollment() message: "+dve.Message)
-	*/
-
-	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
-	assert.Equal(err, nil)
-	var gve2 structs.GetAllVideoEnrollmentsReturn
-	json.Unmarshal(ret, &gve2)
-	// for _, videoEnrollment := range gve2.VideoEnrollments {
-	// assert.NotEqual(enrollmentId, videoEnrollment.VideoEnrollmentId, "GetAllVideoEnrollments() message: "+gve2.Message)
-	// }
-
-	// Delete All Video Enrollments
-	ret, err = myVoiceIt.DeleteAllVideoEnrollments(userId1)
-	assert.Equal(err, nil)
-	var dave structs.DeleteAllVideoEnrollmentsReturn
-	json.Unmarshal(ret, &dave)
-	assert.Equal(200, dave.Status, "DeleteAllVideoEnrollments() message: "+dave.Message)
-	assert.Equal("SUCC", dave.ResponseCode, "DeleteAllVideoEnrollments() message: "+dave.Message)
-
-	var gve3 structs.GetAllVideoEnrollmentsReturn
-	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
-	assert.Equal(err, nil)
-	json.Unmarshal(ret, &gve3)
-	assert.Equal(200, gve3.Status, "GetAllVideoEnrollments() message: "+gve3.Message)
-	assert.Equal("SUCC", gve3.ResponseCode, "GetAllVideoEnrollments() message: "+gve3.Message)
-	assert.Equal(0, len(gve3.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve3.Message)
 
 	// Delete All Enrollments
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
@@ -486,7 +450,6 @@ func TestVoice(t *testing.T) {
 	json.Unmarshal(ret, &cve1)
 	assert.Equal(201, cve1.Status, "CreateVoiceEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVoiceEnrollment() message: "+cve1.Message)
-	enrollmentId := cve1.Id
 
 	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav")
 	if err != nil {
@@ -562,37 +525,6 @@ func TestVoice(t *testing.T) {
 	assert.Equal(200, vi.Status, "VoiceIdentification() message: "+vi.Message)
 	assert.Equal("SUCC", vi.ResponseCode, "VoiceIdentification() message: "+vi.Message)
 	assert.Equal(userId1, vi.UserId, "VoiceIdentification() message: "+vi.Message)
-
-	// Delete Voice Enrollment
-	ret, err = myVoiceIt.DeleteVoiceEnrollment(userId1, enrollmentId)
-	assert.Equal(err, nil)
-	var dve structs.DeleteVoiceEnrollmentReturn
-	json.Unmarshal(ret, &dve)
-	assert.Equal(200, dve.Status, "DeleteVoiceEnrollment() message: "+dve.Message)
-	assert.Equal("SUCC", dve.ResponseCode, "DeleteVoiceEnrollment() message: "+dve.Message)
-
-	ret, err = myVoiceIt.GetAllVoiceEnrollments(userId1)
-	assert.Equal(err, nil)
-	var gve2 structs.GetAllVoiceEnrollmentsReturn
-	json.Unmarshal(ret, &gve2)
-	assert.Equal(200, gve2.Status, "GetAllVoiceEnrollments() message: "+gve2.Message)
-	assert.Equal("SUCC", gve2.ResponseCode, "GetAllVoiceEnrollments() message: "+gve2.Message)
-
-	// Delete All Voice Enrollments
-	ret, err = myVoiceIt.DeleteAllVoiceEnrollments(userId1)
-	assert.Equal(err, nil)
-	var dave structs.DeleteAllVoiceEnrollmentsReturn
-	json.Unmarshal(ret, &dave)
-	assert.Equal(200, dave.Status, "DeleteAllVoiceEnrollments() message: "+dave.Message)
-	assert.Equal("SUCC", dave.ResponseCode, "DeleteAllVoiceEnrollments() message: "+dave.Message)
-
-	var gve3 structs.GetAllVoiceEnrollmentsReturn
-	ret, err = myVoiceIt.GetAllVoiceEnrollments(userId1)
-	assert.Equal(err, nil)
-	json.Unmarshal(ret, &gve3)
-	assert.Equal(200, gve3.Status, "GetAllVoiceEnrollments() message: "+gve3.Message)
-	assert.Equal("SUCC", gve3.ResponseCode, "GetAllVoiceEnrollments() message: "+gve3.Message)
-	assert.Equal(0, len(gve3.VoiceEnrollments), "GetAllVoiceEnrollments() message: "+gve3.Message)
 
 	// Delete All Enrollments
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
@@ -725,7 +657,6 @@ func TestFace(t *testing.T) {
 	json.Unmarshal(ret, &cfe1)
 	assert.Equal(201, cfe1.Status, "CreateFaceEnrollment() message: "+cfe1.Message)
 	assert.Equal("SUCC", cfe1.ResponseCode, "CreateFaceEnrollment() message: "+cfe1.Message)
-	faceEnrollmentId := cfe1.FaceEnrollmentId
 
 	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4")
 	if err != nil {
@@ -804,37 +735,6 @@ func TestFace(t *testing.T) {
 
 	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
-
-	// Delete Face Enrollment
-	ret, err = myVoiceIt.DeleteFaceEnrollment(userId1, faceEnrollmentId)
-	assert.Equal(err, nil)
-	var dfe structs.DeleteFaceEnrollmentReturn
-	json.Unmarshal(ret, &dfe)
-	assert.Equal(200, dfe.Status, "DeleteFaceEnrollment() message: "+dfe.Message)
-	assert.Equal("SUCC", dfe.ResponseCode, "DeleteFaceEnrollment() message: "+dfe.Message)
-
-	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
-	assert.Equal(err, nil)
-	var fve2 structs.GetAllFaceEnrollmentsReturn
-	json.Unmarshal(ret, &fve2)
-	assert.Equal(200, fve2.Status, "GetAllFaceEnrollments() message: "+fve2.Message)
-	assert.Equal("SUCC", fve2.ResponseCode, "GetAllFaceEnrollments() message: "+fve2.Message)
-
-	// Delete All Face Enrollments
-	ret, err = myVoiceIt.DeleteAllFaceEnrollments(userId1)
-	assert.Equal(err, nil)
-	var dafe structs.DeleteAllFaceEnrollmentsReturn
-	json.Unmarshal(ret, &dafe)
-	assert.Equal(200, dafe.Status, "DeleteAllFaceEnrollments() message: "+dafe.Message)
-	assert.Equal("SUCC", dafe.ResponseCode, "DeleteAllFaceEnrollments() message: "+dafe.Message)
-
-	var fve3 structs.GetAllFaceEnrollmentsReturn
-	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
-	assert.Equal(err, nil)
-	json.Unmarshal(ret, &fve3)
-	assert.Equal(200, fve3.Status, "GetAllFaceEnrollments() message: "+fve3.Message)
-	assert.Equal("SUCC", fve3.ResponseCode, "GetAllFaceEnrollments() message: "+fve3.Message)
-	assert.Equal(0, len(fve3.FaceEnrollments), "GetAllFaceEnrollments() message: "+fve3.Message)
 
 	// Delete All Enrollments
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
