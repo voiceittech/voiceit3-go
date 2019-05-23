@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/voiceittech/VoiceIt2-Go/structs"
+	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
 func getUserId(arg []byte) string {
