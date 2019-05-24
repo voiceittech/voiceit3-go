@@ -3,7 +3,6 @@ package structs
 type VoiceVerificationReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
-	Confidence     float32 `json:"confidence"`
 	Text           string  `json:"text"`
 	TextConfidence float32 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
@@ -13,7 +12,6 @@ type VoiceVerificationReturn struct {
 type VoiceVerificationByUrlReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
-	Confidence     float32 `json:"confidence"`
 	Text           string  `json:"text"`
 	TextConfidence float32 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
