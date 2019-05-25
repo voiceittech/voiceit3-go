@@ -1,11 +1,10 @@
 package structs
 
 type Group struct {
-	CreatedAt   int      `json:"createdAt"`
-	Description string   `json:"description"`
-	GroupId     string   `json:"groupId"`
-	Users       []string `json:"users"`
-	UserCount   int      `json:"userCount"`
+	CreatedAt int      `json:"createdAt"`
+	GroupId   string   `json:"groupId"`
+	Users     []string `json:"users"`
+	UserCount int      `json:"userCount"`
 }
 
 type GetAllGroupsReturn struct {
@@ -19,8 +18,6 @@ type GetAllGroupsReturn struct {
 
 type GetGroupReturn struct {
 	Message      string   `json:"message"`
-	Description  string   `json:"description"`
-	GroupId      string   `json:"groupId"`
 	CreatedAt    int      `json:"createdAt"`
 	Users        []string `json:"users"`
 	UserCount    int      `json:"userCount"`
