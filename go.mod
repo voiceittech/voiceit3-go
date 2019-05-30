@@ -1,4 +1,4 @@
-module github.com/voiceittech/VoiceIt2-Go
+module github.com/voiceittech/VoiceIt2-Go/v2
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
