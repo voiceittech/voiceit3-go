@@ -2,8 +2,8 @@ package voiceit2
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const PlatformVersion string = "v2.0.1"
+const PlatformVersion string = "v2.1.0"
 
 type VoiceIt2 struct {
 	ApiKey          string
@@ -49,8 +49,7 @@ func (vi *VoiceIt2) RemoveNotificationUrl() {
 func (vi VoiceIt2) GetAllUsers() ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllUsers():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllUsers error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -59,14 +58,12 @@ func (vi VoiceIt2) GetAllUsers() ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllUsers():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllUsers error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllUsers():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllUsers error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -77,8 +74,7 @@ func (vi VoiceIt2) GetAllUsers() ([]byte, error) {
 func (vi VoiceIt2) CreateUser() ([]byte, error) {
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUser error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -87,14 +83,12 @@ func (vi VoiceIt2) CreateUser() ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUser error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUser error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -105,8 +99,7 @@ func (vi VoiceIt2) CreateUser() ([]byte, error) {
 func (vi VoiceIt2) CheckUserExists(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckUserExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckUserExists error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -115,14 +108,12 @@ func (vi VoiceIt2) CheckUserExists(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckUserExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckUserExists error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckUserExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckUserExists error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -133,8 +124,7 @@ func (vi VoiceIt2) CheckUserExists(userId string) ([]byte, error) {
 func (vi VoiceIt2) DeleteUser(userId string) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteUser error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -143,14 +133,12 @@ func (vi VoiceIt2) DeleteUser(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteUser error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteUser error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -161,8 +149,7 @@ func (vi VoiceIt2) DeleteUser(userId string) ([]byte, error) {
 func (vi VoiceIt2) GetGroupsForUser(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+"/groups"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroupsForUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroupsForUser error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -171,14 +158,12 @@ func (vi VoiceIt2) GetGroupsForUser(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroupsForUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroupsForUser error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroupsForUser():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroupsForUser error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -188,8 +173,7 @@ func (vi VoiceIt2) GetGroupsForUser(userId string) ([]byte, error) {
 func (vi VoiceIt2) GetAllGroups() ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllGroups():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllGroups error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -198,14 +182,12 @@ func (vi VoiceIt2) GetAllGroups() ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllGroups():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllGroups error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllGroups():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllGroups error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -216,8 +198,7 @@ func (vi VoiceIt2) GetAllGroups() ([]byte, error) {
 func (vi VoiceIt2) GetGroup(groupId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroup error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -226,14 +207,12 @@ func (vi VoiceIt2) GetGroup(groupId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroup error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetGroup error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -244,8 +223,7 @@ func (vi VoiceIt2) GetGroup(groupId string) ([]byte, error) {
 func (vi VoiceIt2) CheckGroupExists(groupId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+"/exists"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckGroupExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckGroupExists error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -254,14 +232,12 @@ func (vi VoiceIt2) CheckGroupExists(groupId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckGroupExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckGroupExists error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CheckGroupExists():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CheckGroupExists error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -273,18 +249,15 @@ func (vi VoiceIt2) CreateGroup(description string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("description", description)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateGroup():", err)
-		return []byte{}, err
-	}
+	defer writer.Close()
 
-	writer.Close()
+	if err := writer.WriteField("description", description); err != nil {
+		return []byte{}, errors.New("CreateGroup error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/groups"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateGroup error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -294,14 +267,12 @@ func (vi VoiceIt2) CreateGroup(description string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateGroup error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateGroup error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -313,24 +284,19 @@ func (vi VoiceIt2) AddUserToGroup(groupId string, userId string) ([]byte, error)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.AddUserToGroup():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
 
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.AddUserToGroup():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("PUT", vi.BaseUrl+"/groups/addUser"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.AddUserToGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -340,14 +306,12 @@ func (vi VoiceIt2) AddUserToGroup(groupId string, userId string) ([]byte, error)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.AddUserToGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.AddUserToGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -359,24 +323,19 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.RemoveUserFromGroup():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
 
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.RemoveUserFromGroup():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("PUT", vi.BaseUrl+"/groups/removeUser"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.RemoveUserFromGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -386,14 +345,12 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.RemoveUserFromGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.RemoveUserFromGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -404,12 +361,11 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 func (vi VoiceIt2) DeleteGroup(groupId string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	writer.Close()
+	defer writer.Close()
 
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteGroup error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -419,14 +375,12 @@ func (vi VoiceIt2) DeleteGroup(groupId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteGroup error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteGroup():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteGroup error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -437,8 +391,7 @@ func (vi VoiceIt2) DeleteGroup(groupId string) ([]byte, error) {
 func (vi VoiceIt2) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVoiceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVoiceEnrollments error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -447,14 +400,12 @@ func (vi VoiceIt2) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVoiceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVoiceEnrollments error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVoiceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVoiceEnrollments error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -465,8 +416,7 @@ func (vi VoiceIt2) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 func (vi VoiceIt2) GetAllVideoEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVideoEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVideoEnrollments error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -475,14 +425,12 @@ func (vi VoiceIt2) GetAllVideoEnrollments(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVideoEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVideoEnrollments error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllVideoEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllVideoEnrollments error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -493,8 +441,7 @@ func (vi VoiceIt2) GetAllVideoEnrollments(userId string) ([]byte, error) {
 func (vi VoiceIt2) GetAllFaceEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+userId+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllFaceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllFaceEnrollments error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -503,14 +450,12 @@ func (vi VoiceIt2) GetAllFaceEnrollments(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllFaceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllFaceEnrollments error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetAllFaceEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetAllFaceEnrollments error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -523,50 +468,44 @@ func (vi VoiceIt2) GetAllFaceEnrollments(userId string) ([]byte, error) {
 func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -576,14 +515,12 @@ func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -597,36 +534,27 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -636,14 +564,12 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVoiceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -654,36 +580,36 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
-	part.Write(fileContents)
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
-	writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -693,14 +619,12 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -712,23 +636,19 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollmentByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -738,14 +658,12 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateFaceEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -758,50 +676,44 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
+	defer file.Close()
 
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -811,14 +723,12 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollment():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -832,36 +742,27 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -871,14 +772,12 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateVideoEnrollmentByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -889,8 +788,7 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 func (vi VoiceIt2) DeleteAllEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/all"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteAllEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteAllEnrollments error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -899,14 +797,12 @@ func (vi VoiceIt2) DeleteAllEnrollments(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteAllEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteAllEnrollments error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.DeleteAllEnrollments():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("DeleteAllEnrollments error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -919,50 +815,44 @@ func (vi VoiceIt2) DeleteAllEnrollments(userId string) ([]byte, error) {
 func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/voice"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -972,14 +862,12 @@ func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phra
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -993,36 +881,27 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1032,14 +911,12 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1050,38 +927,36 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
 
-	writer.Close()
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
+	}
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/face"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1091,14 +966,12 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1109,24 +982,20 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	err := writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerificationByUrl():", err)
-		return []byte{}, err
+
+	defer writer.Close()
+
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1136,14 +1005,12 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1156,50 +1023,44 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/video"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1209,14 +1070,12 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1230,36 +1089,27 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("userId", userId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1269,14 +1119,12 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoVerificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1290,50 +1138,44 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/voice"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1343,14 +1185,12 @@ func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, p
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1365,36 +1205,27 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1404,14 +1235,12 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VoiceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1425,50 +1254,44 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 
-	writer.Close()
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/video"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1478,14 +1301,12 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1500,36 +1321,28 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	err := writer.WriteField("fileUrl", fileUrl)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("contentLanguage", contentLanguage)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("phrase", phrase)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1539,14 +1352,12 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.VideoIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1558,38 +1369,36 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
+	defer file.Close()
+
 	fileContents, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
-	file.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
+	defer writer.Close()
+
 	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
-	}
-	part.Write(fileContents)
-
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
 
-	writer.Close()
+	if _, err := part.Write(fileContents); err != nil {
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
+	}
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/face"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1599,14 +1408,12 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentification():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1619,24 +1426,19 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	err := writer.WriteField("fileUrl", fileUrl)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentificationByUrl():", err)
-		return []byte{}, err
+	defer writer.Close()
+
+	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
+		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
 
-	err = writer.WriteField("groupId", groupId)
-	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentificationByUrl():", err)
-		return []byte{}, err
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
-
-	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1646,14 +1448,12 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.FaceIdentificationByUrl():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1663,8 +1463,7 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 func (vi VoiceIt2) GetPhrases(contentLanguage string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetPhrases():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetPhrases error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1673,14 +1472,12 @@ func (vi VoiceIt2) GetPhrases(contentLanguage string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetPhrases():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetPhrases error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.GetPhrases():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("GetPhrases error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1694,8 +1491,7 @@ func (vi VoiceIt2) CreateUserToken(userId string, timeout time.Duration) ([]byte
 	var req *http.Request
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUserToken():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUserToken error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1704,14 +1500,12 @@ func (vi VoiceIt2) CreateUserToken(userId string, timeout time.Duration) ([]byte
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUserToken():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUserToken error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.CreateUserToken():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("CreateUserToken error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1721,8 +1515,7 @@ func (vi VoiceIt2) CreateUserToken(userId string, timeout time.Duration) ([]byte
 func (vi VoiceIt2) ExpireUserTokens(userId string) ([]byte, error) {
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/expireTokens"+vi.NotificationUrl, nil)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.ExpireUserTokens():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("ExpireUserTokens error: " + err.Error())
 	}
 	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
 	req.Header.Add("platformId", "39")
@@ -1731,14 +1524,12 @@ func (vi VoiceIt2) ExpireUserTokens(userId string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.ExpireUserTokens():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("ExpireUserTokens error: " + err.Error())
 	}
 	defer resp.Body.Close()
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error in VoiceIt2-Go.ExpireUserTokens():", err)
-		return []byte{}, err
+		return []byte{}, errors.New("ExpireUserTokens error: " + err.Error())
 	}
 	return reply, nil
 }

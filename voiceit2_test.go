@@ -733,7 +733,7 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", fi.ResponseCode, "FaceIdentification() message: "+fi.Message)
 	assert.Equal(userId1, fi.UserId, "FaceIdentification() message: "+fi.Message)
 
-	ret, err = myVoiceIt.GetAllFaceEnrollments(userId1)
+	_, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
 
 	// Delete All Enrollments
