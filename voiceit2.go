@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const PlatformVersion string = "v2.1.1"
+const PlatformVersion string = "v2.1.2"
 
 type VoiceIt2 struct {
 	ApiKey          string
@@ -248,11 +248,11 @@ func (vi VoiceIt2) CreateGroup(description string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("description", description); err != nil {
 		return []byte{}, errors.New("CreateGroup error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/groups"+vi.NotificationUrl, body)
 	if err != nil {
@@ -283,8 +283,6 @@ func (vi VoiceIt2) AddUserToGroup(groupId string, userId string) ([]byte, error)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("groupId", groupId); err != nil {
 		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
@@ -292,6 +290,8 @@ func (vi VoiceIt2) AddUserToGroup(groupId string, userId string) ([]byte, error)
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("PUT", vi.BaseUrl+"/groups/addUser"+vi.NotificationUrl, body)
 	if err != nil {
@@ -322,8 +322,6 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("groupId", groupId); err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
@@ -331,6 +329,8 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("PUT", vi.BaseUrl+"/groups/removeUser"+vi.NotificationUrl, body)
 	if err != nil {
@@ -360,7 +360,8 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 func (vi VoiceIt2) DeleteGroup(groupId string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	defer writer.Close()
+
+	writer.Close()
 
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, body)
 	if err != nil {
@@ -474,8 +475,6 @@ func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
@@ -496,6 +495,8 @@ func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, 
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice"+vi.NotificationUrl, body)
 	if err != nil {
@@ -528,8 +529,6 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
@@ -545,6 +544,8 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -581,8 +582,6 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
@@ -595,6 +594,8 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face"+vi.NotificationUrl, body)
 	if err != nil {
@@ -625,8 +626,6 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
@@ -634,6 +633,8 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -672,8 +673,6 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
@@ -694,6 +693,8 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video"+vi.NotificationUrl, body)
 	if err != nil {
@@ -726,8 +727,6 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
@@ -743,6 +742,8 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -806,8 +807,6 @@ func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phra
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
@@ -828,6 +827,8 @@ func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phra
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/voice"+vi.NotificationUrl, body)
 	if err != nil {
@@ -860,8 +861,6 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
@@ -877,6 +876,8 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -913,8 +914,6 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
@@ -927,6 +926,8 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/face"+vi.NotificationUrl, body)
 	if err != nil {
@@ -957,8 +958,6 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
 		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
@@ -966,6 +965,8 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1004,8 +1005,6 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
@@ -1026,6 +1025,8 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/video"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1058,8 +1059,6 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("userId", userId); err != nil {
 		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
@@ -1075,6 +1074,8 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1114,8 +1115,6 @@ func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, p
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
@@ -1136,6 +1135,8 @@ func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, p
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/voice"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1169,8 +1170,6 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
@@ -1186,6 +1185,8 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/voice/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1225,8 +1226,6 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
@@ -1247,6 +1246,8 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/video"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1280,8 +1281,6 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	err := writer.WriteField("fileUrl", fileUrl)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
@@ -1298,6 +1297,8 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 	if err := writer.WriteField("phrase", phrase); err != nil {
 		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/video/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1335,8 +1336,6 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
@@ -1349,6 +1348,8 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 	if err := writer.WriteField("groupId", groupId); err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/face"+vi.NotificationUrl, body)
 	if err != nil {
@@ -1380,8 +1381,6 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	defer writer.Close()
-
 	if err := writer.WriteField("fileUrl", fileUrl); err != nil {
 		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
@@ -1389,6 +1388,8 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 	if err := writer.WriteField("groupId", groupId); err != nil {
 		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
+
+	writer.Close()
 
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/face/byUrl"+vi.NotificationUrl, body)
 	if err != nil {
