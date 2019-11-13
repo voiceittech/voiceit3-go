@@ -7,13 +7,12 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
+	"path"
 	"strconv"
 	"time"
 )
 
-const PlatformVersion string = "v2.1.0"
+const PlatformVersion string = "v2.1.1"
 
 type VoiceIt2 struct {
 	ApiKey          string
@@ -466,13 +465,8 @@ func (vi VoiceIt2) GetAllFaceEnrollments(userId string) ([]byte, error) {
 // and absolute file path for a audio recording to create a voice enrollment for the user
 // For more details see https://api.voiceit.io/#create-voice-enrollment
 func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
@@ -482,7 +476,7 @@ func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, 
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
@@ -578,13 +572,8 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 // absolute file path for a video recording to create a face enrollment for the user
 // For more details see https://api.voiceit.io/#create-face-enrollment
 func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
@@ -594,7 +583,7 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
@@ -674,13 +663,8 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 // and absolute file path for a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment
 func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
@@ -690,7 +674,7 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
@@ -813,13 +797,8 @@ func (vi VoiceIt2) DeleteAllEnrollments(userId string) ([]byte, error) {
 // and absolute file path for a audio recording to verify the user's voice
 // For more details see https://api.voiceit.io/#verify-a-user-s-voice
 func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
@@ -829,7 +808,7 @@ func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phra
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
@@ -925,13 +904,8 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 // absolute file path for a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-s-face
 func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
@@ -941,7 +915,7 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
@@ -1021,13 +995,8 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 // and absolute file path for a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification
 func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("VideoVerification error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
@@ -1037,7 +1006,7 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
@@ -1136,13 +1105,8 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice
 func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
@@ -1152,7 +1116,7 @@ func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, p
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("recording", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("recording", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
@@ -1252,13 +1216,8 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
 func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
@@ -1268,7 +1227,7 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
@@ -1367,13 +1326,8 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-face
 func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
-	}
-	defer file.Close()
 
-	fileContents, err := ioutil.ReadAll(file)
+	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
@@ -1383,7 +1337,7 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 
 	defer writer.Close()
 
-	part, err := writer.CreateFormFile("video", filepath.Base(file.Name()))
+	part, err := writer.CreateFormFile("video", path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
