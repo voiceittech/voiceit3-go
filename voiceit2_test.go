@@ -36,7 +36,8 @@ func TestIO(t *testing.T) {
 	}
 
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	// myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := NewClient(os.Getenv("VIAPIKEY"), os.Getenv("VIAPITOKEN"))
 	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
 	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
@@ -59,7 +60,7 @@ func TestIO(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
@@ -205,7 +206,7 @@ func downloadFromUrl(url string) {
 
 func TestVideo(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -420,7 +421,7 @@ func TestVideo(t *testing.T) {
 
 func TestVoice(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -627,7 +628,7 @@ func TestVoice(t *testing.T) {
 
 func TestFace(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := &VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
