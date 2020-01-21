@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const PlatformVersion string = "v2.1.2"
+const PlatformVersion string = "v2.1.3"
 
 type VoiceIt2 struct {
 	ApiKey          string
@@ -22,8 +22,8 @@ type VoiceIt2 struct {
 }
 
 // NewClient returns a new VoiceIt2 client
-func NewClient(key string, tok string) *VoiceIt2 {
-	return &VoiceIt2{
+func NewClient(key string, tok string) VoiceIt2 {
+	return VoiceIt2{
 		ApiKey:          key,
 		ApiToken:        tok,
 		BaseUrl:         "https://api.voiceit.io",
