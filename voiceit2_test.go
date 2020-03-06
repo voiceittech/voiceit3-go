@@ -36,8 +36,7 @@ func TestIO(t *testing.T) {
 	}
 
 	assert := assert.New(t)
-	// myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
-	myVoiceIt := NewClient(os.Getenv("VIAPIKEY"), os.Getenv("VIAPITOKEN"))
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
 	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
@@ -60,7 +59,7 @@ func TestIO(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
@@ -206,7 +205,7 @@ func downloadFromUrl(url string) {
 
 func TestVideo(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -227,6 +226,14 @@ func TestVideo(t *testing.T) {
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC1.mov")
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC2.mov")
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+
+	defer os.Remove("./videoEnrollmentB1.mov")
+	defer os.Remove("./videoEnrollmentB2.mov")
+	defer os.Remove("./videoEnrollmentB3.mov")
+	defer os.Remove("./videoVerificationB1.mov")
+	defer os.Remove("./videoEnrollmentC1.mov")
+	defer os.Remove("./videoEnrollmentC2.mov")
+	defer os.Remove("./videoEnrollmentC3.mov")
 
 	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov")
 	if err != nil {
@@ -410,18 +417,11 @@ func TestVideo(t *testing.T) {
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
 
-	os.Remove("./videoEnrollmentB1.mov")
-	os.Remove("./videoEnrollmentB2.mov")
-	os.Remove("./videoEnrollmentB3.mov")
-	os.Remove("./videoVerificationB1.mov")
-	os.Remove("./videoEnrollmentC1.mov")
-	os.Remove("./videoEnrollmentC2.mov")
-	os.Remove("./videoEnrollmentC3.mov")
 }
 
 func TestVoice(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -442,6 +442,14 @@ func TestVoice(t *testing.T) {
 	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC1.wav")
 	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC2.wav")
 	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC3.wav")
+
+	defer os.Remove("./enrollmentA1.wav")
+	defer os.Remove("./enrollmentA2.wav")
+	defer os.Remove("./enrollmentA3.wav")
+	defer os.Remove("./verificationA1.wav")
+	defer os.Remove("./enrollmentC1.wav")
+	defer os.Remove("./enrollmentC2.wav")
+	defer os.Remove("./enrollmentC3.wav")
 
 	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav")
 	if err != nil {
@@ -616,19 +624,11 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
-
-	os.Remove("./enrollmentA1.wav")
-	os.Remove("./enrollmentA2.wav")
-	os.Remove("./enrollmentA3.wav")
-	os.Remove("./verificationA1.wav")
-	os.Remove("./enrollmentC1.wav")
-	os.Remove("./enrollmentC2.wav")
-	os.Remove("./enrollmentC3.wav")
 }
 
 func TestFace(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt2{ApiKey: os.Getenv("VIAPIKEY"), ApiToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -649,6 +649,14 @@ func TestFace(t *testing.T) {
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC1.mov")
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC2.mov")
 	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+
+	defer os.Remove("./faceEnrollmentB1.mp4")
+	defer os.Remove("./faceEnrollmentB2.mp4")
+	defer os.Remove("./faceEnrollmentB3.mp4")
+	defer os.Remove("./faceVerificationB1.mp4")
+	defer os.Remove("./videoEnrollmentC1.mov")
+	defer os.Remove("./videoEnrollmentC2.mov")
+	defer os.Remove("./videoEnrollmentC3.mov")
 
 	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4")
 	if err != nil {
@@ -826,12 +834,89 @@ func TestFace(t *testing.T) {
 	myVoiceIt.DeleteUser(userId1)
 	myVoiceIt.DeleteUser(userId2)
 	myVoiceIt.DeleteGroup(groupId)
+}
 
-	os.Remove("./faceEnrollmentB1.mp4")
-	os.Remove("./faceEnrollmentB2.mp4")
-	os.Remove("./faceEnrollmentB3.mp4")
-	os.Remove("./faceVerificationB1.mp4")
-	os.Remove("./videoEnrollmentC1.mov")
-	os.Remove("./videoEnrollmentC2.mov")
-	os.Remove("./videoEnrollmentC3.mov")
+func TestSubAccounts(t *testing.T) {
+	assert := assert.New(t)
+	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
+
+	// Check IsEmpty()
+	req := structs.CreateSubAccountRequest{}
+	assert.Equal(true, req.IsEmpty())
+
+	// Managed
+
+	ret, err := myVoiceIt.CreateManagedSubAccount(req)
+	assert.Equal(err, nil)
+	var cmsa structs.CreateSubAccountReturn
+	json.Unmarshal(ret, &cmsa)
+	assert.Equal("SUCC", cmsa.ResponseCode)
+	assert.Equal(201, cmsa.Status)
+
+	managed := VoiceIt2{APIKey: cmsa.APIKey, APIToken: cmsa.APIToken, BaseUrl: "https://api.voiceit.io"}
+	ret, err = managed.CreateUser()
+	assert.Equal(err, nil)
+	var cu structs.CreateUserReturn
+	json.Unmarshal(ret, &cu)
+	assert.Equal("SUCC", cu.ResponseCode)
+	assert.Equal(201, cu.Status)
+
+	ret, err = myVoiceIt.RegenerateSubAccountAPIToken(managed.APIKey)
+	assert.Equal(err, nil)
+	var reg structs.RegenerateSubAccountAPITokenReturn
+	json.Unmarshal(ret, &reg)
+	assert.Equal("SUCC", reg.ResponseCode)
+	assert.Equal(200, reg.Status)
+
+	managed.APIToken = reg.APIToken
+
+	ret, err = managed.CreateUser()
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &cu)
+	assert.Equal("SUCC", cu.ResponseCode)
+	assert.Equal(201, cu.Status)
+
+	ret, err = myVoiceIt.DeleteSubAccount(managed.APIKey)
+	assert.Equal(err, nil)
+	var dsa structs.DeleteSubAccountReturn
+	json.Unmarshal(ret, &dsa)
+	assert.Equal("SUCC", dsa.ResponseCode)
+	assert.Equal(200, dsa.Status)
+
+	// Unmanaged
+
+	ret, err = myVoiceIt.CreateUnmanagedSubAccount(req)
+	assert.Equal(err, nil)
+	var cusa structs.CreateSubAccountReturn
+	json.Unmarshal(ret, &cusa)
+	assert.Equal("SUCC", cmsa.ResponseCode)
+	assert.Equal(201, cmsa.Status)
+
+	unmanaged := VoiceIt2{APIKey: cusa.APIKey, APIToken: cusa.APIToken, BaseUrl: "https://api.voiceit.io"}
+	ret, err = unmanaged.CreateUser()
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &cu)
+	assert.Equal("SUCC", cu.ResponseCode)
+	assert.Equal(201, cu.Status)
+
+	ret, err = myVoiceIt.RegenerateSubAccountAPIToken(unmanaged.APIKey)
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &reg)
+	assert.Equal("SUCC", reg.ResponseCode)
+	assert.Equal(200, reg.Status)
+
+	unmanaged.APIToken = reg.APIToken
+
+	ret, err = unmanaged.CreateUser()
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &cu)
+	assert.Equal("SUCC", cu.ResponseCode)
+	assert.Equal(201, cu.Status)
+
+	ret, err = myVoiceIt.DeleteSubAccount(unmanaged.APIKey)
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &dsa)
+	assert.Equal("SUCC", dsa.ResponseCode)
+	assert.Equal(200, dsa.Status)
+
 }
