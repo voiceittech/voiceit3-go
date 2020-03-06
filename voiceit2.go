@@ -10,13 +10,16 @@ import (
 	"path"
 	"strconv"
 	"time"
+
+	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
-const PlatformVersion string = "v2.1.4"
+const PlatformVersion string = "v2.2.0"
+const PlatformId string = "39"
 
 type VoiceIt2 struct {
-	ApiKey          string
-	ApiToken        string
+	APIKey          string
+	APIToken        string
 	BaseUrl         string
 	NotificationUrl string
 }
@@ -24,8 +27,8 @@ type VoiceIt2 struct {
 // NewClient returns a new VoiceIt2 client
 func NewClient(key string, tok string) VoiceIt2 {
 	return VoiceIt2{
-		ApiKey:          key,
-		ApiToken:        tok,
+		APIKey:          key,
+		APIToken:        tok,
 		BaseUrl:         "https://api.voiceit.io",
 		NotificationUrl: "",
 	}
@@ -50,8 +53,8 @@ func (vi VoiceIt2) GetAllUsers() ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetAllUsers error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -75,8 +78,8 @@ func (vi VoiceIt2) CreateUser() ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("CreateUser error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -100,8 +103,8 @@ func (vi VoiceIt2) CheckUserExists(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("CheckUserExists error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -125,8 +128,8 @@ func (vi VoiceIt2) DeleteUser(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("DeleteUser error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -150,8 +153,8 @@ func (vi VoiceIt2) GetGroupsForUser(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetGroupsForUser error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -174,8 +177,8 @@ func (vi VoiceIt2) GetAllGroups() ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetAllGroups error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -199,8 +202,8 @@ func (vi VoiceIt2) GetGroup(groupId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetGroup error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -224,8 +227,8 @@ func (vi VoiceIt2) CheckGroupExists(groupId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("CheckGroupExists error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -258,8 +261,8 @@ func (vi VoiceIt2) CreateGroup(description string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("CreateGroup error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -297,8 +300,8 @@ func (vi VoiceIt2) AddUserToGroup(groupId string, userId string) ([]byte, error)
 	if err != nil {
 		return []byte{}, errors.New("AddUserToGroup error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -336,8 +339,8 @@ func (vi VoiceIt2) RemoveUserFromGroup(groupId string, userId string) ([]byte, e
 	if err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -367,8 +370,8 @@ func (vi VoiceIt2) DeleteGroup(groupId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("DeleteGroup error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -393,8 +396,8 @@ func (vi VoiceIt2) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetAllVoiceEnrollments error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -418,8 +421,8 @@ func (vi VoiceIt2) GetAllVideoEnrollments(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetAllVideoEnrollments error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -443,8 +446,8 @@ func (vi VoiceIt2) GetAllFaceEnrollments(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetAllFaceEnrollments error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -502,8 +505,8 @@ func (vi VoiceIt2) CreateVoiceEnrollment(userId string, contentLanguage string, 
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -551,8 +554,8 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -601,8 +604,8 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -640,8 +643,8 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -700,8 +703,8 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -749,8 +752,8 @@ func (vi VoiceIt2) CreateVideoEnrollmentByUrl(userId string, contentLanguage str
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -775,8 +778,8 @@ func (vi VoiceIt2) DeleteAllEnrollments(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("DeleteAllEnrollments error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -834,8 +837,8 @@ func (vi VoiceIt2) VoiceVerification(userId string, contentLanguage string, phra
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -883,8 +886,8 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -933,8 +936,8 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -972,8 +975,8 @@ func (vi VoiceIt2) FaceVerificationByUrl(userId string, fileUrl string) ([]byte,
 	if err != nil {
 		return []byte{}, errors.New("FaceVerificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1032,8 +1035,8 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1081,8 +1084,8 @@ func (vi VoiceIt2) VideoVerificationByUrl(userId string, contentLanguage string,
 	if err != nil {
 		return []byte{}, errors.New("VideoVerificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1142,8 +1145,8 @@ func (vi VoiceIt2) VoiceIdentification(groupId string, contentLanguage string, p
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1192,8 +1195,8 @@ func (vi VoiceIt2) VoiceIdentificationByUrl(groupId string, contentLanguage stri
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1253,8 +1256,8 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1304,8 +1307,8 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1355,8 +1358,8 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1395,8 +1398,8 @@ func (vi VoiceIt2) FaceIdentificationByUrl(groupId string, fileUrl string) ([]by
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentificationByUrl error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
@@ -1420,8 +1423,8 @@ func (vi VoiceIt2) GetPhrases(contentLanguage string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("GetPhrases error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -1448,8 +1451,8 @@ func (vi VoiceIt2) CreateUserToken(userId string, timeout time.Duration) ([]byte
 	if err != nil {
 		return []byte{}, errors.New("CreateUserToken error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -1472,8 +1475,8 @@ func (vi VoiceIt2) ExpireUserTokens(userId string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens error: " + err.Error())
 	}
-	req.SetBasicAuth(vi.ApiKey, vi.ApiToken)
-	req.Header.Add("platformId", "39")
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
 	client := &http.Client{}
@@ -1485,6 +1488,192 @@ func (vi VoiceIt2) ExpireUserTokens(userId string) ([]byte, error) {
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// CreateManagedSubAccount creates a managed sub-account.
+func (vi VoiceIt2) CreateManagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
+
+	var req *http.Request
+	var err error
+	const endpoint = "/subaccount/managed"
+
+	if params.IsEmpty() {
+		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, nil)
+		if err != nil {
+			return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+		}
+	} else {
+
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+
+		if params.FirstName != "" {
+			if err := writer.WriteField("firstName", params.FirstName); err != nil {
+				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.LastName != "" {
+			if err := writer.WriteField("lastName", params.LastName); err != nil {
+				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.Email != "" {
+			if err := writer.WriteField("email", params.Email); err != nil {
+				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.Password != "" {
+			if err := writer.WriteField("password", params.Password); err != nil {
+				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.ContentLanguage != "" {
+			if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
+				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+			}
+		}
+
+		writer.Close()
+
+		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, body)
+		if err != nil {
+			return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+		}
+	}
+
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// CreateUnmanagedSubAccount creates an unmanaged sub-account.
+func (vi VoiceIt2) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
+
+	var req *http.Request
+	var err error
+	const endpoint = "/subaccount/unmanaged"
+
+	if params.IsEmpty() {
+		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, nil)
+		if err != nil {
+			return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+		}
+	} else {
+
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+
+		if params.FirstName != "" {
+			if err := writer.WriteField("firstName", params.FirstName); err != nil {
+				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.LastName != "" {
+			if err := writer.WriteField("lastName", params.LastName); err != nil {
+				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.Email != "" {
+			if err := writer.WriteField("email", params.Email); err != nil {
+				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.Password != "" {
+			if err := writer.WriteField("password", params.Password); err != nil {
+				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+			}
+		}
+		if params.ContentLanguage != "" {
+			if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
+				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+			}
+		}
+
+		writer.Close()
+
+		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, body)
+		if err != nil {
+			return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+		}
+	}
+
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// RegenerateSubAccountAPIToken takes a subAccountAPIKey (string).
+func (vi VoiceIt2) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte, error) {
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+subAccountAPIKey, nil)
+	if err != nil {
+		return []byte{}, errors.New("RegenerateSubAccountAPIToken error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{
+		// Timeout: 30 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("RegenerateSubAccountAPIToken error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("RegenerateSubAccountAPIToken error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// DeleteSubAccount takes a subAccountAPIKey (string).
+func (vi VoiceIt2) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/subaccount/"+subAccountAPIKey, nil)
+	if err != nil {
+		return []byte{}, errors.New("DeleteSubAccount error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{
+		// Timeout: 30 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("DeleteSubAccount error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("DeleteSubAccount error: " + err.Error())
 	}
 	return reply, nil
 }
