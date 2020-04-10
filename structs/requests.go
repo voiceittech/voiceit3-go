@@ -9,10 +9,3 @@ type CreateSubAccountRequest struct {
 	Password        string
 	ContentLanguage string
 }
-
-func (csar CreateSubAccountRequest) IsEmpty() bool {
-	if csar.FirstName == "" && csar.LastName == "" && csar.Email == "" && csar.Password == "" && csar.ContentLanguage == "" {
-		return true
-	}
-	return false
-}
