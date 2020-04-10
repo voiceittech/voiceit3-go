@@ -14,7 +14,7 @@ import (
 	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
-const PlatformVersion string = "v2.2.0"
+const PlatformVersion string = "v2.2.1"
 const PlatformId string = "39"
 
 type VoiceIt2 struct {
@@ -1495,57 +1495,40 @@ func (vi VoiceIt2) ExpireUserTokens(userId string) ([]byte, error) {
 // CreateManagedSubAccount creates a managed sub-account.
 func (vi VoiceIt2) CreateManagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
 
-	var req *http.Request
-	var err error
-	const endpoint = "/subaccount/managed"
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
 
-	if params.IsEmpty() {
-		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, nil)
-		if err != nil {
-			return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-		}
-	} else {
+	if err := writer.WriteField("firstName", params.FirstName); err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
 
-		body := &bytes.Buffer{}
-		writer := multipart.NewWriter(body)
+	if err := writer.WriteField("lastName", params.LastName); err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
 
-		if params.FirstName != "" {
-			if err := writer.WriteField("firstName", params.FirstName); err != nil {
-				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.LastName != "" {
-			if err := writer.WriteField("lastName", params.LastName); err != nil {
-				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.Email != "" {
-			if err := writer.WriteField("email", params.Email); err != nil {
-				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.Password != "" {
-			if err := writer.WriteField("password", params.Password); err != nil {
-				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.ContentLanguage != "" {
-			if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
-				return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-			}
-		}
+	if err := writer.WriteField("email", params.Email); err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
 
-		writer.Close()
+	if err := writer.WriteField("password", params.Password); err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
 
-		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, body)
-		if err != nil {
-			return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
-		}
+	if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
+	}
+
+	writer.Close()
+
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/managed"+vi.NotificationUrl, body)
+	if err != nil {
+		return []byte{}, errors.New("CreateManagedSubAccount error: " + err.Error())
 	}
 
 	req.SetBasicAuth(vi.APIKey, vi.APIToken)
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -1563,57 +1546,40 @@ func (vi VoiceIt2) CreateManagedSubAccount(params structs.CreateSubAccountReques
 // CreateUnmanagedSubAccount creates an unmanaged sub-account.
 func (vi VoiceIt2) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
 
-	var req *http.Request
-	var err error
-	const endpoint = "/subaccount/unmanaged"
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
 
-	if params.IsEmpty() {
-		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, nil)
-		if err != nil {
-			return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-		}
-	} else {
+	if err := writer.WriteField("firstName", params.FirstName); err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
 
-		body := &bytes.Buffer{}
-		writer := multipart.NewWriter(body)
+	if err := writer.WriteField("lastName", params.LastName); err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
 
-		if params.FirstName != "" {
-			if err := writer.WriteField("firstName", params.FirstName); err != nil {
-				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.LastName != "" {
-			if err := writer.WriteField("lastName", params.LastName); err != nil {
-				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.Email != "" {
-			if err := writer.WriteField("email", params.Email); err != nil {
-				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.Password != "" {
-			if err := writer.WriteField("password", params.Password); err != nil {
-				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-			}
-		}
-		if params.ContentLanguage != "" {
-			if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
-				return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-			}
-		}
+	if err := writer.WriteField("email", params.Email); err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
 
-		writer.Close()
+	if err := writer.WriteField("password", params.Password); err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
 
-		req, err = http.NewRequest("POST", vi.BaseUrl+endpoint, body)
-		if err != nil {
-			return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
-		}
+	if err := writer.WriteField("contentLanguage", params.ContentLanguage); err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
+	}
+
+	writer.Close()
+
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/unmanaged"+vi.NotificationUrl, body)
+	if err != nil {
+		return []byte{}, errors.New("CreateUnmanagedSubAccount error: " + err.Error())
 	}
 
 	req.SetBasicAuth(vi.APIKey, vi.APIToken)
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
