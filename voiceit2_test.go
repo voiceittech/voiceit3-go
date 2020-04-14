@@ -840,13 +840,9 @@ func TestSubAccounts(t *testing.T) {
 	assert := assert.New(t)
 	myVoiceIt := VoiceIt2{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 
-	// Check IsEmpty()
-	req := structs.CreateSubAccountRequest{}
-	assert.Equal(true, req.IsEmpty())
-
 	// Managed
 
-	ret, err := myVoiceIt.CreateManagedSubAccount(req)
+	ret, err := myVoiceIt.CreateManagedSubAccount(structs.CreateSubAccountRequest{})
 	assert.Equal(err, nil)
 	var cmsa structs.CreateSubAccountReturn
 	json.Unmarshal(ret, &cmsa)
@@ -885,7 +881,7 @@ func TestSubAccounts(t *testing.T) {
 
 	// Unmanaged
 
-	ret, err = myVoiceIt.CreateUnmanagedSubAccount(req)
+	ret, err = myVoiceIt.CreateUnmanagedSubAccount(structs.CreateSubAccountRequest{})
 	assert.Equal(err, nil)
 	var cusa structs.CreateSubAccountReturn
 	json.Unmarshal(ret, &cusa)
