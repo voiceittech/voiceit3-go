@@ -844,12 +844,12 @@ func TestSubAccounts(t *testing.T) {
 
 	ret, err := myVoiceIt.CreateManagedSubAccount(structs.CreateSubAccountRequest{})
 	assert.Equal(err, nil)
-	var cmsa structs.CreateSubAccountReturn
-	json.Unmarshal(ret, &cmsa)
-	assert.Equal("SUCC", cmsa.ResponseCode)
-	assert.Equal(201, cmsa.Status)
+	var csa structs.CreateSubAccountReturn
+	json.Unmarshal(ret, &csa)
+	assert.Equal("SUCC", csa.ResponseCode)
+	assert.Equal(201, csa.Status)
 
-	managed := VoiceIt2{APIKey: cmsa.APIKey, APIToken: cmsa.APIToken, BaseUrl: "https://api.voiceit.io"}
+	managed := VoiceIt2{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://api.voiceit.io"}
 	ret, err = managed.CreateUser()
 	assert.Equal(err, nil)
 	var cu structs.CreateUserReturn
@@ -883,12 +883,11 @@ func TestSubAccounts(t *testing.T) {
 
 	ret, err = myVoiceIt.CreateUnmanagedSubAccount(structs.CreateSubAccountRequest{})
 	assert.Equal(err, nil)
-	var cusa structs.CreateSubAccountReturn
-	json.Unmarshal(ret, &cusa)
-	assert.Equal("SUCC", cmsa.ResponseCode)
-	assert.Equal(201, cmsa.Status)
+	json.Unmarshal(ret, &csa)
+	assert.Equal("SUCC", csa.ResponseCode)
+	assert.Equal(201, csa.Status)
 
-	unmanaged := VoiceIt2{APIKey: cusa.APIKey, APIToken: cusa.APIToken, BaseUrl: "https://api.voiceit.io"}
+	unmanaged := VoiceIt2{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://api.voiceit.io"}
 	ret, err = unmanaged.CreateUser()
 	assert.Equal(err, nil)
 	json.Unmarshal(ret, &cu)
