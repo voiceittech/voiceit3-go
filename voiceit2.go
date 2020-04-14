@@ -1600,13 +1600,13 @@ func (vi VoiceIt2) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte
 	if err != nil {
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken error: " + err.Error())
 	}
+
 	req.SetBasicAuth(vi.APIKey, vi.APIToken)
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{
-		// Timeout: 30 * time.Second,
-	}
+	client := &http.Client{}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken error: " + err.Error())
@@ -1629,9 +1629,8 @@ func (vi VoiceIt2) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{
-		// Timeout: 30 * time.Second,
-	}
+	client := &http.Client{}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("DeleteSubAccount error: " + err.Error())
