@@ -14,7 +14,7 @@ import (
 	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
-const PlatformVersion string = "v2.2.2"
+const PlatformVersion string = "v2.3.0"
 const PlatformId string = "39"
 
 type VoiceIt2 struct {
@@ -1639,6 +1639,31 @@ func (vi VoiceIt2) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteSubAccount error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// SwitchSubAccountType takes a subAccountAPIKey (string)  (
+func (vi VoiceIt2) SwitchSubAccountType(subAccountAPIKey string) ([]byte, error) {
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+subAccountAPIKey+"/switchType", nil)
+	if err != nil {
+		return []byte{}, errors.New("SwitchSubAccountType error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+
+	client := &http.Client{
+		// Timeout: 30 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("SwitchSubAccountType error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("SwitchSubAccountType error: " + err.Error())
 	}
 	return reply, nil
 }
