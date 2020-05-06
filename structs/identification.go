@@ -4,10 +4,10 @@ type VoiceIdentificationReturn struct {
 	Message        string  `json:"message"`
 	UserId         string  `json:"userId"`
 	GroupId        string  `json:"groupId"`
-	Confidence     float32 `json:"confidence"`
+	Confidence     float64 `json:"confidence"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
+	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -16,10 +16,10 @@ type VoiceIdentificationByUrlReturn struct {
 	Message        string  `json:"message"`
 	UserId         string  `json:"userId"`
 	GroupId        string  `json:"groupId"`
-	Confidence     float32 `json:"confidence"`
+	Confidence     float64 `json:"confidence"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
+	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -29,7 +29,7 @@ type FaceIdentificationReturn struct {
 	UserId         string  `json:"userId"`
 	GroupId        string  `json:"groupId"`
 	Status         int     `json:"status"`
-	FaceConfidence float32 `json:"faceConfidence"`
+	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -39,7 +39,7 @@ type FaceIdentificationByUrlReturn struct {
 	UserId         string  `json:"userId"`
 	GroupId        string  `json:"groupId"`
 	Status         int     `json:"status"`
-	FaceConfidence float32 `json:"faceConfidence"`
+	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -49,10 +49,10 @@ type VideoIdentificationReturn struct {
 	UserId          string  `json:"userId"`
 	GroupId         string  `json:"groupId"`
 	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
+	VoiceConfidence float64 `json:"voiceConfidence"`
+	FaceConfidence  float64 `json:"faceConfidence"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }
@@ -62,10 +62,10 @@ type VideoIdentificationByUrlReturn struct {
 	UserId          string  `json:"userId"`
 	GroupId         string  `json:"groupId"`
 	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
+	VoiceConfidence float64 `json:"voiceConfidence"`
+	FaceConfidence  float64 `json:"faceConfidence"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }

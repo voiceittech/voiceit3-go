@@ -4,7 +4,7 @@ type VoiceVerificationReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
+	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -13,7 +13,7 @@ type VoiceVerificationByUrlReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
-	TextConfidence float32 `json:"textConfidence"`
+	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -21,7 +21,7 @@ type VoiceVerificationByUrlReturn struct {
 type FaceVerificationReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
-	FaceConfidence float32 `json:"faceConfidence"`
+	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -29,7 +29,7 @@ type FaceVerificationReturn struct {
 type FaceVerificationByUrlReturn struct {
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
-	FaceConfidence float32 `json:"faceConfidence"`
+	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
 }
@@ -37,10 +37,10 @@ type FaceVerificationByUrlReturn struct {
 type VideoVerificationReturn struct {
 	Message         string  `json:"message"`
 	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
+	VoiceConfidence float64 `json:"voiceConfidence"`
+	FaceConfidence  float64 `json:"faceConfidence"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }
@@ -48,10 +48,10 @@ type VideoVerificationReturn struct {
 type VideoVerificationByUrlReturn struct {
 	Message         string  `json:"message"`
 	Status          int     `json:"status"`
-	VoiceConfidence float32 `json:"voiceConfidence"`
-	FaceConfidence  float32 `json:"faceConfidence"`
+	VoiceConfidence float64 `json:"voiceConfidence"`
+	FaceConfidence  float64 `json:"faceConfidence"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
 }

@@ -52,7 +52,7 @@ type CreateVoiceEnrollmentReturn struct {
 	Id              int     `json:"id"`
 	Status          int     `json:"status"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
@@ -64,7 +64,7 @@ type CreateVoiceEnrollmentByUrlReturn struct {
 	Id              int     `json:"id"`
 	Status          int     `json:"status"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
@@ -94,7 +94,7 @@ type CreateVideoEnrollmentReturn struct {
 	Id              int     `json:"id"`
 	Status          int     `json:"status"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
@@ -106,7 +106,7 @@ type CreateVideoEnrollmentByUrlReturn struct {
 	Id              int     `json:"id"`
 	Status          int     `json:"status"`
 	Text            string  `json:"text"`
-	TextConfidence  float32 `json:"textConfidence"`
+	TextConfidence  float64 `json:"textConfidence"`
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
