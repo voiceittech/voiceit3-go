@@ -872,6 +872,14 @@ func TestSubAccounts(t *testing.T) {
 	assert.Equal("SUCC", cu.ResponseCode)
 	assert.Equal(201, cu.Status)
 
+	ret, err = myVoiceIt.SwitchSubAccountType(managed.APIKey)
+	assert.Equal(err, nil)
+	var csat structs.ChangeSubAccountType
+	json.Unmarshal(ret, &csat)
+	assert.Equal("SUCC", csat.ResponseCode)
+	assert.Equal(200, csat.Status)
+	assert.Equal("unmanaged", csat.Type)
+
 	ret, err = myVoiceIt.DeleteSubAccount(managed.APIKey)
 	assert.Equal(err, nil)
 	var dsa structs.DeleteSubAccountReturn
@@ -907,6 +915,13 @@ func TestSubAccounts(t *testing.T) {
 	json.Unmarshal(ret, &cu)
 	assert.Equal("SUCC", cu.ResponseCode)
 	assert.Equal(201, cu.Status)
+
+	ret, err = myVoiceIt.SwitchSubAccountType(unmanaged.APIKey)
+	assert.Equal(err, nil)
+	json.Unmarshal(ret, &csat)
+	assert.Equal("SUCC", csat.ResponseCode)
+	assert.Equal(200, csat.Status)
+	assert.Equal("managed", csat.Type)
 
 	ret, err = myVoiceIt.DeleteSubAccount(unmanaged.APIKey)
 	assert.Equal(err, nil)
