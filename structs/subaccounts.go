@@ -29,7 +29,7 @@ type DeleteSubAccountReturn struct {
 	ResponseCode string `json:"responseCode"`
 }
 
-type ChangeSubAccountType struct {
+type ChangeSubAccountTypeReturn struct {
 	TimeTaken    string `json:"timeTaken"`
 	Type         string `json:"type"`
 	Message      string `json:"message"`
