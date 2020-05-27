@@ -874,7 +874,7 @@ func TestSubAccounts(t *testing.T) {
 
 	ret, err = myVoiceIt.SwitchSubAccountType(managed.APIKey)
 	assert.Equal(err, nil)
-	var csat structs.ChangeSubAccountTypeReturn
+	var csat structs.SwitchSubAccountTypeReturn
 	json.Unmarshal(ret, &csat)
 	assert.Equal("SUCC", csat.ResponseCode)
 	assert.Equal(200, csat.Status)
