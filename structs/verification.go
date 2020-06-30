@@ -1,6 +1,7 @@
 package structs
 
 type VoiceVerificationReturn struct {
+	Confidence     string  `json:"confidence"`
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
@@ -10,6 +11,7 @@ type VoiceVerificationReturn struct {
 }
 
 type VoiceVerificationByUrlReturn struct {
+	Confidence     string  `json:"confidence"`
 	Message        string  `json:"message"`
 	Status         int     `json:"status"`
 	Text           string  `json:"text"`
