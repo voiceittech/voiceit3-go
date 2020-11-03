@@ -5,6 +5,7 @@ type VoiceEnrollment struct {
 	ContentLanguage   string `json:"contentLanguage"`
 	VoiceEnrollmentId int    `json:"voiceEnrollmentId"`
 	Text              string `json:"text"`
+	APICallId         string `json:"apiCallId"`
 }
 
 type GetAllVoiceEnrollmentsReturn struct {
@@ -14,11 +15,13 @@ type GetAllVoiceEnrollmentsReturn struct {
 	TimeTaken        string            `json:"timeTaken"`
 	VoiceEnrollments []VoiceEnrollment `json:"voiceEnrollments"`
 	ResponseCode     string            `json:"responseCode"`
+	APICallId        string            `json:"apiCallId"`
 }
 
 type FaceEnrollment struct {
-	CreatedAt        int `json:"createdAt"`
-	FaceEnrollmentId int `json:"faceEnrollmentId"`
+	CreatedAt        int    `json:"createdAt"`
+	FaceEnrollmentId int    `json:"faceEnrollmentId"`
+	APICallId        string `json:"apiCallId"`
 }
 
 type GetAllFaceEnrollmentsReturn struct {
@@ -28,6 +31,7 @@ type GetAllFaceEnrollmentsReturn struct {
 	TimeTaken       string           `json:"timeTaken"`
 	FaceEnrollments []FaceEnrollment `json:"faceEnrollments"`
 	ResponseCode    string           `json:"responseCode"`
+	APICallId       string           `json:"apiCallId"`
 }
 
 type VideoEnrollment struct {
@@ -35,6 +39,7 @@ type VideoEnrollment struct {
 	ContentLanguage   string `json:"contentLanguage"`
 	VideoEnrollmentId int    `json:"videoEnrollmentId"`
 	Text              string `json:"text"`
+	APICallId         string `json:"apiCallId"`
 }
 
 type GetAllVideoEnrollmentsReturn struct {
@@ -44,6 +49,7 @@ type GetAllVideoEnrollmentsReturn struct {
 	TimeTaken        string            `json:"timeTaken"`
 	VideoEnrollments []VideoEnrollment `json:"videoEnrollments"`
 	ResponseCode     string            `json:"responseCode"`
+	APICallId        string            `json:"apiCallId"`
 }
 
 type CreateVoiceEnrollmentReturn struct {
@@ -56,6 +62,7 @@ type CreateVoiceEnrollmentReturn struct {
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
 
 type CreateVoiceEnrollmentByUrlReturn struct {
@@ -68,6 +75,7 @@ type CreateVoiceEnrollmentByUrlReturn struct {
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
 
 type CreateFaceEnrollmentReturn struct {
@@ -77,6 +85,7 @@ type CreateFaceEnrollmentReturn struct {
 	FaceEnrollmentId int    `json:"faceEnrollmentId"`
 	CreatedAt        int    `json:"createdAt"`
 	ResponseCode     string `json:"responseCode"`
+	APICallId        string `json:"apiCallId"`
 }
 
 type CreateFaceEnrollmentByUrlReturn struct {
@@ -86,6 +95,7 @@ type CreateFaceEnrollmentByUrlReturn struct {
 	FaceEnrollmentId int    `json:"faceEnrollmentId"`
 	CreatedAt        int    `json:"createdAt"`
 	ResponseCode     string `json:"responseCode"`
+	APICallId        string `json:"apiCallId"`
 }
 
 type CreateVideoEnrollmentReturn struct {
@@ -98,6 +108,7 @@ type CreateVideoEnrollmentReturn struct {
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
 
 type CreateVideoEnrollmentByUrlReturn struct {
@@ -110,6 +121,7 @@ type CreateVideoEnrollmentByUrlReturn struct {
 	CreatedAt       int     `json:"createdAt"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
 
 type DeleteVoiceEnrollmentReturn struct {
@@ -117,6 +129,7 @@ type DeleteVoiceEnrollmentReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteFaceEnrollmentReturn struct {
@@ -124,6 +137,7 @@ type DeleteFaceEnrollmentReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteVideoEnrollmentReturn struct {
@@ -131,6 +145,7 @@ type DeleteVideoEnrollmentReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteAllVoiceEnrollmentsReturn struct {
@@ -138,6 +153,7 @@ type DeleteAllVoiceEnrollmentsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteAllFaceEnrollmentsReturn struct {
@@ -145,6 +161,7 @@ type DeleteAllFaceEnrollmentsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteAllVideoEnrollmentsReturn struct {
@@ -152,6 +169,7 @@ type DeleteAllVideoEnrollmentsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteAllEnrollmentsReturn struct {
@@ -159,4 +177,5 @@ type DeleteAllEnrollmentsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }

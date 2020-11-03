@@ -12,6 +12,7 @@ type GetAllUsersReturn struct {
 	TimeTaken    string `json:"timeTaken"`
 	Users        []User `json:"users"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type CreateUserReturn struct {
@@ -20,6 +21,7 @@ type CreateUserReturn struct {
 	TimeTaken    string `json:"timeTaken"`
 	UserId       string `json:"userId"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type CheckUserExistsReturn struct {
@@ -28,6 +30,7 @@ type CheckUserExistsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteUserReturn struct {
@@ -35,6 +38,7 @@ type DeleteUserReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type GetGroupsForUserReturn struct {
@@ -44,6 +48,7 @@ type GetGroupsForUserReturn struct {
 	Status       int      `json:"status"`
 	TimeTaken    string   `json:"timeTaken"`
 	ResponseCode string   `json:"responseCode"`
+	APICallId    string   `json:"apiCallId"`
 }
 
 type CreateUserTokenReturn struct {
@@ -53,6 +58,7 @@ type CreateUserTokenReturn struct {
 	UserToken    string `json:"userToken"`
 	CreatedAt    int    `json:"createdAt"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type ExpireUserTokensReturn struct {
@@ -60,4 +66,5 @@ type ExpireUserTokensReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }

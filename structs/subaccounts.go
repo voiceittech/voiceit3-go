@@ -12,6 +12,7 @@ type CreateSubAccountReturn struct {
 	ResponseCode            string `json:"responseCode"`
 	EmailValidationRequired bool   `json:"emailValidationRequired"`
 	Type                    string `json:"type"`
+	APICallId               string `json:"apiCallId"`
 }
 
 type RegenerateSubAccountAPITokenReturn struct {
@@ -20,6 +21,7 @@ type RegenerateSubAccountAPITokenReturn struct {
 	Message      string `json:"message"`
 	Status       int    `json:"status"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteSubAccountReturn struct {
@@ -27,6 +29,7 @@ type DeleteSubAccountReturn struct {
 	Message      string `json:"message"`
 	Status       int    `json:"status"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type SwitchSubAccountTypeReturn struct {
@@ -35,4 +38,5 @@ type SwitchSubAccountTypeReturn struct {
 	Message      string `json:"message"`
 	Status       int    `json:"status"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
