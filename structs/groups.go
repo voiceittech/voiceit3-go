@@ -5,6 +5,7 @@ type Group struct {
 	GroupId   string   `json:"groupId"`
 	Users     []string `json:"users"`
 	UserCount int      `json:"userCount"`
+	APICallId string   `json:"apiCallId"`
 }
 
 type GetAllGroupsReturn struct {
@@ -14,6 +15,7 @@ type GetAllGroupsReturn struct {
 	TimeTaken    string  `json:"timeTaken"`
 	Groups       []Group `json:"groups"`
 	ResponseCode string  `json:"responseCode"`
+	APICallId    string  `json:"apiCallId"`
 }
 
 type GetGroupReturn struct {
@@ -24,6 +26,7 @@ type GetGroupReturn struct {
 	Status       int      `json:"status"`
 	TimeTaken    string   `json:"timeTaken"`
 	ResponseCode string   `json:"responseCode"`
+	APICallId    string   `json:"apiCallId"`
 }
 
 type CheckGroupExistsReturn struct {
@@ -32,6 +35,7 @@ type CheckGroupExistsReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type CreateGroupReturn struct {
@@ -42,6 +46,7 @@ type CreateGroupReturn struct {
 	CreatedAt    int    `json:"createdAt"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type AddUserToGroupReturn struct {
@@ -49,6 +54,7 @@ type AddUserToGroupReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type RemoveUserFromGroupReturn struct {
@@ -56,6 +62,7 @@ type RemoveUserFromGroupReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }
 
 type DeleteGroupReturn struct {
@@ -63,4 +70,5 @@ type DeleteGroupReturn struct {
 	Status       int    `json:"status"`
 	TimeTaken    string `json:"timeTaken"`
 	ResponseCode string `json:"responseCode"`
+	APICallId    string `json:"apiCallId"`
 }

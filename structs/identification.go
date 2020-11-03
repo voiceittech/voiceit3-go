@@ -10,6 +10,7 @@ type VoiceIdentificationReturn struct {
 	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	APICallId      string  `json:"apiCallId"`
 }
 
 type VoiceIdentificationByUrlReturn struct {
@@ -22,6 +23,7 @@ type VoiceIdentificationByUrlReturn struct {
 	TextConfidence float64 `json:"textConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	APICallId      string  `json:"apiCallId"`
 }
 
 type FaceIdentificationReturn struct {
@@ -32,6 +34,7 @@ type FaceIdentificationReturn struct {
 	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	APICallId      string  `json:"apiCallId"`
 }
 
 type FaceIdentificationByUrlReturn struct {
@@ -42,6 +45,7 @@ type FaceIdentificationByUrlReturn struct {
 	FaceConfidence float64 `json:"faceConfidence"`
 	TimeTaken      string  `json:"timeTaken"`
 	ResponseCode   string  `json:"responseCode"`
+	APICallId      string  `json:"apiCallId"`
 }
 
 type VideoIdentificationReturn struct {
@@ -55,6 +59,7 @@ type VideoIdentificationReturn struct {
 	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
 
 type VideoIdentificationByUrlReturn struct {
@@ -68,4 +73,5 @@ type VideoIdentificationByUrlReturn struct {
 	TextConfidence  float64 `json:"textConfidence"`
 	TimeTaken       string  `json:"timeTaken"`
 	ResponseCode    string  `json:"responseCode"`
+	APICallId       string  `json:"apiCallId"`
 }
