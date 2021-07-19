@@ -1,6 +1,6 @@
 <img src="./go.png" width="100%" style="width:100%" />
 
-# VoiceIt2-Go [![travis](https://travis-ci.org/voiceittech/VoiceIt2-Go.svg?branch=master)](https://travis-ci.org/voiceittech/VoiceIt2-Go) [![godoc](https://godoc.org/github.com/voiceittech/VoiceIt2-Go?status.svg)](https://godoc.org/github.com/voiceittech/VoiceIt2-Go) [![Go Report Card](https://goreportcard.com/badge/github.com/voiceittech/VoiceIt2-Go)](https://goreportcard.com/report/github.com/voiceittech/VoiceIt2-Go)
+# VoiceIt2-Go [![travis](https://travis-ci.com/voiceittech/VoiceIt2-Go.svg?branch=master)](https://travis-ci.com/voiceittech/VoiceIt2-Go) [![godoc](https://pkg.go.dev/badge/github.com/voiceittech/VoiceIt2-Go.svg)](https://pkg.go.dev/github.com/voiceittech/VoiceIt2-Go) [![Go Report Card](https://goreportcard.com/badge/github.com/voiceittech/VoiceIt2-Go)](https://goreportcard.com/report/github.com/voiceittech/VoiceIt2-Go)
 
 A Go wrapper for VoiceIt's API 2.0 featuring Voice + Face Verification and Identification.
 
