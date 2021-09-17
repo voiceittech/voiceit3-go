@@ -2,7 +2,7 @@ package voiceit2
 
 import (
 	"encoding/json"
-	"io"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,19 +41,37 @@ func TestIO(t *testing.T) {
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
 	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVideoEnrollment (should return real error)")
+	_, err = myVoiceIt.CreateSplitVideoEnrollment("", "", "", "not_a_real.file", "also_not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateSplitVideoEnrollment (should return real error)")
 	_, err = myVoiceIt.CreateFaceEnrollment("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateFaceEnrollment (should return real error)")
+	_, err = myVoiceIt.CreateFaceEnrollment("", "not_a_real.file", false)
+	assert.NotEqual(err, nil, "passing not existent filepath to CreateFaceEnrollment (should return real error)")
+	_, err = myVoiceIt.CreateFaceEnrollment("", "not_a_real.file", true)
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateFaceEnrollment (should return real error)")
 	_, err = myVoiceIt.VoiceVerification("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to VoiceVerification(should return real error)")
 	_, err = myVoiceIt.VideoVerification("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
+	_, err = myVoiceIt.SplitVideoVerification("", "", "", "not_a_real.file", "also_not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to SplitVideoVerification(should return real error)")
 	_, err = myVoiceIt.FaceVerification("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
+	_, err = myVoiceIt.FaceVerification("", "not_a_real.file", false)
+	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
+	_, err = myVoiceIt.FaceVerification("", "not_a_real.file", true)
 	assert.NotEqual(err, nil, "passing not existent filepath to VideoVerification(should return real error)")
 	_, err = myVoiceIt.VoiceIdentification("", "en-US", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to VoiceIdentification(should return real error)")
 	_, err = myVoiceIt.VideoIdentification("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to VideoIdentification(should return real error)")
+	_, err = myVoiceIt.SplitVideoIdentification("", "", "", "not_a_real.file", "also_not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to SplitVideoIdentification(should return real error)")
 	_, err = myVoiceIt.FaceIdentification("", "not_a_real.file")
+	assert.NotEqual(err, nil, "passing not existent filepath to FaceIdentification(should return real error)")
+	_, err = myVoiceIt.FaceIdentification("", "not_a_real.file", false)
+	assert.NotEqual(err, nil, "passing not existent filepath to FaceIdentification(should return real error)")
+	_, err = myVoiceIt.FaceIdentification("", "not_a_real.file", true)
 	assert.NotEqual(err, nil, "passing not existent filepath to FaceIdentification(should return real error)")
 }
 
@@ -176,30 +194,32 @@ func TestBasics(t *testing.T) {
 }
 
 // Helper function to download files to disk
-func downloadFromUrl(url string) {
+func downloadFromUrl(url string) error {
 	tokens := strings.Split(url, "/")
 	fileName := tokens[len(tokens)-1]
 
 	log.Println("Downloading " + url + "...")
-	output, err := os.Create(fileName)
-	if err != nil {
-		log.Println("Error while creating", fileName, "-", err)
-		return
-	}
-	defer output.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
-		log.Println("Error while downloading", url, "-", err)
-		return
+		return errors.New(`http.Get("` + url + `") Exception: ` + err.Error())
 	}
 	defer response.Body.Close()
 
-	_, err = io.Copy(output, response.Body)
-	if err != nil {
-		log.Println("Error while downloading", url, "-", err)
-		return
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return errors.New(`HTTP GET to "` + url + `" gave a non 200's HTTP Response Code of ` + response.Status)
 	}
+
+	bytes, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return errors.New(`ioutil.ReadAll(response.Body) Exception: ` + err.Error())
+	}
+
+	if err := ioutil.WriteFile("./"+fileName, bytes, 0644); err != nil {
+		return errors.New(`ioutil.WriteFile("./` + fileName + `", bytes, 0644) Exception: ` + err.Error())
+	}
+
+	return nil
 
 }
 
@@ -219,23 +239,76 @@ func TestVideo(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Video Enrollments
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentB1.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentB2.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentB3.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoVerificationB1.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC1.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC2.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentA1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentA1.mov")
+	}
 
-	defer os.Remove("./videoEnrollmentB1.mov")
-	defer os.Remove("./videoEnrollmentB2.mov")
-	defer os.Remove("./videoEnrollmentB3.mov")
-	defer os.Remove("./videoVerificationB1.mov")
-	defer os.Remove("./videoEnrollmentC1.mov")
-	defer os.Remove("./videoEnrollmentC2.mov")
-	defer os.Remove("./videoEnrollmentC3.mov")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentA2.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentA2.mov")
+	}
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB1.mov")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentA3.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentA3.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoVerificationA1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoVerificationA1.mov")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD1.mov")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD2.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD2.mov")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD3.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD3.mov")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA1.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA1.png")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA2.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA2.png")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA3.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA3.png")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA1.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA1.wav")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA2.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA2.wav")
+	}
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA3.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA3.wav")
+	}
+
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -244,7 +317,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve1.Status, "CreateVideoEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVideoEnrollment() message: "+cve1.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA2.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -253,7 +326,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve2.Status, "CreateVideoEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVideoEnrollment() message: "+cve2.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentB3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA3.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -262,7 +335,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve3.Status, "CreateVideoEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVideoEnrollment() message: "+cve3.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -271,7 +344,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve4.Status, "CreateVideoEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVideoEnrollment() message: "+cve4.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD2.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -280,7 +353,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve5.Status, "CreateVideoEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVideoEnrollment() message: "+cve5.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentC3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD3.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -289,6 +362,16 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve6.Status, "CreateVideoEnrollment() message: "+cve6.Message)
 	assert.Equal("SUCC", cve6.ResponseCode, "CreateVideoEnrollment() message: "+cve6.Message)
 
+	ret, err = myVoiceIt.CreateSplitVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav", "./faceA1.png")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	var cve7 structs.CreateVideoEnrollmentReturn
+	json.Unmarshal(ret, &cve7)
+	assert.Equal(201, cve7.Status, "CreateSplitVideoEnrollment() message: "+cve7.Message)
+	assert.Equal("SUCC", cve7.ResponseCode, "CreateSplitVideoEnrollment() message: "+cve7.Message)
+
 	// Get Video Enrollment
 	ret, err = myVoiceIt.GetAllVideoEnrollments(userId1)
 	assert.Equal(err, nil)
@@ -296,10 +379,10 @@ func TestVideo(t *testing.T) {
 	json.Unmarshal(ret, &gve1)
 	assert.Equal(200, gve1.Status, "GetAllVideoEnrollments() message: "+gve1.Message)
 	assert.Equal("SUCC", gve1.ResponseCode, "GetAllVideoEnrollments() message: "+gve1.Message)
-	assert.Equal(3, len(gve1.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve1.Message)
+	assert.Equal(4, len(gve1.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve1.Message)
 
 	// Video Verification
-	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov")
+	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -308,8 +391,18 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, vv1.Status, "VideoVerification() message: "+vv1.Message)
 	assert.Equal("SUCC", vv1.ResponseCode, "VideoVerification() message: "+vv1.Message)
 
+	// Split Video Verification
+	ret, err = myVoiceIt.SplitVideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav", "./faceA2.png")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	var vv2 structs.VideoVerificationReturn
+	json.Unmarshal(ret, &vv2)
+	assert.Equal(200, vv2.Status, "SplitVideoVerification() message: "+vv2.Message)
+	assert.Equal("SUCC", vv2.ResponseCode, "SplitVideoVerification() message: "+vv2.Message)
+
 	// Video Identification
-	ret, err = myVoiceIt.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationB1.mov")
+	ret, err = myVoiceIt.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -318,6 +411,17 @@ func TestVideo(t *testing.T) {
 	assert.Equal(200, vi1.Status, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal("SUCC", vi1.ResponseCode, "VideoIdentification() message: "+vi1.Message)
 	assert.Equal(userId1, vi1.UserId, "VideoIdentification() message: "+vi1.Message)
+
+	// Split Video Identification
+	ret, err = myVoiceIt.SplitVideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav", "./faceA3.png")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	var vi2 structs.VideoIdentificationReturn
+	json.Unmarshal(ret, &vi2)
+	assert.Equal(200, vi2.Status, "SplitVideoIdentification() message: "+vi2.Message)
+	assert.Equal("SUCC", vi2.ResponseCode, "SplitVideoIdentification() message: "+vi2.Message)
+	assert.Equal(userId1, vi2.UserId, "SplitVideoIdentification() message: "+vi2.Message)
 
 	// Delete All Enrollments
 	ret, err = myVoiceIt.DeleteAllEnrollments(userId2)
@@ -352,42 +456,42 @@ func TestVideo(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Video Enrollments By Url
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA1.mov")
 	assert.Equal(err, nil)
 	var cvebu1 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA2.mov")
 	assert.Equal(err, nil)
 	var cvebu2 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentB3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA3.mov")
 	assert.Equal(err, nil)
 	var cvebu3 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD1.mov")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD2.mov")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD3.mov")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu6)
@@ -395,7 +499,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu6.Message)
 
 	// Video Verification
-	ret, err = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationB1.mov")
+	ret, err = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var vvbu structs.VideoVerificationByUrlReturn
 	json.Unmarshal(ret, &vvbu)
@@ -403,7 +507,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", vvbu.ResponseCode, "VideoVerificationByUrl() message: "+vvbu.Message)
 
 	// Video Identification
-	ret, err = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationB1.mov")
+	ret, err = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var vibu structs.VideoIdentificationByUrlReturn
 	json.Unmarshal(ret, &vibu)
@@ -435,21 +539,47 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Voice Enrollments
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentA1.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentA2.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentA3.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/verificationA1.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC1.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC2.wav")
-	downloadFromUrl("https://drive.voiceit.io/files/enrollmentC3.wav")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA1.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA1.wav")
+	}
 
-	defer os.Remove("./enrollmentA1.wav")
-	defer os.Remove("./enrollmentA2.wav")
-	defer os.Remove("./enrollmentA3.wav")
-	defer os.Remove("./verificationA1.wav")
-	defer os.Remove("./enrollmentC1.wav")
-	defer os.Remove("./enrollmentC2.wav")
-	defer os.Remove("./enrollmentC3.wav")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA2.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA2.wav")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentA3.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentA3.wav")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/verificationA1.wav"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./verificationA1.wav")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentD1.m4a"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentD1.m4a")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentD2.m4a"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentD2.m4a")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/enrollmentD3.m4a"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./enrollmentD3.m4a")
+	}
 
 	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav")
 	if err != nil {
@@ -478,7 +608,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve3.Status, "CreateVoiceEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVoiceEnrollment() message: "+cve3.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC1.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD1.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -487,7 +617,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve4.Status, "CreateVoiceEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVoiceEnrollment() message: "+cve4.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC2.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD2.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -496,7 +626,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve5.Status, "CreateVoiceEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVoiceEnrollment() message: "+cve5.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentC3.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD3.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -581,21 +711,21 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cvebu3.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC1.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD1.m4a")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC2.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD2.m4a")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentC3.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD3.m4a")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu6)
@@ -642,23 +772,61 @@ func TestFace(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Face Enrollments
-	downloadFromUrl("https://drive.voiceit.io/files/faceEnrollmentB1.mp4")
-	downloadFromUrl("https://drive.voiceit.io/files/faceEnrollmentB2.mp4")
-	downloadFromUrl("https://drive.voiceit.io/files/faceEnrollmentB3.mp4")
-	downloadFromUrl("https://drive.voiceit.io/files/faceVerificationB1.mp4")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC1.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC2.mov")
-	downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceEnrollmentA1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceEnrollmentA1.mov")
+	}
 
-	defer os.Remove("./faceEnrollmentB1.mp4")
-	defer os.Remove("./faceEnrollmentB2.mp4")
-	defer os.Remove("./faceEnrollmentB3.mp4")
-	defer os.Remove("./faceVerificationB1.mp4")
-	defer os.Remove("./videoEnrollmentC1.mov")
-	defer os.Remove("./videoEnrollmentC2.mov")
-	defer os.Remove("./videoEnrollmentC3.mov")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA2.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA2.png")
+	}
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentB1.mp4")
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceEnrollmentA3.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceEnrollmentA3.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoVerificationA1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoVerificationA1.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD1.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD1.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD2.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD2.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/videoEnrollmentD3.mov"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./videoEnrollmentD3.mov")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA1.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA1.png")
+	}
+
+	if err := downloadFromUrl("https://drive.voiceit.io/files/faceA3.png"); err != nil {
+		t.Fatal(err)
+	} else {
+		defer os.Remove("./faceA3.png")
+	}
+
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -667,7 +835,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(201, cfe1.Status, "CreateFaceEnrollment() message: "+cfe1.Message)
 	assert.Equal("SUCC", cfe1.ResponseCode, "CreateFaceEnrollment() message: "+cfe1.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentB2.mp4")
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceA2.png", true)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -676,7 +844,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(201, cfe2.Status, "CreateFaceEnrollment() message: "+cfe2.Message)
 	assert.Equal("SUCC", cfe2.ResponseCode, "CreateFaceEnrollment() message: "+cfe2.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentB3.mp4")
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId1, "./faceEnrollmentA3.mov", false)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -685,7 +853,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(201, cfe3.Status, "CreateFaceEnrollment() message: "+cfe3.Message)
 	assert.Equal("SUCC", cfe3.ResponseCode, "CreateFaceEnrollment() message: "+cfe3.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentD1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -694,7 +862,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(201, cfe4.Status, "CreateFaceEnrollment() message: "+cfe4.Message)
 	assert.Equal("SUCC", cfe4.ResponseCode, "CreateFaceEnrollment() message: "+cfe4.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentD1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -703,7 +871,7 @@ func TestFace(t *testing.T) {
 	assert.Equal(201, cfe5.Status, "CreateFaceEnrollment() message: "+cfe5.Message)
 	assert.Equal("SUCC", cfe5.ResponseCode, "CreateFaceEnrollment() message: "+cfe5.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollment(userId2, "./videoEnrollmentD1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -722,25 +890,46 @@ func TestFace(t *testing.T) {
 	assert.Equal(3, len(fve1.FaceEnrollments), "GetAllFaceEnrollments() message: "+fve1.Message)
 
 	// Face Verification
-	ret, err = myVoiceIt.FaceVerification(userId1, "./faceVerificationB1.mp4")
+	ret, err = myVoiceIt.FaceVerification(userId1, "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	var fv structs.FaceVerificationReturn
-	json.Unmarshal(ret, &fv)
-	assert.Equal(200, fv.Status, "FaceVerification() message: "+fv.Message)
-	assert.Equal("SUCC", fv.ResponseCode, "FaceVerification() message: "+fv.Message)
+	var fv1 structs.FaceVerificationReturn
+	json.Unmarshal(ret, &fv1)
+	assert.Equal(200, fv1.Status, "FaceVerification() message: "+fv1.Message)
+	assert.Equal("SUCC", fv1.ResponseCode, "FaceVerification() message: "+fv1.Message)
+
+	// Split Face Verification
+	ret, err = myVoiceIt.FaceVerification(userId1, "./faceA1.png", true)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	var fv2 structs.FaceVerificationReturn
+	json.Unmarshal(ret, &fv2)
+	assert.Equal(200, fv2.Status, "FaceVerification() message: "+fv2.Message)
+	assert.Equal("SUCC", fv2.ResponseCode, "FaceVerification() message: "+fv2.Message)
 
 	// Face Identification
-	ret, err = myVoiceIt.FaceIdentification(groupId, "./faceVerificationB1.mp4")
+	ret, err = myVoiceIt.FaceIdentification(groupId, "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	var fi structs.FaceIdentificationReturn
-	json.Unmarshal(ret, &fi)
-	assert.Equal(200, fi.Status, "FaceIdentification() message: "+fi.Message)
-	assert.Equal("SUCC", fi.ResponseCode, "FaceIdentification() message: "+fi.Message)
-	assert.Equal(userId1, fi.UserId, "FaceIdentification() message: "+fi.Message)
+	var fi1 structs.FaceIdentificationReturn
+	json.Unmarshal(ret, &fi1)
+	assert.Equal(200, fi1.Status, "FaceIdentification() message: "+fi1.Message)
+	assert.Equal("SUCC", fi1.ResponseCode, "FaceIdentification() message: "+fi1.Message)
+	assert.Equal(userId1, fi1.UserId, "FaceIdentification() message: "+fi1.Message)
+
+	// Split Face Identification
+	ret, err = myVoiceIt.FaceIdentification(groupId, "./faceA3.png", true)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	var fi2 structs.FaceIdentificationReturn
+	json.Unmarshal(ret, &fi2)
+	assert.Equal(200, fi2.Status, "FaceIdentification() message: "+fi2.Message)
+	assert.Equal("SUCC", fi2.ResponseCode, "FaceIdentification() message: "+fi2.Message)
+	assert.Equal(userId1, fi2.UserId, "FaceIdentification() message: "+fi2.Message)
 
 	_, err = myVoiceIt.GetAllFaceEnrollments(userId1)
 	assert.Equal(err, nil)
@@ -770,42 +959,42 @@ func TestFace(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Face Enrollments By Url
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB1.mp4")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentA1.mov")
 	assert.Equal(err, nil)
 	var cfebu1 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu1)
 	assert.Equal(201, cfebu1.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu1.Message)
 	assert.Equal("SUCC", cfebu1.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu1.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB2.mp4")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentA2.mov")
 	assert.Equal(err, nil)
 	var cfebu2 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu2)
 	assert.Equal(201, cfebu2.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu2.Message)
 	assert.Equal("SUCC", cfebu2.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu2.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentB3.mp4")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId1, "https://drive.voiceit.io/files/faceEnrollmentA3.mov")
 	assert.Equal(err, nil)
 	var cfebu3 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu3)
 	assert.Equal(201, cfebu3.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu3.Message)
 	assert.Equal("SUCC", cfebu3.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu3.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC1.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentD1.mov")
 	assert.Equal(err, nil)
 	var cfebu4 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu4)
 	assert.Equal(201, cfebu4.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu4.Message)
 	assert.Equal("SUCC", cfebu4.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu4.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC2.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentD2.mov")
 	assert.Equal(err, nil)
 	var cfebu5 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu5)
 	assert.Equal(201, cfebu5.Status, "CreateFaceEnrollmentByUrl() message: "+cfebu5.Message)
 	assert.Equal("SUCC", cfebu5.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu5.Message)
 
-	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentC3.mov")
+	ret, err = myVoiceIt.CreateFaceEnrollmentByUrl(userId2, "https://drive.voiceit.io/files/videoEnrollmentD3.mov")
 	assert.Equal(err, nil)
 	var cfebu6 structs.CreateFaceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cfebu6)
@@ -813,7 +1002,7 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", cfebu6.ResponseCode, "CreateFaceEnrollmentByUrl() message: "+cfebu6.Message)
 
 	// Face Verification
-	ret, err = myVoiceIt.FaceVerificationByUrl(userId1, "https://drive.voiceit.io/files/faceVerificationB1.mp4")
+	ret, err = myVoiceIt.FaceVerificationByUrl(userId1, "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var fvbu structs.FaceVerificationByUrlReturn
 	json.Unmarshal(ret, &fvbu)
@@ -821,7 +1010,7 @@ func TestFace(t *testing.T) {
 	assert.Equal("SUCC", fvbu.ResponseCode, "FaceVerificationByUrl() message: "+fvbu.Message)
 
 	// Face Identification
-	ret, err = myVoiceIt.FaceIdentificationByUrl(groupId, "https://drive.voiceit.io/files/faceVerificationB1.mp4")
+	ret, err = myVoiceIt.FaceIdentificationByUrl(groupId, "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var fibu structs.FaceIdentificationByUrlReturn
 	json.Unmarshal(ret, &fibu)
