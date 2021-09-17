@@ -14,7 +14,7 @@ import (
 	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
-const PlatformVersion string = "v2.4.5"
+const PlatformVersion string = "v2.5.0"
 const PlatformId string = "39"
 
 type VoiceIt2 struct {
@@ -575,7 +575,7 @@ func (vi VoiceIt2) CreateVoiceEnrollmentByUrl(userId string, contentLanguage str
 // CreateFaceEnrollment takes the userId generated during a createUser and
 // absolute file path for a video recording to create a face enrollment for the user
 // For more details see https://api.voiceit.io/#create-face-enrollment
-func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte, error) {
+func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -585,7 +585,14 @@ func (vi VoiceIt2) CreateFaceEnrollment(userId string, filePath string) ([]byte,
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile("video", path.Base(filePath))
+	var fileFieldKey string
+	if len(isPhoto) < 1 || !isPhoto[0] {
+		fileFieldKey = "video"
+	} else {
+		fileFieldKey = "photo"
+	}
+
+	part, err := writer.CreateFormFile(fileFieldKey, path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment error: " + err.Error())
 	}
@@ -666,7 +673,7 @@ func (vi VoiceIt2) CreateFaceEnrollmentByUrl(userId string, fileUrl string) ([]b
 // the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment
-func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, phrase string, filePath string) ([]byte, error) {
+func (vi VoiceIt2) CreateVideoEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -721,7 +728,81 @@ func (vi VoiceIt2) CreateVideoEnrollment(userId string, contentLanguage string, 
 	return reply, nil
 }
 
-// CreateVideoEnrollment takes the userId generated during a createUser,
+// CreateSplitVideoEnrollment takes the userId generated during a createUser,
+// the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
+// and absolute file paths for a photo and audio recording
+// Written for VoiceIt internal projects
+func (vi VoiceIt2) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
+
+	audioFileContents, err := ioutil.ReadFile(audioFilePath)
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	photoFileContents, err := ioutil.ReadFile(photoFilePath)
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	audioPart, err := writer.CreateFormFile("audio", path.Base(audioFilePath))
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	if _, err := audioPart.Write(audioFileContents); err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	photoPart, err := writer.CreateFormFile("photo", path.Base(photoFilePath))
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	if _, err := photoPart.Write(photoFileContents); err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+
+	writer.Close()
+
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/enrollments/video"+vi.NotificationUrl, body)
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("CreateSplitVideoEnrollment error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// CreateVideoEnrollmentByUrl takes the userId generated during a createUser,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to create a video enrollment for the user
@@ -907,7 +988,7 @@ func (vi VoiceIt2) VoiceVerificationByUrl(userId string, contentLanguage string,
 // FaceVerification takes the userId generated during a createUser and a
 // absolute file path for a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-s-face
-func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, error) {
+func (vi VoiceIt2) FaceVerification(userId string, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -917,7 +998,14 @@ func (vi VoiceIt2) FaceVerification(userId string, filePath string) ([]byte, err
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile("video", path.Base(filePath))
+	var fileFieldKey string
+	if len(isPhoto) < 1 || !isPhoto[0] {
+		fileFieldKey = "video"
+	} else {
+		fileFieldKey = "photo"
+	}
+
+	part, err := writer.CreateFormFile(fileFieldKey, path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification() error: " + err.Error())
 	}
@@ -1049,6 +1137,81 @@ func (vi VoiceIt2) VideoVerification(userId string, contentLanguage string, phra
 	reply, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification error: " + err.Error())
+	}
+	return reply, nil
+}
+
+// SplitVideoVerification takes the userId generated during a createUser,
+// the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
+// and absolute file paths for a photo and audio recording to verify the user's face and voice
+// For more details see https://api.voiceit.io/#video-verification
+// Written for VoiceIt internal projects
+func (vi VoiceIt2) SplitVideoVerification(userId string, contentLanguage string, phrase string, audioFilePath, photoFilePath string) ([]byte, error) {
+
+	audioContents, err := ioutil.ReadFile(audioFilePath)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	photoContents, err := ioutil.ReadFile(photoFilePath)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	audioPart, err := writer.CreateFormFile("audio", path.Base(audioFilePath))
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	if _, err := audioPart.Write(audioContents); err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	photoPart, err := writer.CreateFormFile("photo", path.Base(photoFilePath))
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	if _, err := photoPart.Write(photoContents); err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("userId", userId); err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+
+	writer.Close()
+
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/verification/video"+vi.NotificationUrl, body)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoVerification error: " + err.Error())
 	}
 	return reply, nil
 }
@@ -1274,6 +1437,81 @@ func (vi VoiceIt2) VideoIdentification(groupId string, contentLanguage string, p
 	return reply, nil
 }
 
+// SplitVideoIdentification takes the groupId generated during a createGroup,
+// the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
+// the text of a valid phrase for the developer account,
+// and absolute file path for a video recording to idetify the user's face and voice
+// amongst others in the group
+// For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
+func (vi VoiceIt2) SplitVideoIdentification(groupId string, contentLanguage string, phrase string, audioFilePath, photoFilePath string) ([]byte, error) {
+
+	audioContents, err := ioutil.ReadFile(audioFilePath)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	photoContents, err := ioutil.ReadFile(photoFilePath)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	audioPart, err := writer.CreateFormFile("audio", path.Base(audioFilePath))
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	if _, err := audioPart.Write(audioContents); err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	photoPart, err := writer.CreateFormFile("photo", path.Base(photoFilePath))
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	if _, err := photoPart.Write(photoContents); err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("groupId", groupId); err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("contentLanguage", contentLanguage); err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	if err := writer.WriteField("phrase", phrase); err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+
+	writer.Close()
+
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/identification/video"+vi.NotificationUrl, body)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+	req.SetBasicAuth(vi.APIKey, vi.APIToken)
+	req.Header.Add("platformId", PlatformId)
+	req.Header.Add("platformVersion", PlatformVersion)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+	defer resp.Body.Close()
+	reply, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, errors.New("SplitVideoIdentification error: " + err.Error())
+	}
+	return reply, nil
+}
+
 // VideoIdentificationByUrl takes the groupId generated during a createGroup,
 // the contentLanguage(https://api.voiceit.io/#content-languages) for the phrase,
 // the text of a valid phrase for the developer account,
@@ -1329,7 +1567,7 @@ func (vi VoiceIt2) VideoIdentificationByUrl(groupId string, contentLanguage stri
 // and absolute file path for a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-face
-func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, error) {
+func (vi VoiceIt2) FaceIdentification(groupId string, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -1339,7 +1577,14 @@ func (vi VoiceIt2) FaceIdentification(groupId string, filePath string) ([]byte, 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile("video", path.Base(filePath))
+	var fileFieldKey string
+	if len(isPhoto) < 1 || !isPhoto[0] {
+		fileFieldKey = "video"
+	} else {
+		fileFieldKey = "photo"
+	}
+
+	part, err := writer.CreateFormFile(fileFieldKey, path.Base(filePath))
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification error: " + err.Error())
 	}
