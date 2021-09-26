@@ -14,8 +14,10 @@ import (
 	"github.com/voiceittech/VoiceIt2-Go/v2/structs"
 )
 
-const PlatformVersion string = "v2.6.0"
-const PlatformId string = "39"
+var (
+	PlatformVersion string = "v2.6.1"
+	PlatformId      string = "39"
+)
 
 type VoiceIt2 struct {
 	APIKey          string
