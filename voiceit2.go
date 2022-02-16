@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	PlatformVersion string = "v2.6.1"
+	PlatformVersion string = "v2.7.0"
 	PlatformId      string = "39"
 )
 
@@ -27,12 +27,21 @@ type VoiceIt2 struct {
 }
 
 // NewClient returns a new VoiceIt2 client
-func NewClient(key, tok string) VoiceIt2 {
-	return VoiceIt2{
-		APIKey:          key,
-		APIToken:        tok,
-		BaseUrl:         "https://api.voiceit.io",
-		NotificationUrl: "",
+func NewClient(key, tok string, baseUrl ...string) VoiceIt2 {
+	if len(baseUrl) == 0 {
+		return VoiceIt2{
+			APIKey:          key,
+			APIToken:        tok,
+			BaseUrl:         "https://api.voiceit.io",
+			NotificationUrl: "",
+		}
+	} else {
+		return VoiceIt2{
+			APIKey:          key,
+			APIToken:        tok,
+			BaseUrl:         baseUrl[0],
+			NotificationUrl: "",
+		}
 	}
 }
 
