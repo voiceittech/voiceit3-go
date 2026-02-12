@@ -32,11 +32,3 @@ type DeleteSubAccountReturn struct {
 	APICallId    string `json:"apiCallId"`
 }
 
-type SwitchSubAccountTypeReturn struct {
-	TimeTaken    string `json:"timeTaken"`
-	Type         string `json:"type"`
-	Message      string `json:"message"`
-	Status       int    `json:"status"`
-	ResponseCode string `json:"responseCode"`
-	APICallId    string `json:"apiCallId"`
-}
