@@ -2583,27 +2583,3 @@ func (vi VoiceIt2) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 	return reply, nil
 }
 
-// SwitchSubAccountType takes a subAccountAPIKey (string)  (
-func (vi VoiceIt2) SwitchSubAccountType(subAccountAPIKey string) ([]byte, error) {
-	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+subAccountAPIKey+"/switchType", nil)
-	if err != nil {
-		return []byte{}, errors.New("SwitchSubAccountType Exception: " + err.Error())
-	}
-	req.SetBasicAuth(vi.APIKey, vi.APIToken)
-	req.Header.Add("platformId", PlatformId)
-	req.Header.Add("platformVersion", PlatformVersion)
-
-	client := &http.Client{
-		// Timeout: 30 * time.Second,
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return []byte{}, errors.New("SwitchSubAccountType Exception: " + err.Error())
-	}
-	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return []byte{}, errors.New("SwitchSubAccountType Exception: " + err.Error())
-	}
-	return reply, nil
-}
