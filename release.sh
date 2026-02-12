@@ -1,6 +1,6 @@
 #!/bin/bash
 commit=$(git log -1 --pretty=%B | head -n 1)
-version=$(echo $(curl -H "Authorization: token $GH_TOKEN" -s https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases/latest | grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-) | tr "." "\n")
+version=$(echo $(curl -H "Authorization: token $GH_TOKEN" -s https://api.github.com/repos/voiceittech/VoiceIt3-Go/releases/latest | grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/' | cut -c 2-) | tr "." "\n")
 set -- $version
 major=$1
 minor=$2
@@ -62,7 +62,7 @@ then
   version='v'$major'.'$minor'.'$patch
   if [[ $wrapperplatformversion = $version ]];
   then
-    curl -H "Authorization: token $GH_TOKEN" -H "Content-Type: application/json" --request POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt2-Go/releases &> /dev/null
+    curl -H "Authorization: token $GH_TOKEN" -H "Content-Type: application/json" --request POST --data '{"tag_name": "'$version'", "target_commitish": "master", "name": "'$version'", "body": "", "draft": false, "prerelease": false}' https://api.github.com/repos/voiceittech/VoiceIt3-Go/releases &> /dev/null
     if [ "$?" != "0" ]
     then
       curl -X POST -H 'Content-type: application/json' --data '{
@@ -93,7 +93,7 @@ then
         formattedmessages=$formattedmessages'|'$i
       done
 
-      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=true" --data-urlencode "instructions=go get -u github.com/voiceittech/VoiceIt2-Go</code></div><br /><p class=\"p1\"><span class=\"s1\">inside your project.</span></p><br />" "https://api.voiceit.io/platform/39"
+      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=true" --data-urlencode "instructions=go get -u github.com/voiceittech/VoiceIt3-Go</code></div><br /><p class=\"p1\"><span class=\"s1\">inside your project.</span></p><br />" "https://api.voiceit.io/platform/39"
     fi
     exit 0
 
@@ -103,7 +103,7 @@ then
       "username": "Release Wrapper Gate",
         "attachments": [
             {
-                "text": "Packaging VoiceIt2-Go version '$version' failed because the specified release version to update package management (specified by including '$releasetype' in the commit title) does not match the platform version inside the wrapper ('$wrapperplatformversion').",
+                "text": "Packaging VoiceIt3-Go version '$version' failed because the specified release version to update package management (specified by including '$releasetype' in the commit title) does not match the platform version inside the wrapper ('$wrapperplatformversion').",
                 "color": "danger"
             }
         ]
