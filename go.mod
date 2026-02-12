@@ -1,4 +1,4 @@
-module github.com/voiceittech/VoiceIt2-Go/v2
+module github.com/voiceittech/VoiceIt3-Go/v3
 
 go 1.12
 
