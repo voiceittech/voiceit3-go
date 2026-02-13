@@ -93,7 +93,7 @@ then
         formattedmessages=$formattedmessages'|'$i
       done
 
-      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=true" --data-urlencode "instructions=go get -u github.com/voiceittech/VoiceIt3-Go</code></div><br /><p class=\"p1\"><span class=\"s1\">inside your project.</span></p><br />" "https://qpi.voiceit.io/platform/39"
+      curl -X POST -H "X-Admin-Password: $EMAILAUTHPASS" --data-urlencode "messages=$formattedmessages" -d "packageManaged=true" --data-urlencode "instructions=go get -u github.com/voiceittech/VoiceIt3-Go</code></div><br /><p class=\"p1\"><span class=\"s1\">inside your project.</span></p><br />" "https://api.voiceit.io/platform/39"
     fi
     exit 0
 
