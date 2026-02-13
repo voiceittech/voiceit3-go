@@ -36,7 +36,7 @@ func TestIO(t *testing.T) {
 	}
 
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	_, err := myVoiceIt.CreateVoiceEnrollment("", "", "", "not_a_real.file")
 	assert.NotEqual(err, nil, "passing not existent filepath to CreateVoiceEnrollmentFunction (should return real error)")
 	_, err = myVoiceIt.CreateVideoEnrollment("", "", "", "not_a_real.file")
@@ -77,7 +77,7 @@ func TestIO(t *testing.T) {
 
 func TestBasics(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
@@ -225,7 +225,7 @@ func downloadFromUrl(url string) error {
 
 func TestVideo(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -525,7 +525,7 @@ func TestVideo(t *testing.T) {
 
 func TestVoice(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -758,7 +758,7 @@ func TestVoice(t *testing.T) {
 
 func TestFace(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 	ret, err := myVoiceIt.CreateUser()
 	assert.Equal(err, nil)
 	userId1 := getUserId(ret)
@@ -1027,7 +1027,7 @@ func TestFace(t *testing.T) {
 
 func TestSubAccounts(t *testing.T) {
 	assert := assert.New(t)
-	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://qpi.voiceit.io"}
+	myVoiceIt := VoiceIt3{APIKey: os.Getenv("VIAPIKEY"), APIToken: os.Getenv("VIAPITOKEN"), BaseUrl: "https://api.voiceit.io"}
 
 	// Managed
 
@@ -1038,7 +1038,7 @@ func TestSubAccounts(t *testing.T) {
 	assert.Equal("SUCC", csa.ResponseCode)
 	assert.Equal(201, csa.Status)
 
-	managed := VoiceIt3{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://qpi.voiceit.io"}
+	managed := VoiceIt3{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://api.voiceit.io"}
 	ret, err = managed.CreateUser()
 	assert.Equal(err, nil)
 	var cu structs.CreateUserReturn
@@ -1076,7 +1076,7 @@ func TestSubAccounts(t *testing.T) {
 	assert.Equal("SUCC", csa.ResponseCode)
 	assert.Equal(201, csa.Status)
 
-	unmanaged := VoiceIt3{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://qpi.voiceit.io"}
+	unmanaged := VoiceIt3{APIKey: csa.APIKey, APIToken: csa.APIToken, BaseUrl: "https://api.voiceit.io"}
 	ret, err = unmanaged.CreateUser()
 	assert.Equal(err, nil)
 	json.Unmarshal(ret, &cu)
