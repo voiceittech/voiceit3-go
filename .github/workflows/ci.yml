@@ -22,5 +22,5 @@ jobs:
       - name: Run tests
         run: go test -timeout 999999s
         env:
-          VOICEITSECRETKEY: ${{ secrets.VOICEITSECRETKEY }}
-          VOICEITTOKEN: ${{ secrets.VOICEITTOKEN }}
+          VIAPIKEY: ${{ secrets.VIAPIKEY }}
+          VIAPITOKEN: ${{ secrets.VIAPITOKEN }}
