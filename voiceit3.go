@@ -3,7 +3,8 @@ package voiceit3
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
+	"os"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -74,7 +75,7 @@ func (vi VoiceIt3) GetAllUsers() ([]byte, error) {
 		return []byte{}, errors.New("GetAllUsers Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetAllUsers Exception: " + err.Error())
 	}
@@ -99,7 +100,7 @@ func (vi VoiceIt3) CreateUser() ([]byte, error) {
 		return []byte{}, errors.New("CreateUser Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateUser Exception: " + err.Error())
 	}
@@ -124,7 +125,7 @@ func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
 		return []byte{}, errors.New("CheckUserExists Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CheckUserExists Exception: " + err.Error())
 	}
@@ -149,7 +150,7 @@ func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
 		return []byte{}, errors.New("DeleteUser Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteUser Exception: " + err.Error())
 	}
@@ -174,7 +175,7 @@ func (vi VoiceIt3) GetGroupsForUser(userId string) ([]byte, error) {
 		return []byte{}, errors.New("GetGroupsForUser Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetGroupsForUser Exception: " + err.Error())
 	}
@@ -198,7 +199,7 @@ func (vi VoiceIt3) GetAllGroups() ([]byte, error) {
 		return []byte{}, errors.New("GetAllGroups Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetAllGroups Exception: " + err.Error())
 	}
@@ -223,7 +224,7 @@ func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
 		return []byte{}, errors.New("GetGroup Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetGroup Exception: " + err.Error())
 	}
@@ -248,7 +249,7 @@ func (vi VoiceIt3) CheckGroupExists(groupId string) ([]byte, error) {
 		return []byte{}, errors.New("CheckGroupExists Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CheckGroupExists Exception: " + err.Error())
 	}
@@ -283,7 +284,7 @@ func (vi VoiceIt3) CreateGroup(description string) ([]byte, error) {
 		return []byte{}, errors.New("CreateGroup Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateGroup Exception: " + err.Error())
 	}
@@ -322,7 +323,7 @@ func (vi VoiceIt3) AddUserToGroup(groupId, userId string) ([]byte, error) {
 		return []byte{}, errors.New("AddUserToGroup Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("AddUserToGroup Exception: " + err.Error())
 	}
@@ -361,7 +362,7 @@ func (vi VoiceIt3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
 		return []byte{}, errors.New("RemoveUserFromGroup Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup Exception: " + err.Error())
 	}
@@ -392,7 +393,7 @@ func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
 		return []byte{}, errors.New("DeleteGroup Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteGroup Exception: " + err.Error())
 	}
@@ -417,7 +418,7 @@ func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 		return []byte{}, errors.New("GetAllVoiceEnrollments Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVoiceEnrollments Exception: " + err.Error())
 	}
@@ -442,7 +443,7 @@ func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
 		return []byte{}, errors.New("GetAllVideoEnrollments Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVideoEnrollments Exception: " + err.Error())
 	}
@@ -467,7 +468,7 @@ func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
 		return []byte{}, errors.New("GetAllFaceEnrollments Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetAllFaceEnrollments Exception: " + err.Error())
 	}
@@ -481,7 +482,7 @@ func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
 // For more details see https://api.voiceit.io/#create-voice-enrollment
 func (vi VoiceIt3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment Exception: " + err.Error())
 	}
@@ -527,7 +528,7 @@ func (vi VoiceIt3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePa
 		return []byte{}, errors.New("CreateVoiceEnrollment Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment Exception: " + err.Error())
 	}
@@ -582,7 +583,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByByteSlice(userId, contentLanguage, phr
 		return []byte{}, errors.New("CreateVoiceEnrollmentByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByByteSlice Exception: " + err.Error())
 	}
@@ -631,7 +632,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, f
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl Exception: " + err.Error())
 	}
@@ -642,7 +643,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, f
 // absolute file path for a video recording to create a face enrollment for the user
 func (vi VoiceIt3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
 	}
@@ -687,7 +688,7 @@ func (vi VoiceIt3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
 	}
@@ -739,7 +740,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByByteSlice(userId, filename string, file
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
 	}
@@ -778,7 +779,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, er
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl Exception: " + err.Error())
 	}
@@ -792,7 +793,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, er
 // For more details see https://api.voiceit.io/#create-video-enrollment
 func (vi VoiceIt3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment Exception: " + err.Error())
 	}
@@ -838,7 +839,7 @@ func (vi VoiceIt3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePa
 		return []byte{}, errors.New("CreateVideoEnrollment Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment Exception: " + err.Error())
 	}
@@ -893,7 +894,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phr
 		return []byte{}, errors.New("CreateVideoEnrollmentByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByByteSlice Exception: " + err.Error())
 	}
@@ -907,12 +908,12 @@ func (vi VoiceIt3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phr
 // Written for VoiceIt internal projects
 func (vi VoiceIt3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
-	audioFileContents, err := ioutil.ReadFile(audioFilePath)
+	audioFileContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollment Exception: " + err.Error())
 	}
 
-	photoFileContents, err := ioutil.ReadFile(photoFilePath)
+	photoFileContents, err := os.ReadFile(photoFilePath)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollment Exception: " + err.Error())
 	}
@@ -967,7 +968,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, a
 		return []byte{}, errors.New("CreateSplitVideoEnrollment Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollment Exception: " + err.Error())
 	}
@@ -1032,7 +1033,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollmentByByteSlice(userId, contentLanguage
 		return []byte{}, errors.New("CreateSplitVideoEnrollmentByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollmentByByteSlice Exception: " + err.Error())
 	}
@@ -1081,7 +1082,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, f
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl Exception: " + err.Error())
 	}
@@ -1106,7 +1107,7 @@ func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
 		return []byte{}, errors.New("DeleteAllEnrollments Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteAllEnrollments Exception: " + err.Error())
 	}
@@ -1120,7 +1121,7 @@ func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
 // For more details see https://api.voiceit.io/#verify-a-user-s-voice
 func (vi VoiceIt3) VoiceVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification Exception: " + err.Error())
 	}
@@ -1166,7 +1167,7 @@ func (vi VoiceIt3) VoiceVerification(userId, contentLanguage, phrase, filePath s
 		return []byte{}, errors.New("VoiceVerification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification Exception: " + err.Error())
 	}
@@ -1221,7 +1222,7 @@ func (vi VoiceIt3) VoiceVerificationByByteSlice(userId, contentLanguage, phrase,
 		return []byte{}, errors.New("VoiceVerificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerificationByByteSlice Exception: " + err.Error())
 	}
@@ -1270,7 +1271,7 @@ func (vi VoiceIt3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileU
 		return []byte{}, errors.New("VoiceVerificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerificationByUrl Exception: " + err.Error())
 	}
@@ -1282,7 +1283,7 @@ func (vi VoiceIt3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileU
 // For more details see https://api.voiceit.io/#verify-a-user-s-face
 func (vi VoiceIt3) FaceVerification(userId, filePath string, isPhoto ...bool) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification Exception: " + err.Error())
 	}
@@ -1327,7 +1328,7 @@ func (vi VoiceIt3) FaceVerification(userId, filePath string, isPhoto ...bool) ([
 		return []byte{}, errors.New("FaceVerification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification Exception: " + err.Error())
 	}
@@ -1379,7 +1380,7 @@ func (vi VoiceIt3) FaceVerificationByByteSlice(userId, filename string, fileData
 		return []byte{}, errors.New("FaceVerificationByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerificationByteSlice Exception: " + err.Error())
 	}
@@ -1418,7 +1419,7 @@ func (vi VoiceIt3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error)
 		return []byte{}, errors.New("FaceVerificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerificationByUrl Exception: " + err.Error())
 	}
@@ -1432,7 +1433,7 @@ func (vi VoiceIt3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error)
 // For more details see https://api.voiceit.io/#video-verification
 func (vi VoiceIt3) VideoVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification Exception: " + err.Error())
 	}
@@ -1478,7 +1479,7 @@ func (vi VoiceIt3) VideoVerification(userId, contentLanguage, phrase, filePath s
 		return []byte{}, errors.New("VideoVerification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification Exception: " + err.Error())
 	}
@@ -1533,7 +1534,7 @@ func (vi VoiceIt3) VideoVerificationByByteSlice(userId, contentLanguage, phrase,
 		return []byte{}, errors.New("VideoVerificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerificationByByteSlice Exception: " + err.Error())
 	}
@@ -1547,12 +1548,12 @@ func (vi VoiceIt3) VideoVerificationByByteSlice(userId, contentLanguage, phrase,
 // Written for VoiceIt internal projects
 func (vi VoiceIt3) SplitVideoVerification(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
-	audioContents, err := ioutil.ReadFile(audioFilePath)
+	audioContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerification Exception: " + err.Error())
 	}
 
-	photoContents, err := ioutil.ReadFile(photoFilePath)
+	photoContents, err := os.ReadFile(photoFilePath)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerification Exception: " + err.Error())
 	}
@@ -1607,7 +1608,7 @@ func (vi VoiceIt3) SplitVideoVerification(userId, contentLanguage, phrase, audio
 		return []byte{}, errors.New("SplitVideoVerification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerification Exception: " + err.Error())
 	}
@@ -1671,7 +1672,7 @@ func (vi VoiceIt3) SplitVideoVerificationByByteSlice(userId, contentLanguage, ph
 		return []byte{}, errors.New("SplitVideoVerificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerificationByByteSlice Exception: " + err.Error())
 	}
@@ -1720,7 +1721,7 @@ func (vi VoiceIt3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileU
 		return []byte{}, errors.New("VideoVerificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerificationByUrl Exception: " + err.Error())
 	}
@@ -1735,7 +1736,7 @@ func (vi VoiceIt3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileU
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice
 func (vi VoiceIt3) VoiceIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification Exception: " + err.Error())
 	}
@@ -1781,7 +1782,7 @@ func (vi VoiceIt3) VoiceIdentification(groupId, contentLanguage, phrase, filePat
 		return []byte{}, errors.New("VoiceIdentification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification Exception: " + err.Error())
 	}
@@ -1838,7 +1839,7 @@ func (vi VoiceIt3) VoiceIdentificationByByteSlice(groupId, contentLanguage, phra
 		return []byte{}, errors.New("VoiceIdentificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByByteSlice Exception: " + err.Error())
 	}
@@ -1888,7 +1889,7 @@ func (vi VoiceIt3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fi
 		return []byte{}, errors.New("VoiceIdentificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByUrl Exception: " + err.Error())
 	}
@@ -1903,7 +1904,7 @@ func (vi VoiceIt3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fi
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
 func (vi VoiceIt3) VideoIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification Exception: " + err.Error())
 	}
@@ -1949,7 +1950,7 @@ func (vi VoiceIt3) VideoIdentification(groupId, contentLanguage, phrase, filePat
 		return []byte{}, errors.New("VideoIdentification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification Exception: " + err.Error())
 	}
@@ -2005,7 +2006,7 @@ func (vi VoiceIt3) VideoIdentificationByByteSlice(groupId, contentLanguage, phra
 		return []byte{}, errors.New("VideoIdentificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByByteSlice Exception: " + err.Error())
 	}
@@ -2020,12 +2021,12 @@ func (vi VoiceIt3) VideoIdentificationByByteSlice(groupId, contentLanguage, phra
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
 func (vi VoiceIt3) SplitVideoIdentification(groupId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
-	audioContents, err := ioutil.ReadFile(audioFilePath)
+	audioContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentification Exception: " + err.Error())
 	}
 
-	photoContents, err := ioutil.ReadFile(photoFilePath)
+	photoContents, err := os.ReadFile(photoFilePath)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentification Exception: " + err.Error())
 	}
@@ -2080,7 +2081,7 @@ func (vi VoiceIt3) SplitVideoIdentification(groupId, contentLanguage, phrase, au
 		return []byte{}, errors.New("SplitVideoIdentification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentification Exception: " + err.Error())
 	}
@@ -2146,7 +2147,7 @@ func (vi VoiceIt3) SplitVideoIdentificationByByteSlice(groupId, contentLanguage,
 		return []byte{}, errors.New("SplitVideoIdentificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentificationByByteSlice Exception: " + err.Error())
 	}
@@ -2197,7 +2198,7 @@ func (vi VoiceIt3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fi
 		return []byte{}, errors.New("VideoIdentificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByUrl Exception: " + err.Error())
 	}
@@ -2210,7 +2211,7 @@ func (vi VoiceIt3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fi
 // For more details see https://api.voiceit.io/#identify-a-user-s-face
 func (vi VoiceIt3) FaceIdentification(groupId, filePath string, isPhoto ...bool) ([]byte, error) {
 
-	fileContents, err := ioutil.ReadFile(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification Exception: " + err.Error())
 	}
@@ -2255,7 +2256,7 @@ func (vi VoiceIt3) FaceIdentification(groupId, filePath string, isPhoto ...bool)
 		return []byte{}, errors.New("FaceIdentification Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification Exception: " + err.Error())
 	}
@@ -2309,7 +2310,7 @@ func (vi VoiceIt3) FaceIdentificationByByteSlice(groupId, filename string, fileD
 		return []byte{}, errors.New("FaceIdentificationByByteSlice Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentificationByByteSlice Exception: " + err.Error())
 	}
@@ -2349,7 +2350,7 @@ func (vi VoiceIt3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, err
 		return []byte{}, errors.New("FaceIdentificationByUrl Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentificationByUrl Exception: " + err.Error())
 	}
@@ -2373,7 +2374,7 @@ func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
 		return []byte{}, errors.New("GetPhrases Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("GetPhrases Exception: " + err.Error())
 	}
@@ -2401,7 +2402,7 @@ func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte
 		return []byte{}, errors.New("CreateUserToken Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateUserToken Exception: " + err.Error())
 	}
@@ -2425,7 +2426,7 @@ func (vi VoiceIt3) ExpireUserTokens(userId string) ([]byte, error) {
 		return []byte{}, errors.New("ExpireUserTokens Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens Exception: " + err.Error())
 	}
@@ -2476,7 +2477,7 @@ func (vi VoiceIt3) CreateManagedSubAccount(params structs.CreateSubAccountReques
 		return []byte{}, errors.New("CreateManagedSubAccount Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateManagedSubAccount Exception: " + err.Error())
 	}
@@ -2527,7 +2528,7 @@ func (vi VoiceIt3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequ
 		return []byte{}, errors.New("CreateUnmanagedSubAccount Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("CreateUnmanagedSubAccount Exception: " + err.Error())
 	}
@@ -2552,7 +2553,7 @@ func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken Exception: " + err.Error())
 	}
@@ -2576,7 +2577,7 @@ func (vi VoiceIt3) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 		return []byte{}, errors.New("DeleteSubAccount Exception: " + err.Error())
 	}
 	defer resp.Body.Close()
-	reply, err := ioutil.ReadAll(resp.Body)
+	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteSubAccount Exception: " + err.Error())
 	}

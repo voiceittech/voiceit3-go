@@ -3,7 +3,7 @@ package voiceit3
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +29,7 @@ func getGroupId(arg []byte) string {
 
 func TestIO(t *testing.T) {
 	if os.Getenv("BOXFUSE_ENV") == "voiceittest" {
-		writefileerr := ioutil.WriteFile(os.Getenv("HOME")+"/platformVersion", []byte(PlatformVersion), 0644)
+		writefileerr := os.WriteFile(os.Getenv("HOME")+"/platformVersion", []byte(PlatformVersion), 0644)
 		if writefileerr != nil {
 			panic(writefileerr)
 		}
@@ -210,13 +210,13 @@ func downloadFromUrl(url string) error {
 		return errors.New(`HTTP GET to "` + url + `" gave a non 200's HTTP Response Code of ` + response.Status)
 	}
 
-	bytes, err := ioutil.ReadAll(response.Body)
+	bytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return errors.New(`ioutil.ReadAll(response.Body) Exception: ` + err.Error())
+		return errors.New(`io.ReadAll(response.Body) Exception: ` + err.Error())
 	}
 
-	if err := ioutil.WriteFile("./"+fileName, bytes, 0644); err != nil {
-		return errors.New(`ioutil.WriteFile("./` + fileName + `", bytes, 0644) Exception: ` + err.Error())
+	if err := os.WriteFile("./"+fileName, bytes, 0644); err != nil {
+		return errors.New(`os.WriteFile("./` + fileName + `", bytes, 0644) Exception: ` + err.Error())
 	}
 
 	return nil
