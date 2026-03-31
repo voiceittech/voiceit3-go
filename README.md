@@ -11,7 +11,7 @@ go get github.com/voiceittech/VoiceIt3-Go/v3
 
 ## Getting Started
 
-Sign up for a free Developer Account at [VoiceIt.io](https://voiceit.io/pricing). Visit the settings tab to view your API Key and Token. 
+Sign up for a 10-Day paid trial at [VoiceIt.io](https://voiceit.io/pricing). Visit the settings tab to view your API Key and Token. 
 
 ## API calls
 You can visit our [HTTP API 3.0 Documentation](https://api.voiceit.io/?go#introduction) for detailed information on each API call.
