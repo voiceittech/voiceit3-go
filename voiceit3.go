@@ -347,7 +347,7 @@ func (vi VoiceIt3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
 
 	writer.Close()
 
-	req, err := http.NewRequest("PUT", vi.BaseUrl+"/groups/removeUser"+vi.NotificationUrl, body)
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/groups/removeUser"+vi.NotificationUrl, body)
 	if err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup Exception: " + err.Error())
 	}
