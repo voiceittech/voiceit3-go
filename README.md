@@ -1,5 +1,10 @@
 <img src="./go.png" width="100%" style="width:100%" />
 
+[![Version](https://img.shields.io/badge/version-v3.0.1-blue)](https://github.com/voiceittech/VoiceIt3-Go)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/VoiceIt3-Go/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Go-lightgrey)](https://github.com/voiceittech/VoiceIt3-Go)
+[![VoiceIt API](https://img.shields.io/badge/VoiceIt-API%203.0-blue)](https://voiceit.io)
+
 
 A Go wrapper for VoiceIt's API 3.0 featuring Voice + Face Verification and Identification.
 
