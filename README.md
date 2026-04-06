@@ -1,7 +1,7 @@
 <img src="./go.png" width="100%" style="width:100%" />
 
 [![API Test](https://github.com/voiceittech/VoiceIt3-Go/actions/workflows/test.yml/badge.svg)](https://github.com/voiceittech/VoiceIt3-Go/actions/workflows/test.yml)
-[![Dependabot](https://img.shields.io/badge/dependabot-100%25-025e8c?logo=dependabot)](https://github.com/voiceittech/VoiceIt3-Go/security/dependabot)
+[![Dependabot](https://img.shields.io/github/issues-pr/voiceittech/VoiceIt3-Go/dependencies?label=dependabot&logo=dependabot&color=025e8c)](https://github.com/voiceittech/VoiceIt3-Go/pulls?q=is%3Apr+label%3Adependencies)
 [![Version](https://img.shields.io/badge/version-v3.0.1-blue)](https://github.com/voiceittech/VoiceIt3-Go)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/VoiceIt3-Go/blob/main/LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Go-lightgrey)](https://github.com/voiceittech/VoiceIt3-Go)
