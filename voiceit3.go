@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/voiceittech/VoiceIt3-Go/v3/structs"
+	"github.com/voiceittech/voiceit3-go/v3/structs"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	voiceit3 "github.com/voiceittech/VoiceIt3-Go/v3"
+	voiceit3 "github.com/voiceittech/voiceit3-go/v3"
 )
 
 func main() {

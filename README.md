@@ -1,10 +1,10 @@
 <img src="./go.png" width="100%" style="width:100%" />
 
-[![API Test](https://github.com/voiceittech/VoiceIt3-Go/actions/workflows/test.yml/badge.svg)](https://github.com/voiceittech/VoiceIt3-Go/actions/workflows/test.yml)
-[![Dependabot](https://img.shields.io/github/issues-pr/voiceittech/VoiceIt3-Go/dependencies?label=dependabot&logo=dependabot&color=025e8c)](https://github.com/voiceittech/VoiceIt3-Go/pulls?q=is%3Apr+label%3Adependencies)
-[![Version](https://img.shields.io/badge/version-v3.0.1-blue)](https://github.com/voiceittech/VoiceIt3-Go)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/VoiceIt3-Go/blob/main/LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Go-lightgrey)](https://github.com/voiceittech/VoiceIt3-Go)
+[![API Test](https://github.com/voiceittech/voiceit3-go/actions/workflows/test.yml/badge.svg)](https://github.com/voiceittech/voiceit3-go/actions/workflows/test.yml)
+[![Dependabot](https://img.shields.io/github/issues-pr/voiceittech/voiceit3-go/dependencies?label=dependabot&logo=dependabot&color=025e8c)](https://github.com/voiceittech/voiceit3-go/pulls?q=is%3Apr+label%3Adependencies)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue)](https://github.com/voiceittech/voiceit3-go)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/voiceittech/voiceit3-go/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Go-lightgrey)](https://github.com/voiceittech/voiceit3-go)
 [![VoiceIt API](https://img.shields.io/badge/VoiceIt-API%203.0-blue)](https://voiceit.io)
 
 
@@ -13,7 +13,7 @@ A Go wrapper for VoiceIt's API 3.0 featuring Voice + Face Verification and Ident
 ## Installation
 
 ```bash
-go get github.com/voiceittech/VoiceIt3-Go/v3
+go get github.com/voiceittech/voiceit3-go/v3
 ```
 
 ## Getting Started
@@ -28,7 +28,7 @@ You can visit our [HTTP API 3.0 Documentation](https://voiceit.io/documentation)
 
 If you find this SDK useful, please consider giving it a star on GitHub — it helps others discover the project!
 
-[![GitHub stars](https://img.shields.io/github/stars/voiceittech/VoiceIt3-Go?style=social)](https://github.com/voiceittech/VoiceIt3-Go/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/voiceittech/voiceit3-go?style=social)](https://github.com/voiceittech/voiceit3-go/stargazers)
 
 ## License
 
