@@ -1,0 +1,4 @@
+*.exe
+*.test
+*.out
+vendor/
