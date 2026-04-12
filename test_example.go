@@ -19,7 +19,7 @@ func main() {
 	}
 
 	vi := voiceit3.NewClient(apiKey, apiToken)
-	phrase := "never forget tomorrow is a new day"
+	phrase := "Never forget tomorrow is a new day"
 	td := "test-data"
 	errors := 0
 

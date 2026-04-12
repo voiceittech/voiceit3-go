@@ -308,7 +308,7 @@ func TestVideo(t *testing.T) {
 		defer os.Remove("./enrollmentA3.wav")
 	}
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -317,7 +317,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve1.Status, "CreateVideoEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVideoEnrollment() message: "+cve1.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentA2.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -326,7 +326,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve2.Status, "CreateVideoEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVideoEnrollment() message: "+cve2.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentA3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentA3.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -335,7 +335,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve3.Status, "CreateVideoEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVideoEnrollment() message: "+cve3.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentD1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -344,7 +344,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve4.Status, "CreateVideoEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVideoEnrollment() message: "+cve4.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentD2.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -353,7 +353,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve5.Status, "CreateVideoEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVideoEnrollment() message: "+cve5.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./videoEnrollmentD3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./videoEnrollmentD3.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -362,7 +362,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(201, cve6.Status, "CreateVideoEnrollment() message: "+cve6.Message)
 	assert.Equal("SUCC", cve6.ResponseCode, "CreateVideoEnrollment() message: "+cve6.Message)
 
-	ret, err = myVoiceIt.CreateSplitVideoEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav", "./faceA1.png")
+	ret, err = myVoiceIt.CreateSplitVideoEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./enrollmentA1.wav", "./faceA1.png")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -382,7 +382,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(4, len(gve1.VideoEnrollments), "GetAllVideoEnrollments() message: "+gve1.Message)
 
 	// Video Verification
-	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./videoVerificationA1.mov")
+	ret, err = myVoiceIt.VideoVerification(userId1, "en-US", "Never forget tomorrow is a new day", "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -392,7 +392,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", vv1.ResponseCode, "VideoVerification() message: "+vv1.Message)
 
 	// Split Video Verification
-	ret, err = myVoiceIt.SplitVideoVerification(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav", "./faceA2.png")
+	ret, err = myVoiceIt.SplitVideoVerification(userId1, "en-US", "Never forget tomorrow is a new day", "./enrollmentA2.wav", "./faceA2.png")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -402,7 +402,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", vv2.ResponseCode, "SplitVideoVerification() message: "+vv2.Message)
 
 	// Video Identification
-	ret, err = myVoiceIt.VideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./videoVerificationA1.mov")
+	ret, err = myVoiceIt.VideoIdentification(groupId, "en-US", "Never forget tomorrow is a new day", "./videoVerificationA1.mov")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -413,7 +413,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal(userId1, vi1.UserId, "VideoIdentification() message: "+vi1.Message)
 
 	// Split Video Identification
-	ret, err = myVoiceIt.SplitVideoIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav", "./faceA3.png")
+	ret, err = myVoiceIt.SplitVideoIdentification(groupId, "en-US", "Never forget tomorrow is a new day", "./enrollmentA3.wav", "./faceA3.png")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -456,42 +456,42 @@ func TestVideo(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Video Enrollments By Url
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA1.mov")
 	assert.Equal(err, nil)
 	var cvebu1 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu1.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA2.mov")
 	assert.Equal(err, nil)
 	var cvebu2 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu2.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentA3.mov")
 	assert.Equal(err, nil)
 	var cvebu3 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu3.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD1.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD1.mov")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu4.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD2.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD2.mov")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu5.Message)
 
-	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD3.mov")
+	ret, err = myVoiceIt.CreateVideoEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoEnrollmentD3.mov")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVideoEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu6)
@@ -499,7 +499,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVideoEnrollmentByUrl() message: "+cvebu6.Message)
 
 	// Video Verification
-	ret, err = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
+	ret, err = myVoiceIt.VideoVerificationByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var vvbu structs.VideoVerificationByUrlReturn
 	json.Unmarshal(ret, &vvbu)
@@ -507,7 +507,7 @@ func TestVideo(t *testing.T) {
 	assert.Equal("SUCC", vvbu.ResponseCode, "VideoVerificationByUrl() message: "+vvbu.Message)
 
 	// Video Identification
-	ret, err = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
+	ret, err = myVoiceIt.VideoIdentificationByUrl(groupId, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/videoVerificationA1.mov")
 	assert.Equal(err, nil)
 	var vibu structs.VideoIdentificationByUrlReturn
 	json.Unmarshal(ret, &vibu)
@@ -581,7 +581,7 @@ func TestVoice(t *testing.T) {
 		defer os.Remove("./enrollmentD3.m4a")
 	}
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA1.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./enrollmentA1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -590,7 +590,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve1.Status, "CreateVoiceEnrollment() message: "+cve1.Message)
 	assert.Equal("SUCC", cve1.ResponseCode, "CreateVoiceEnrollment() message: "+cve1.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA2.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./enrollmentA2.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -599,7 +599,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve2.Status, "CreateVoiceEnrollment() message: "+cve2.Message)
 	assert.Equal("SUCC", cve2.ResponseCode, "CreateVoiceEnrollment() message: "+cve2.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "never forget tomorrow is a new day", "./enrollmentA3.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId1, "en-US", "Never forget tomorrow is a new day", "./enrollmentA3.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -608,7 +608,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve3.Status, "CreateVoiceEnrollment() message: "+cve3.Message)
 	assert.Equal("SUCC", cve3.ResponseCode, "CreateVoiceEnrollment() message: "+cve3.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD1.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./enrollmentD1.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -617,7 +617,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve4.Status, "CreateVoiceEnrollment() message: "+cve4.Message)
 	assert.Equal("SUCC", cve4.ResponseCode, "CreateVoiceEnrollment() message: "+cve4.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD2.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./enrollmentD2.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -626,7 +626,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(201, cve5.Status, "CreateVoiceEnrollment() message: "+cve5.Message)
 	assert.Equal("SUCC", cve5.ResponseCode, "CreateVoiceEnrollment() message: "+cve5.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "never forget tomorrow is a new day", "./enrollmentD3.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollment(userId2, "en-US", "Never forget tomorrow is a new day", "./enrollmentD3.m4a")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -645,7 +645,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal(3, len(gve1.VoiceEnrollments), "GetAllVoiceEnrollments() message: "+gve1.Message)
 
 	// Voice Verification
-	ret, err = myVoiceIt.VoiceVerification(userId1, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav")
+	ret, err = myVoiceIt.VoiceVerification(userId1, "en-US", "Never forget tomorrow is a new day", "./verificationA1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -655,7 +655,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", vv.ResponseCode, "VoiceVerification() message: "+vv.Message)
 
 	// Voice Identification
-	ret, err = myVoiceIt.VoiceIdentification(groupId, "en-US", "never forget tomorrow is a new day", "./verificationA1.wav")
+	ret, err = myVoiceIt.VoiceIdentification(groupId, "en-US", "Never forget tomorrow is a new day", "./verificationA1.wav")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -690,42 +690,42 @@ func TestVoice(t *testing.T) {
 	myVoiceIt.AddUserToGroup(groupId, userId2)
 
 	// Voice Enrollments By Url
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA1.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA1.wav")
 	assert.Equal(err, nil)
 	var cvebu1 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu1)
 	assert.Equal(201, cvebu1.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 	assert.Equal("SUCC", cvebu1.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu1.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA2.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA2.wav")
 	assert.Equal(err, nil)
 	var cvebu2 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu2)
 	assert.Equal(201, cvebu2.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 	assert.Equal("SUCC", cvebu2.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu2.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA3.wav")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentA3.wav")
 	assert.Equal(err, nil)
 	var cvebu3 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu3)
 	assert.Equal(201, cvebu3.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 	assert.Equal("SUCC", cvebu3.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu3.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD1.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD1.m4a")
 	assert.Equal(err, nil)
 	var cvebu4 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu4)
 	assert.Equal(201, cvebu4.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 	assert.Equal("SUCC", cvebu4.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu4.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD2.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD2.m4a")
 	assert.Equal(err, nil)
 	var cvebu5 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu5)
 	assert.Equal(201, cvebu5.Status, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 	assert.Equal("SUCC", cvebu5.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu5.Message)
 
-	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD3.m4a")
+	ret, err = myVoiceIt.CreateVoiceEnrollmentByUrl(userId2, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/enrollmentD3.m4a")
 	assert.Equal(err, nil)
 	var cvebu6 structs.CreateVoiceEnrollmentByUrlReturn
 	json.Unmarshal(ret, &cvebu6)
@@ -733,7 +733,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", cvebu6.ResponseCode, "CreateVoiceEnrollmentByUrl() message: "+cvebu6.Message)
 
 	// Voice Verification
-	ret, err = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
+	ret, err = myVoiceIt.VoiceVerificationByUrl(userId1, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
 	assert.Equal(err, nil)
 	var vvbu structs.VoiceVerificationByUrlReturn
 	json.Unmarshal(ret, &vvbu)
@@ -741,7 +741,7 @@ func TestVoice(t *testing.T) {
 	assert.Equal("SUCC", vvbu.ResponseCode, "VoiceVerificationByUrl() message: "+vvbu.Message)
 
 	// Voice Identification
-	ret, err = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
+	ret, err = myVoiceIt.VoiceIdentificationByUrl(groupId, "en-US", "Never forget tomorrow is a new day", "https://drive.voiceit.io/files/verificationA1.wav")
 	assert.Equal(err, nil)
 	var vibu structs.VoiceIdentificationByUrlReturn
 	json.Unmarshal(ret, &vibu)
