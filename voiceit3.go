@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	PlatformVersion string = "v2.7.1"
+	PlatformVersion string = "v3.0.3"
 	PlatformId      string = "39"
 )
 
