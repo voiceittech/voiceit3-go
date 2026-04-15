@@ -25,16 +25,19 @@ type VoiceIt3 struct {
 	APIToken        string
 	BaseUrl         string
 	NotificationUrl string
+	HTTPClient      *http.Client
 }
 
 // NewClient returns a new VoiceIt3 client
 func NewClient(key, tok string, customUrl ...string) VoiceIt3 {
+	httpClient := &http.Client{Timeout: 30 * time.Second}
 	if len(customUrl) == 0 {
 		return VoiceIt3{
 			APIKey:          key,
 			APIToken:        tok,
 			BaseUrl:         "https://api.voiceit.io",
 			NotificationUrl: "",
+			HTTPClient:      httpClient,
 		}
 	} else {
 		return VoiceIt3{
@@ -42,6 +45,7 @@ func NewClient(key, tok string, customUrl ...string) VoiceIt3 {
 			APIToken:        tok,
 			BaseUrl:         customUrl[0],
 			NotificationUrl: "",
+			HTTPClient:      httpClient,
 		}
 	}
 }
@@ -69,7 +73,7 @@ func (vi VoiceIt3) GetAllUsers() ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetAllUsers Exception: " + err.Error())
@@ -94,7 +98,7 @@ func (vi VoiceIt3) CreateUser() ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateUser Exception: " + err.Error())
@@ -119,7 +123,7 @@ func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CheckUserExists Exception: " + err.Error())
@@ -144,7 +148,7 @@ func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("DeleteUser Exception: " + err.Error())
@@ -169,7 +173,7 @@ func (vi VoiceIt3) GetGroupsForUser(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetGroupsForUser Exception: " + err.Error())
@@ -193,7 +197,7 @@ func (vi VoiceIt3) GetAllGroups() ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetAllGroups Exception: " + err.Error())
@@ -218,7 +222,7 @@ func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetGroup Exception: " + err.Error())
@@ -243,7 +247,7 @@ func (vi VoiceIt3) CheckGroupExists(groupId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CheckGroupExists Exception: " + err.Error())
@@ -278,7 +282,7 @@ func (vi VoiceIt3) CreateGroup(description string) ([]byte, error) {
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateGroup Exception: " + err.Error())
@@ -317,7 +321,7 @@ func (vi VoiceIt3) AddUserToGroup(groupId, userId string) ([]byte, error) {
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("AddUserToGroup Exception: " + err.Error())
@@ -356,7 +360,7 @@ func (vi VoiceIt3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("RemoveUserFromGroup Exception: " + err.Error())
@@ -387,7 +391,7 @@ func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("DeleteGroup Exception: " + err.Error())
@@ -412,7 +416,7 @@ func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVoiceEnrollments Exception: " + err.Error())
@@ -437,7 +441,7 @@ func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVideoEnrollments Exception: " + err.Error())
@@ -462,7 +466,7 @@ func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetAllFaceEnrollments Exception: " + err.Error())
@@ -522,7 +526,7 @@ func (vi VoiceIt3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePa
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollment Exception: " + err.Error())
@@ -577,7 +581,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByByteSlice(userId, contentLanguage, phr
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByByteSlice Exception: " + err.Error())
@@ -626,7 +630,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, f
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVoiceEnrollmentByUrl Exception: " + err.Error())
@@ -682,7 +686,7 @@ func (vi VoiceIt3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
@@ -734,7 +738,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByByteSlice(userId, filename string, file
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollment Exception: " + err.Error())
@@ -773,7 +777,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, er
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateFaceEnrollmentByUrl Exception: " + err.Error())
@@ -833,7 +837,7 @@ func (vi VoiceIt3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePa
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollment Exception: " + err.Error())
@@ -888,7 +892,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phr
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByByteSlice Exception: " + err.Error())
@@ -962,7 +966,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, a
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollment Exception: " + err.Error())
@@ -1027,7 +1031,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollmentByByteSlice(userId, contentLanguage
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateSplitVideoEnrollmentByByteSlice Exception: " + err.Error())
@@ -1076,7 +1080,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, f
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateVideoEnrollmentByUrl Exception: " + err.Error())
@@ -1101,7 +1105,7 @@ func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("DeleteAllEnrollments Exception: " + err.Error())
@@ -1161,7 +1165,7 @@ func (vi VoiceIt3) VoiceVerification(userId, contentLanguage, phrase, filePath s
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerification Exception: " + err.Error())
@@ -1216,7 +1220,7 @@ func (vi VoiceIt3) VoiceVerificationByByteSlice(userId, contentLanguage, phrase,
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerificationByByteSlice Exception: " + err.Error())
@@ -1265,7 +1269,7 @@ func (vi VoiceIt3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileU
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceVerificationByUrl Exception: " + err.Error())
@@ -1322,7 +1326,7 @@ func (vi VoiceIt3) FaceVerification(userId, filePath string, isPhoto ...bool) ([
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerification Exception: " + err.Error())
@@ -1374,7 +1378,7 @@ func (vi VoiceIt3) FaceVerificationByByteSlice(userId, filename string, fileData
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerificationByteSlice Exception: " + err.Error())
@@ -1413,7 +1417,7 @@ func (vi VoiceIt3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceVerificationByUrl Exception: " + err.Error())
@@ -1473,7 +1477,7 @@ func (vi VoiceIt3) VideoVerification(userId, contentLanguage, phrase, filePath s
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerification Exception: " + err.Error())
@@ -1528,7 +1532,7 @@ func (vi VoiceIt3) VideoVerificationByByteSlice(userId, contentLanguage, phrase,
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerificationByByteSlice Exception: " + err.Error())
@@ -1602,7 +1606,7 @@ func (vi VoiceIt3) SplitVideoVerification(userId, contentLanguage, phrase, audio
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerification Exception: " + err.Error())
@@ -1666,7 +1670,7 @@ func (vi VoiceIt3) SplitVideoVerificationByByteSlice(userId, contentLanguage, ph
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoVerificationByByteSlice Exception: " + err.Error())
@@ -1715,7 +1719,7 @@ func (vi VoiceIt3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileU
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoVerificationByUrl Exception: " + err.Error())
@@ -1776,7 +1780,7 @@ func (vi VoiceIt3) VoiceIdentification(groupId, contentLanguage, phrase, filePat
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentification Exception: " + err.Error())
@@ -1833,7 +1837,7 @@ func (vi VoiceIt3) VoiceIdentificationByByteSlice(groupId, contentLanguage, phra
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByByteSlice Exception: " + err.Error())
@@ -1883,7 +1887,7 @@ func (vi VoiceIt3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fi
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VoiceIdentificationByUrl Exception: " + err.Error())
@@ -1944,7 +1948,7 @@ func (vi VoiceIt3) VideoIdentification(groupId, contentLanguage, phrase, filePat
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentification Exception: " + err.Error())
@@ -2000,7 +2004,7 @@ func (vi VoiceIt3) VideoIdentificationByByteSlice(groupId, contentLanguage, phra
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByByteSlice Exception: " + err.Error())
@@ -2075,7 +2079,7 @@ func (vi VoiceIt3) SplitVideoIdentification(groupId, contentLanguage, phrase, au
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentification Exception: " + err.Error())
@@ -2141,7 +2145,7 @@ func (vi VoiceIt3) SplitVideoIdentificationByByteSlice(groupId, contentLanguage,
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("SplitVideoIdentificationByByteSlice Exception: " + err.Error())
@@ -2192,7 +2196,7 @@ func (vi VoiceIt3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fi
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("VideoIdentificationByUrl Exception: " + err.Error())
@@ -2250,7 +2254,7 @@ func (vi VoiceIt3) FaceIdentification(groupId, filePath string, isPhoto ...bool)
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentification Exception: " + err.Error())
@@ -2304,7 +2308,7 @@ func (vi VoiceIt3) FaceIdentificationByByteSlice(groupId, filename string, fileD
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentificationByByteSlice Exception: " + err.Error())
@@ -2344,7 +2348,7 @@ func (vi VoiceIt3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, err
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("FaceIdentificationByUrl Exception: " + err.Error())
@@ -2368,7 +2372,7 @@ func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("GetPhrases Exception: " + err.Error())
@@ -2396,7 +2400,7 @@ func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateUserToken Exception: " + err.Error())
@@ -2420,7 +2424,7 @@ func (vi VoiceIt3) ExpireUserTokens(userId string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens Exception: " + err.Error())
@@ -2471,7 +2475,7 @@ func (vi VoiceIt3) CreateManagedSubAccount(params structs.CreateSubAccountReques
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateManagedSubAccount Exception: " + err.Error())
@@ -2522,7 +2526,7 @@ func (vi VoiceIt3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequ
 	req.Header.Add("platformVersion", PlatformVersion)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return []byte{}, errors.New("CreateUnmanagedSubAccount Exception: " + err.Error())
@@ -2546,7 +2550,7 @@ func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -2570,7 +2574,7 @@ func (vi VoiceIt3) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 	req.Header.Add("platformId", PlatformId)
 	req.Header.Add("platformVersion", PlatformVersion)
 
-	client := &http.Client{}
+	client := vi.HTTPClient
 
 	resp, err := client.Do(req)
 	if err != nil {
