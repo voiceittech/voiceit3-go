@@ -115,7 +115,7 @@ func (vi VoiceIt3) CreateUser() ([]byte, error) {
 // an object which contains the boolean "exists" which shows whether a given user exists
 // For more details see https://api.voiceit.io/#check-if-a-specific-user-exists
 func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("CheckUserExists Exception: " + err.Error())
 	}
@@ -140,7 +140,7 @@ func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
 // the user profile and all associated face and voice enrollments
 // For more details see https://api.voiceit.io/#delete-a-specific-user
 func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+userId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteUser Exception: " + err.Error())
 	}
@@ -165,7 +165,7 @@ func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
 // a list of all groups that the user belongs to
 // For more details see https://api.voiceit.io/#get-groups-for-user
 func (vi VoiceIt3) GetGroupsForUser(userId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+userId+"/groups"+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/groups"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetGroupsForUser Exception: " + err.Error())
 	}
@@ -214,7 +214,7 @@ func (vi VoiceIt3) GetAllGroups() ([]byte, error) {
 // and returns the group along with a list of associated users in the group
 // For more details see https://api.voiceit.io/#get-a-specific-group
 func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+url.PathEscape(groupId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetGroup Exception: " + err.Error())
 	}
@@ -239,7 +239,7 @@ func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
 // and returns whether the group exists for the given groupId
 // For more details see https://api.voiceit.io/#check-if-group-exists
 func (vi VoiceIt3) CheckGroupExists(groupId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+groupId+"/exists"+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+url.PathEscape(groupId)+"/exists"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("CheckGroupExists Exception: " + err.Error())
 	}
@@ -382,7 +382,7 @@ func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
 
 	writer.Close()
 
-	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+groupId+vi.NotificationUrl, body)
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/groups/"+url.PathEscape(groupId)+vi.NotificationUrl, body)
 	if err != nil {
 		return []byte{}, errors.New("DeleteGroup Exception: " + err.Error())
 	}
@@ -408,7 +408,7 @@ func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
 // and returns a list of all voice enrollments for the user
 // For more details see https://api.voiceit.io/#get-voice-enrollments
 func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+userId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVoiceEnrollments Exception: " + err.Error())
 	}
@@ -433,7 +433,7 @@ func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 // and returns a list of all video enrollments for the user
 // For more details see https://api.voiceit.io/#get-video-enrollments
 func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+userId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVideoEnrollments Exception: " + err.Error())
 	}
@@ -458,7 +458,7 @@ func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
 // and returns a list of all face enrollments for the user
 // For more details see https://api.voiceit.io/#get-face-enrollments
 func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+userId+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllFaceEnrollments Exception: " + err.Error())
 	}
@@ -1097,7 +1097,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, f
 // and deletes all video/voice enrollments for the user
 // For more details see https://api.voiceit.io/#delete-all-enrollments-for-user
 func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+userId+"/all"+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+url.PathEscape(userId)+"/all"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteAllEnrollments Exception: " + err.Error())
 	}
@@ -2364,7 +2364,7 @@ func (vi VoiceIt3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, err
 // GetPhrases takes the contentLanguage
 // For more details see https://api.voiceit.io/#get-phrases
 func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
-	req, err := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+contentLanguage+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+url.PathEscape(contentLanguage)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetPhrases Exception: " + err.Error())
 	}
@@ -2392,7 +2392,7 @@ func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
 func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte, error) {
 
 	var req *http.Request
-	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
 	if err != nil {
 		return []byte{}, errors.New("CreateUserToken Exception: " + err.Error())
 	}
@@ -2416,7 +2416,7 @@ func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte
 // ExpireUserTokens takes a userId (string).
 // For more details see https://api.voiceit.io/?go#user-token-expiration
 func (vi VoiceIt3) ExpireUserTokens(userId string) ([]byte, error) {
-	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+userId+"/expireTokens"+vi.NotificationUrl, nil)
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/expireTokens"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens Exception: " + err.Error())
 	}
@@ -2541,7 +2541,7 @@ func (vi VoiceIt3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequ
 
 // RegenerateSubAccountAPIToken takes a subAccountAPIKey (string).
 func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte, error) {
-	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+subAccountAPIKey, nil)
+	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+url.PathEscape(subAccountAPIKey), nil)
 	if err != nil {
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken Exception: " + err.Error())
 	}
@@ -2566,7 +2566,7 @@ func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte
 
 // DeleteSubAccount takes a subAccountAPIKey (string).
 func (vi VoiceIt3) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
-	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/subaccount/"+subAccountAPIKey, nil)
+	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/subaccount/"+url.PathEscape(subAccountAPIKey), nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteSubAccount Exception: " + err.Error())
 	}
