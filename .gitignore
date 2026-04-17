@@ -2,3 +2,5 @@
 *.test
 *.out
 vendor/
+.env
+.env.*
