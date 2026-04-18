@@ -20,7 +20,7 @@ var (
 	PlatformId      string = "39"
 )
 
-type VoiceIt3 struct {
+type voiceit3 struct {
 	APIKey          string
 	APIToken        string
 	BaseUrl         string
@@ -28,11 +28,11 @@ type VoiceIt3 struct {
 	HTTPClient      *http.Client
 }
 
-// NewClient returns a new VoiceIt3 client
-func NewClient(key, tok string, customUrl ...string) VoiceIt3 {
+// NewClient returns a new voiceit3 client
+func NewClient(key, tok string, customUrl ...string) voiceit3 {
 	httpClient := &http.Client{Timeout: 30 * time.Second}
 	if len(customUrl) == 0 {
-		return VoiceIt3{
+		return voiceit3{
 			APIKey:          key,
 			APIToken:        tok,
 			BaseUrl:         "https://api.voiceit.io",
@@ -40,7 +40,7 @@ func NewClient(key, tok string, customUrl ...string) VoiceIt3 {
 			HTTPClient:      httpClient,
 		}
 	} else {
-		return VoiceIt3{
+		return voiceit3{
 			APIKey:          key,
 			APIToken:        tok,
 			BaseUrl:         customUrl[0],
@@ -50,21 +50,21 @@ func NewClient(key, tok string, customUrl ...string) VoiceIt3 {
 	}
 }
 
-// AddNotificationUrl adds a notification URL field in the VoiceIt3 object.
+// AddNotificationUrl adds a notification URL field in the voiceit3 object.
 // If one is already specified, it will be overwritten
 // For more details, see https://api.voiceit.io/#webhook-notification
-func (vi *VoiceIt3) AddNotificationUrl(notificationUrl string) {
+func (vi *voiceit3) AddNotificationUrl(notificationUrl string) {
 	vi.NotificationUrl = "?notificationURL=" + url.QueryEscape(notificationUrl)
 }
 
-// RemoveNotificationUrl removes the notification URL field from the VoiceIt3 struct
-func (vi *VoiceIt3) RemoveNotificationUrl() {
+// RemoveNotificationUrl removes the notification URL field from the voiceit3 struct
+func (vi *voiceit3) RemoveNotificationUrl() {
 	vi.NotificationUrl = ""
 }
 
 // GetAllUsers returns a list of all users associated with the API Key
 // For more details see https://api.voiceit.io/#get-all-users
-func (vi VoiceIt3) GetAllUsers() ([]byte, error) {
+func (vi voiceit3) GetAllUsers() ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllUsers Exception: " + err.Error())
@@ -89,7 +89,7 @@ func (vi VoiceIt3) GetAllUsers() ([]byte, error) {
 // CreateUser creates a new user profile and returns a unique userId
 // that is used for all future calls related to the user profile
 // For more details see https://api.voiceit.io/#create-a-user
-func (vi VoiceIt3) CreateUser() ([]byte, error) {
+func (vi voiceit3) CreateUser() ([]byte, error) {
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("CreateUser Exception: " + err.Error())
@@ -114,7 +114,7 @@ func (vi VoiceIt3) CreateUser() ([]byte, error) {
 // CheckUserExists takes the userId generated during a createUser and returns
 // an object which contains the boolean "exists" which shows whether a given user exists
 // For more details see https://api.voiceit.io/#check-if-a-specific-user-exists
-func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
+func (vi voiceit3) CheckUserExists(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("CheckUserExists Exception: " + err.Error())
@@ -139,7 +139,7 @@ func (vi VoiceIt3) CheckUserExists(userId string) ([]byte, error) {
 // DeleteUser takes the userId generated during a createUser and deletes
 // the user profile and all associated face and voice enrollments
 // For more details see https://api.voiceit.io/#delete-a-specific-user
-func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
+func (vi voiceit3) DeleteUser(userId string) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/users/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteUser Exception: " + err.Error())
@@ -164,7 +164,7 @@ func (vi VoiceIt3) DeleteUser(userId string) ([]byte, error) {
 // GetGroupsForUser takes the userId generated during a createUser and returns
 // a list of all groups that the user belongs to
 // For more details see https://api.voiceit.io/#get-groups-for-user
-func (vi VoiceIt3) GetGroupsForUser(userId string) ([]byte, error) {
+func (vi voiceit3) GetGroupsForUser(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/groups"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetGroupsForUser Exception: " + err.Error())
@@ -188,7 +188,7 @@ func (vi VoiceIt3) GetGroupsForUser(userId string) ([]byte, error) {
 
 // GetAllGroups returns a list of all groups associated with the API Key
 // For more details see https://api.voiceit.io/#get-all-groups
-func (vi VoiceIt3) GetAllGroups() ([]byte, error) {
+func (vi voiceit3) GetAllGroups() ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllGroups Exception: " + err.Error())
@@ -213,7 +213,7 @@ func (vi VoiceIt3) GetAllGroups() ([]byte, error) {
 // GetGroup takes the groupId generated during a createGroup
 // and returns the group along with a list of associated users in the group
 // For more details see https://api.voiceit.io/#get-a-specific-group
-func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
+func (vi voiceit3) GetGroup(groupId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+url.PathEscape(groupId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetGroup Exception: " + err.Error())
@@ -238,7 +238,7 @@ func (vi VoiceIt3) GetGroup(groupId string) ([]byte, error) {
 // CheckGroupExists takes the groupId generated during a createGroup
 // and returns whether the group exists for the given groupId
 // For more details see https://api.voiceit.io/#check-if-group-exists
-func (vi VoiceIt3) CheckGroupExists(groupId string) ([]byte, error) {
+func (vi voiceit3) CheckGroupExists(groupId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/groups/"+url.PathEscape(groupId)+"/exists"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("CheckGroupExists Exception: " + err.Error())
@@ -263,7 +263,7 @@ func (vi VoiceIt3) CheckGroupExists(groupId string) ([]byte, error) {
 // CreateGroup creates a new group profile and returns a unique groupId
 // that is used for all future calls related to the group
 // For more details see https://api.voiceit.io/#create-a-group
-func (vi VoiceIt3) CreateGroup(description string) ([]byte, error) {
+func (vi voiceit3) CreateGroup(description string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -298,7 +298,7 @@ func (vi VoiceIt3) CreateGroup(description string) ([]byte, error) {
 // AddUserToGroup takes the groupId generated during a createGroup
 // and the userId generated during createUser and adds the user to the group
 // For more details see https://api.voiceit.io/#add-user-to-group
-func (vi VoiceIt3) AddUserToGroup(groupId, userId string) ([]byte, error) {
+func (vi voiceit3) AddUserToGroup(groupId, userId string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -337,7 +337,7 @@ func (vi VoiceIt3) AddUserToGroup(groupId, userId string) ([]byte, error) {
 // RemoveUserFromGroup takes the groupId generated during a createGroup
 // and the userId generated during createUser and removes the user from the group
 // For more details see https://api.voiceit.io/#remove-user-from-group
-func (vi VoiceIt3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
+func (vi voiceit3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -376,7 +376,7 @@ func (vi VoiceIt3) RemoveUserFromGroup(groupId, userId string) ([]byte, error) {
 // DeleteGroup takes the groupId generated during a createGroup and deletes
 // the group profile disassociates all users associated with it
 // For more details see https://api.voiceit.io/#delete-a-specific-group
-func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
+func (vi voiceit3) DeleteGroup(groupId string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -407,7 +407,7 @@ func (vi VoiceIt3) DeleteGroup(groupId string) ([]byte, error) {
 // GetAllVoiceEnrollments takes the userId generated during a createUser
 // and returns a list of all voice enrollments for the user
 // For more details see https://api.voiceit.io/#get-voice-enrollments
-func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
+func (vi voiceit3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/voice/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVoiceEnrollments Exception: " + err.Error())
@@ -432,7 +432,7 @@ func (vi VoiceIt3) GetAllVoiceEnrollments(userId string) ([]byte, error) {
 // GetAllVideoEnrollments takes the userId generated during a createUser
 // and returns a list of all video enrollments for the user
 // For more details see https://api.voiceit.io/#get-video-enrollments
-func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
+func (vi voiceit3) GetAllVideoEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/video/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllVideoEnrollments Exception: " + err.Error())
@@ -457,7 +457,7 @@ func (vi VoiceIt3) GetAllVideoEnrollments(userId string) ([]byte, error) {
 // GetAllFaceEnrollments takes the userId generated during a createUser
 // and returns a list of all face enrollments for the user
 // For more details see https://api.voiceit.io/#get-face-enrollments
-func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
+func (vi voiceit3) GetAllFaceEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/enrollments/face/"+url.PathEscape(userId)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetAllFaceEnrollments Exception: " + err.Error())
@@ -484,7 +484,7 @@ func (vi VoiceIt3) GetAllFaceEnrollments(userId string) ([]byte, error) {
 // the text of a valid phrase for the developer account,
 // and absolute file path for an audio recording to create a voice enrollment for the user
 // For more details see https://api.voiceit.io/#create-voice-enrollment
-func (vi VoiceIt3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -544,7 +544,7 @@ func (vi VoiceIt3) CreateVoiceEnrollment(userId, contentLanguage, phrase, filePa
 // the text of a valid phrase for the developer account,
 // file name for an audio recording to create a voice enrollment for the user
 // file data in []byte form for an audio recording to create a voice enrollment for the user
-func (vi VoiceIt3) CreateVoiceEnrollmentByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) CreateVoiceEnrollmentByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -599,7 +599,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByByteSlice(userId, contentLanguage, phr
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to an audio recording to create a voice enrollment for the user
 // For more details see https://api.voiceit.io/#create-voice-enrollment-by-url
-func (vi VoiceIt3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -645,7 +645,7 @@ func (vi VoiceIt3) CreateVoiceEnrollmentByUrl(userId, contentLanguage, phrase, f
 
 // CreateFaceEnrollment takes the userId generated during a createUser and
 // absolute file path for a video recording to create a face enrollment for the user
-func (vi VoiceIt3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -702,7 +702,7 @@ func (vi VoiceIt3) CreateFaceEnrollment(userId, filePath string, isPhoto ...bool
 // CreateFaceEnrollmentByByteSlice takes the userId generated during a CreateUser and
 // filename for a video recording to create a face enrollment for the user
 // fileData in []byte form for a video recording to create a face enrollment for the user
-func (vi VoiceIt3) CreateFaceEnrollmentByByteSlice(userId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) CreateFaceEnrollmentByByteSlice(userId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -754,7 +754,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByByteSlice(userId, filename string, file
 // CreateFaceEnrollmentByUrl takes the userId generated during a createUser
 // and a fully qualified URL to a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#create-face-enrollment-by-url
-func (vi VoiceIt3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, error) {
+func (vi voiceit3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -795,7 +795,7 @@ func (vi VoiceIt3) CreateFaceEnrollmentByUrl(userId, fileUrl string) ([]byte, er
 // the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment
-func (vi VoiceIt3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -855,7 +855,7 @@ func (vi VoiceIt3) CreateVideoEnrollment(userId, contentLanguage, phrase, filePa
 // the text of a valid phrase for the developer account,
 // filename for a video recording to create a video enrollment for the user
 // and file data in []byte form for a video recording to create a video enrollment for the user
-func (vi VoiceIt3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -910,7 +910,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByByteSlice(userId, contentLanguage, phr
 // the text of a valid phrase for the developer account,
 // and absolute file paths for a photo and audio recording
 // Written for VoiceIt internal projects
-func (vi VoiceIt3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
+func (vi voiceit3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
 	audioFileContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
@@ -985,7 +985,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollment(userId, contentLanguage, phrase, a
 // filename for a photo and audio recording
 // and file data in []byte form for a photo and audio recording
 // Written for VoiceIt internal projects
-func (vi VoiceIt3) CreateSplitVideoEnrollmentByByteSlice(userId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
+func (vi voiceit3) CreateSplitVideoEnrollmentByByteSlice(userId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1049,7 +1049,7 @@ func (vi VoiceIt3) CreateSplitVideoEnrollmentByByteSlice(userId, contentLanguage
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to create a video enrollment for the user
 // For more details see https://api.voiceit.io/#create-video-enrollment-by-url
-func (vi VoiceIt3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -1096,7 +1096,7 @@ func (vi VoiceIt3) CreateVideoEnrollmentByUrl(userId, contentLanguage, phrase, f
 // DeleteAllEnrollments takes the userId generated during a createUser
 // and deletes all video/voice enrollments for the user
 // For more details see https://api.voiceit.io/#delete-all-enrollments-for-user
-func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
+func (vi voiceit3) DeleteAllEnrollments(userId string) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/enrollments/"+url.PathEscape(userId)+"/all"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteAllEnrollments Exception: " + err.Error())
@@ -1123,7 +1123,7 @@ func (vi VoiceIt3) DeleteAllEnrollments(userId string) ([]byte, error) {
 // the text of a valid phrase for the developer account,
 // and absolute file path for an audio recording to verify the user's voice
 // For more details see https://api.voiceit.io/#verify-a-user-s-voice
-func (vi VoiceIt3) VoiceVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) VoiceVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -1183,7 +1183,7 @@ func (vi VoiceIt3) VoiceVerification(userId, contentLanguage, phrase, filePath s
 // the text of a valid phrase for the developer account,
 // filename for an audio recording to verify the user's voice
 // and file data in []byte form for an audio recording to verify the user's voice
-func (vi VoiceIt3) VoiceVerificationByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) VoiceVerificationByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1238,7 +1238,7 @@ func (vi VoiceIt3) VoiceVerificationByByteSlice(userId, contentLanguage, phrase,
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to an audio recording to verify the user's voice
 // For more details see https://api.voiceit.io/#verify-a-user-s-voice-by-url
-func (vi VoiceIt3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -1285,7 +1285,7 @@ func (vi VoiceIt3) VoiceVerificationByUrl(userId, contentLanguage, phrase, fileU
 // FaceVerification takes the userId generated during a createUser and a
 // absolute file path for a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-s-face
-func (vi VoiceIt3) FaceVerification(userId, filePath string, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) FaceVerification(userId, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -1342,7 +1342,7 @@ func (vi VoiceIt3) FaceVerification(userId, filePath string, isPhoto ...bool) ([
 // FaceVerificationByByteSlice takes the userId generated during a createUser and a
 // filename for a video recording to verify the user's face
 // and file data in []byte form for a video recording to verify the user's face
-func (vi VoiceIt3) FaceVerificationByByteSlice(userId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) FaceVerificationByByteSlice(userId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1394,7 +1394,7 @@ func (vi VoiceIt3) FaceVerificationByByteSlice(userId, filename string, fileData
 // FaceVerificationByUrl takes the userId generated during a createUser
 // and a fully qualified URL to a video recording to verify the user's face
 // For more details see https://api.voiceit.io/#verify-a-user-s-face-by-url
-func (vi VoiceIt3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error) {
+func (vi voiceit3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -1435,7 +1435,7 @@ func (vi VoiceIt3) FaceVerificationByUrl(userId, fileUrl string) ([]byte, error)
 // the text of a valid phrase for the developer account,
 // and absolute file path for a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification
-func (vi VoiceIt3) VideoVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) VideoVerification(userId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -1495,7 +1495,7 @@ func (vi VoiceIt3) VideoVerification(userId, contentLanguage, phrase, filePath s
 // the text of a valid phrase for the developer account,
 // and filename for a video recording to verify the user's face and voice
 // and file data in []byte form for a video recording to verify the user's face and voice
-func (vi VoiceIt3) VideoVerificationByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) VideoVerificationByByteSlice(userId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1550,7 +1550,7 @@ func (vi VoiceIt3) VideoVerificationByByteSlice(userId, contentLanguage, phrase,
 // the text of a valid phrase for the developer account,
 // and absolute file paths for a photo and audio recording to verify the user's face and voice
 // Written for VoiceIt internal projects
-func (vi VoiceIt3) SplitVideoVerification(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
+func (vi voiceit3) SplitVideoVerification(userId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
 	audioContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
@@ -1624,7 +1624,7 @@ func (vi VoiceIt3) SplitVideoVerification(userId, contentLanguage, phrase, audio
 // the text of a valid phrase for the developer account,
 // file names for a photo and audio recording to verify the user's face and voice
 // and file data in []byte form for a photo and audio recording to verify the user's face and voice
-func (vi VoiceIt3) SplitVideoVerificationByByteSlice(userId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
+func (vi voiceit3) SplitVideoVerificationByByteSlice(userId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1688,7 +1688,7 @@ func (vi VoiceIt3) SplitVideoVerificationByByteSlice(userId, contentLanguage, ph
 // the text of a valid phrase for the developer account,
 // and a fully qualified URL to a video recording to verify the user's face and voice
 // For more details see https://api.voiceit.io/#video-verification-by-url
-func (vi VoiceIt3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -1738,7 +1738,7 @@ func (vi VoiceIt3) VideoVerificationByUrl(userId, contentLanguage, phrase, fileU
 // and absolute file path for an audio recording to idetify the user's voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice
-func (vi VoiceIt3) VoiceIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) VoiceIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -1800,7 +1800,7 @@ func (vi VoiceIt3) VoiceIdentification(groupId, contentLanguage, phrase, filePat
 // and file data in []byte form for an audio recording to idetify the user's voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice
-func (vi VoiceIt3) VoiceIdentificationByByteSlice(groupId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) VoiceIdentificationByByteSlice(groupId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -1856,7 +1856,7 @@ func (vi VoiceIt3) VoiceIdentificationByByteSlice(groupId, contentLanguage, phra
 // and a fully qualified URL to an audio recording to idetify the user's voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-by-url
-func (vi VoiceIt3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -1906,7 +1906,7 @@ func (vi VoiceIt3) VoiceIdentificationByUrl(groupId, contentLanguage, phrase, fi
 // and absolute file path for a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
-func (vi VoiceIt3) VideoIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
+func (vi voiceit3) VideoIdentification(groupId, contentLanguage, phrase, filePath string) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -1967,7 +1967,7 @@ func (vi VoiceIt3) VideoIdentification(groupId, contentLanguage, phrase, filePat
 // file name for a video recording to idetify the user's face and voice
 // and file data in []byte form for a video recording to idetify the user's face and voice
 // amongst others in the group
-func (vi VoiceIt3) VideoIdentificationByByteSlice(groupId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
+func (vi voiceit3) VideoIdentificationByByteSlice(groupId, contentLanguage, phrase, filename string, fileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -2023,7 +2023,7 @@ func (vi VoiceIt3) VideoIdentificationByByteSlice(groupId, contentLanguage, phra
 // and absolute file path for a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
-func (vi VoiceIt3) SplitVideoIdentification(groupId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
+func (vi voiceit3) SplitVideoIdentification(groupId, contentLanguage, phrase, audioFilePath, photoFilePath string) ([]byte, error) {
 
 	audioContents, err := os.ReadFile(audioFilePath)
 	if err != nil {
@@ -2099,7 +2099,7 @@ func (vi VoiceIt3) SplitVideoIdentification(groupId, contentLanguage, phrase, au
 // and file data in []byte form for a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face
-func (vi VoiceIt3) SplitVideoIdentificationByByteSlice(groupId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
+func (vi voiceit3) SplitVideoIdentificationByByteSlice(groupId, contentLanguage, phrase, audioFilename, photoFilename string, audioFileData, photoFileData []byte) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -2164,7 +2164,7 @@ func (vi VoiceIt3) SplitVideoIdentificationByByteSlice(groupId, contentLanguage,
 // and a fully qualified URL to a video recording to idetify the user's face and voice
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-voice-amp-face-by-url
-func (vi VoiceIt3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
+func (vi voiceit3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -2213,7 +2213,7 @@ func (vi VoiceIt3) VideoIdentificationByUrl(groupId, contentLanguage, phrase, fi
 // and absolute file path for a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-face
-func (vi VoiceIt3) FaceIdentification(groupId, filePath string, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) FaceIdentification(groupId, filePath string, isPhoto ...bool) ([]byte, error) {
 
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
@@ -2272,7 +2272,7 @@ func (vi VoiceIt3) FaceIdentification(groupId, filePath string, isPhoto ...bool)
 // and file data in []byte form for a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-face
-func (vi VoiceIt3) FaceIdentificationByByteSlice(groupId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
+func (vi voiceit3) FaceIdentificationByByteSlice(groupId, filename string, fileData []byte, isPhoto ...bool) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -2325,7 +2325,7 @@ func (vi VoiceIt3) FaceIdentificationByByteSlice(groupId, filename string, fileD
 // and a fully qualified URL to a face recording to idetify the user's face
 // amongst others in the group
 // For more details see https://api.voiceit.io/#identify-a-user-s-face-by-url
-func (vi VoiceIt3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, error) {
+func (vi voiceit3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -2363,7 +2363,7 @@ func (vi VoiceIt3) FaceIdentificationByUrl(groupId, fileUrl string) ([]byte, err
 
 // GetPhrases takes the contentLanguage
 // For more details see https://api.voiceit.io/#get-phrases
-func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
+func (vi voiceit3) GetPhrases(contentLanguage string) ([]byte, error) {
 	req, err := http.NewRequest("GET", vi.BaseUrl+"/phrases/"+url.PathEscape(contentLanguage)+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("GetPhrases Exception: " + err.Error())
@@ -2386,10 +2386,10 @@ func (vi VoiceIt3) GetPhrases(contentLanguage string) ([]byte, error) {
 }
 
 // CreateUserToken takes the userId (string) and a timeout (time.Duration).
-// The returned user token can be used to construct a new VoiceIt3 instance which has user level rights for the given user.
+// The returned user token can be used to construct a new voiceit3 instance which has user level rights for the given user.
 // The timeout controls the expiration of the user token.
 // For more details see https://api.voiceit.io/?go#user-token-generation
-func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte, error) {
+func (vi voiceit3) CreateUserToken(userId string, timeout time.Duration) ([]byte, error) {
 
 	var req *http.Request
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/token"+"?timeOut="+strconv.Itoa(int(timeout.Seconds())), nil)
@@ -2415,7 +2415,7 @@ func (vi VoiceIt3) CreateUserToken(userId string, timeout time.Duration) ([]byte
 
 // ExpireUserTokens takes a userId (string).
 // For more details see https://api.voiceit.io/?go#user-token-expiration
-func (vi VoiceIt3) ExpireUserTokens(userId string) ([]byte, error) {
+func (vi voiceit3) ExpireUserTokens(userId string) ([]byte, error) {
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/users/"+url.PathEscape(userId)+"/expireTokens"+vi.NotificationUrl, nil)
 	if err != nil {
 		return []byte{}, errors.New("ExpireUserTokens Exception: " + err.Error())
@@ -2438,7 +2438,7 @@ func (vi VoiceIt3) ExpireUserTokens(userId string) ([]byte, error) {
 }
 
 // CreateManagedSubAccount creates a managed sub-account.
-func (vi VoiceIt3) CreateManagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
+func (vi voiceit3) CreateManagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -2489,7 +2489,7 @@ func (vi VoiceIt3) CreateManagedSubAccount(params structs.CreateSubAccountReques
 }
 
 // CreateUnmanagedSubAccount creates an unmanaged sub-account.
-func (vi VoiceIt3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
+func (vi voiceit3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequest) ([]byte, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -2540,7 +2540,7 @@ func (vi VoiceIt3) CreateUnmanagedSubAccount(params structs.CreateSubAccountRequ
 }
 
 // RegenerateSubAccountAPIToken takes a subAccountAPIKey (string).
-func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte, error) {
+func (vi voiceit3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte, error) {
 	req, err := http.NewRequest("POST", vi.BaseUrl+"/subaccount/"+url.PathEscape(subAccountAPIKey), nil)
 	if err != nil {
 		return []byte{}, errors.New("RegenerateSubAccountAPIToken Exception: " + err.Error())
@@ -2565,7 +2565,7 @@ func (vi VoiceIt3) RegenerateSubAccountAPIToken(subAccountAPIKey string) ([]byte
 }
 
 // DeleteSubAccount takes a subAccountAPIKey (string).
-func (vi VoiceIt3) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
+func (vi voiceit3) DeleteSubAccount(subAccountAPIKey string) ([]byte, error) {
 	req, err := http.NewRequest("DELETE", vi.BaseUrl+"/subaccount/"+url.PathEscape(subAccountAPIKey), nil)
 	if err != nil {
 		return []byte{}, errors.New("DeleteSubAccount Exception: " + err.Error())
